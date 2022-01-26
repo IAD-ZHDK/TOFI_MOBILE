@@ -20,6 +20,9 @@
     },
     "cordova-plugin-statusbar": {
       "PACKAGE_NAME": "com.example.tofi"
+    },
+    "cordova-plugin-browsersync-gen2": {
+      "PACKAGE_NAME": "com.example.tofi"
     }
   },
   "dependent_plugins": {}

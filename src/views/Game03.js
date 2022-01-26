@@ -8,8 +8,8 @@ class Game03 extends View {
     constructor (p, Tone, Timer, params) {
         super(p, Tone, Timer, params)
         this.meta = new Meta(p, p.width, p.height, params, Tone, this.Timer.envelopes)
-
         this.messageNo = 0;
+        this.tone = Tone;
         this.messages = ['Please put your TOFI - TRAINER on',
                          'Forcefully press the different sensor areas on your TOFI trainer',
                          'Try to keep the blob in constant motion']
@@ -24,7 +24,7 @@ class Game03 extends View {
     draw () {
         this.p.clear()
         // this.tofiTrainer.display()
-        this.meta.update()
+        this.meta.update(this.tone)
         this.textBox.display(this.p.width/2, this.p.height*.2)
         if (this.timer < this.p.millis()) {
             if (this.messageNo < this.messages.length) {

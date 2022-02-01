@@ -18,11 +18,14 @@ class Game05 extends View {
         this.messageNo++
         let font = this.p.loadFont('./css/fonts/inconsolata.otf');
         this.p.textFont(font);
+        this.timer = this.p.millis() + 7000
+        /*
         addBtn(function(){
             this.timer = this.p.millis() + 7000
             this.textBox.setText(this.messages[this.messageNo])
-            this.messageNo++
+
         }.bind(this),"I am ready!")
+        */
         this.winningtimer = 0;
     }
 

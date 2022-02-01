@@ -9,7 +9,7 @@ class Ball {
     this.yspeed = p.random(2, 5) * Math.sin(angle)
     this.r = p.random(0, 1)
     this.r = 0.3
-    this.rad = this.r*30
+    this.rad = this.r*20
     this.Xangle = p.random(p.PI)
     this.Yangle = p.random(p.PI)
     this.speed = 0.003

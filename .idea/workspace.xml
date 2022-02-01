@@ -2,23 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d6cf0d72-aea2-43f5-a18e-7aa5b5629e69" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/views/Game05.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/config.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/index.bundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/index.bundle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/xml/config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/xml/config.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/browser/www/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/browser/www/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/ios/HelloWorld/config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/ios/HelloWorld/config.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/ios/www/config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/ios/www/config.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/ios/www/index.bundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/ios/www/index.bundle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/ios/www/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/ios/www/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Canvas.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Canvas.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parameters.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parameters.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/Views.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/Views.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/utils/Meta.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/utils/Meta.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/www/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/Game05.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/Game05.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/utils/Ball.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/utils/Ball.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/utils/TiltBoard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/utils/TiltBoard.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,7 +130,10 @@
       <workItem from="1641892355903" duration="3369000" />
       <workItem from="1642061953823" duration="3437000" />
       <workItem from="1642079359629" duration="76000" />
-      <workItem from="1642586219387" duration="953000" />
+      <workItem from="1642586219387" duration="5453000" />
+      <workItem from="1642778877589" duration="791000" />
+      <workItem from="1643210667449" duration="2314000" />
+      <workItem from="1643378746640" duration="4618000" />
     </task>
     <servers />
   </component>

@@ -1,8 +1,8 @@
 import { Tone } from 'tone/build/esm/core/Tone';
 
 const world = {
-    gravity: 9.82,
-    friction: 0.02,
+    gravity:         9.82,
+    friction: 0.01,
     ballhardness: 0.7,
     angleScaling: 20,
     playerSensitivity: 0.008,
@@ -118,7 +118,7 @@ class TiltBoard {
         this.sphereTexture = this.p.loadImage('./img/sphere_texture_checkered.jpeg');
         this.p.colorMode(this.p.HSB);
         this.colorPallet = [196, 330, 36, 159, 312, 60, 250];
-        this.colorwinningArea = this.p.color(this.colorPallet[4],255,255);
+        this.colorwinningArea = this.p.color(this.colorPallet[4],0,0);
         this.colorWalls = this.p.color(this.colorPallet[6],255,70);
         this.colorBoard = this.p.color(this.colorPallet[0],255,355);
         this.colorObstacle1 = this.p.color(this.colorPallet[2],255,100)

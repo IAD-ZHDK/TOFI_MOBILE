@@ -1,5 +1,6 @@
 import P5 from 'p5'
 import P5ble from 'p5ble'
+import {map, constrain, moveingWeightedAverageArray} from './views/utils/MathUtils'
 let that
 class BLEhandler {
   constructor (params) {
@@ -72,17 +73,14 @@ class BLEhandler {
   handleSensor (data) {
     // apply filtering
     let filters = that.params.getFilters();
+    let newValues = []
+    // extract 16 bit sensor values from hex
     for (let i = 0; i < that.noChannels; i++) {
       let byteCount = i * 2
-      // let filter = that.chanelOptions[Object.keys(that.chanelOptions)[i]].filter
-      let filter = filters[i];
-      if (filter > 0) {
-        that.sensorValues[i] = Math.floor(that.sensorValues[i] * filter)
-        that.sensorValues[i] += Math.floor(data.getUint16(byteCount, true) * (1.0 - filter))
-      } else {
-        that.sensorValues[i] = data.getUint16(byteCount, true)
-      }
+      newValues[i] = data.getUint16(byteCount, true)
     }
+    let averageValues = that.sensorValues
+    moveingWeightedAverageArray(newValues, averageValues, filters)
   }
 }
 export default BLEhandler

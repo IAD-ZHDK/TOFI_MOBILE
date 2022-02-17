@@ -1,10 +1,11 @@
-import { Tone } from 'tone/build/esm/core/Tone';
+//import { Tone } from 'tone/build/esm/core/Tone';
+// references: https://codepen.io/HunorMarton/pen/VwKwgxX
 
 const world = {
-    gravity:         9.82,
+    gravity: 9.82,
     friction: 0.01,
     ballhardness: 0.7,
-    angleScaling: 20,
+    angleScaling: 40,
     playerSensitivity: 0.008,
     collisionBoundary: 1.2,
     perspective: 0.0,
@@ -115,7 +116,7 @@ class TiltBoard {
         this.objectSetup();
         this.soundSetup(Tone);
         this.inputThreshold = 0.1;
-        this.sphereTexture = this.p.loadImage('./img/sphere_texture_checkered.jpeg');
+        this.sphereTexture = this.p.loadImage('./img/checkerboard_pattern.png');
         this.p.colorMode(this.p.HSB);
         this.colorPallet = [196, 330, 36, 159, 312, 60, 250];
         this.colorwinningArea = this.p.color(this.colorPallet[4],0,0);
@@ -166,6 +167,7 @@ class TiltBoard {
       let volumeDry = -8;
       let bpmValue = 80;
       
+      
   
       this.synth1 = new Tone.MonoSynth();
       this.synth2 = new Tone.MonoSynth();
@@ -188,6 +190,31 @@ class TiltBoard {
       
   
       this.volDry = new Tone.Volume(volumeDry);
+
+         //
+    this.params.toneObjects = []; // important! all tone.js objects need to be tracked in order to dispose after use.
+    this.params.toneObjects.push(this.synth1);
+    this.params.toneObjects.push(this.synth2);
+    this.params.toneObjects.push(this.synth3);
+    this.params.toneObjects.push(this.synth4);
+    this.params.toneObjects.push(this.synth5);
+
+    this.params.toneObjects.push(this.chorus1);
+    this.params.toneObjects.push(this.chorus2);
+    this.params.toneObjects.push(this.chorus3);
+    this.params.toneObjects.push(this.chorus4);
+
+    this.params.toneObjects.push(this.reverb1);
+    this.params.toneObjects.push(this.reverb2);
+    this.params.toneObjects.push(this.reverb3);
+    this.params.toneObjects.push(this.reverb4);
+    this.params.toneObjects.push(this.reverb5);
+
+    this.params.toneObjects.push(this.volDry);
+ 
+
+   
+    //
   
   
       //set parameters for synths and FX's
@@ -262,11 +289,11 @@ class TiltBoard {
 
     objectSetup () {
         if (this.height <= this.width){
-          board.boardWidth = this.height * 1 / 3;
+          board.boardWidth = this.height * .8;
           board.boardHeight = board.boardWidth;
         }
         else {
-          board.boardWidth = this.width * 2 / 3;
+          board.boardWidth = this.width * .8;
           board.boardHeight = board.boardWidth;
         }
 

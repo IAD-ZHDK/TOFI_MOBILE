@@ -15,7 +15,6 @@ class Game04 extends View {
         this.wave = new Wave(.5, .5, this.p.width, this.p.height, p, this.tofiTrainer.sensorLocations, params)
     }
 
-
     draw () {
         this.p.clear()
         // p.background(80, 120, 30)

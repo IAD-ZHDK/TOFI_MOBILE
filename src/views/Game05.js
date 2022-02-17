@@ -4,6 +4,7 @@ import TiltBoard from "./utils/TiltBoard.js";
 import TextBox from "./utils/TextBox";
 import { addBtn } from "./utils/DomButton.js";
 import { Player } from 'tone';
+import { pushPage } from '..';
 
 
 class Game05 extends View {
@@ -12,8 +13,8 @@ class Game05 extends View {
         this.tiltboard = new TiltBoard(p, p.width, p.height, params, Tone, this.Timer.envelopes);
         this.messageNo = 0;
         this.messages = ['Please put your TOFI - TRAINER on',
-                         'Press the buttons to tilt the board and move the ball',
-                         'Reach the marked winning area']
+                         'Press the sensors to tilt the board and move the ball',
+                         'Reach the hole to progress to the next level']
         this.textBox = new TextBox(this.p,this.messages[this.messageNo], 0, - this.p.height*.4,p.width*0.4,p.height*0.5)
         this.messageNo++
         let font = this.p.loadFont('./css/fonts/inconsolata.otf');
@@ -33,8 +34,9 @@ class Game05 extends View {
     draw () {
         this.p.clear();
         // this.Tone.start();
-
+      
         this.textBox.display(0, 0)
+        this.p.translate(0,0,-100)
         if (this.timer < this.p.millis()) {
             if (this.messageNo < this.messages.length) {
                 this.timer = this.p.millis() + 7000

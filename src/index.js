@@ -41,7 +41,6 @@ function onDeviceReady() {
     blehandler = new BleSimulator(params)
     calibrationGUI = new CalibrationGUI(params)
     calibrationGUI.toggle(false)
-    console.log('handling sounds')
     document.addEventListener("click", RunToneConext, false);
     // populate statistics menu
     statisticsMenu()
@@ -84,7 +83,6 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////// Initial Setup ///////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,10 +116,24 @@ function DOMContentLoadedEvent() {
 
 // sound
 function RunToneConext() {
-    if (Tone.context.state !== 'running') {
-        Tone.context.resume()
+
+    console.log("sound state "+Tone.context.state )
+   // if (Tone.disposed == true) {
+        //Tone = new Tone()
+   // }
+
+    if (Tone.context.state === 'closed') {
         console.log("start sound")
-    }
+       // Tone.start();
+         Tone.Master.mute = false;
+        Tone.context.resume()
+    
+    } else if (Tone.context.state !== 'running') {
+        Tone.context.resume()
+        Tone.Master.mute = false;
+        console.log("resume sound")
+    } 
+
 }
 
 

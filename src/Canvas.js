@@ -24,6 +24,7 @@ const Canvas = (p) => {
     p.preload = function () {
         //todo: fix font load
         myFont = p.loadFont('./css/fonts/barlow_condensed.otf')
+        Tone.Master.mute = false
     }
 
     p.setup = function () {
@@ -90,9 +91,24 @@ function defineSketch(options) {
         Timer.envelopes.forEach(
             item => item.dispose()
         );
-
         if (Tone !== undefined) {
-            Tone.Transport.stop()
+        console.log("shutdown sound")       
+        if (typeof params.toneObjects != "undefined") {
+            params.toneObjects.forEach(
+                item => { try {
+                    item.dispose()
+                  } catch (error) {
+                    console.error("error could not dispos: " + item);
+                  }
+                }
+            );
+        }
+        params.toneObjects  = [];
+           // Tone.Transport.stop()
+            //Tone.Master.mute = true
+          //  Tone.context.close()
+            //Tone.disconnect()
+            //Tone.Transport.dispose()
         }
         // save data if the params object exists
         if (typeof params != "undefined") {

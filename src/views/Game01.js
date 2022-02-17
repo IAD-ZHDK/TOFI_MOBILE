@@ -47,7 +47,7 @@ class Game01 extends View {
     draw () {
         this.p.clear()
         this.p.background(249, 60, 20, 10)
-        this.textBox.display(this.p.width/2, this.p.height*.2)
+        this.textBox.display(this.p.width/2, this.p.height*.2)  
         if (this.statesMachineNew.value === 'intro') {
             this.drawDemo()
         } else if (this.statesMachineNew.value === 'player') {

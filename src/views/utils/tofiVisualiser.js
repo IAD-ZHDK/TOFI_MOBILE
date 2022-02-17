@@ -10,7 +10,6 @@ class tofiVisualiser {
         this.height = height
         this.params = params
         this.Tone = Tone
-        // this.sensorLocations = [{"x": 0.3, "y": 0.8}, {"x": 0.5, "y": 0.8}, {"x": 0.5, "y": 0.33}, {"x": 0.5, "y": 0.55}, {"x": 0.7, "y": 0.8}, {"x": 0.9, "y": 0.8}]; // todo: make these configurable in front end
         this.sensorLocations = this.params.getActiveSensorLocations()
         this.sensorDisplays = []
         this.x = x
@@ -37,10 +36,21 @@ class tofiVisualiser {
         });
     }
 
-    display(option0,option1,option2,option3,option4, option5, option6) {
+
+    setMockValues(mockValues) {
+        // set mock sensor values
+        this.mockValues = mockValues
+    }
+
+    display(option0,option1,option2,option3,option4,option5,option6) {
+        let sensorValues 
+        if (typeof this.mockValues === "undefined") {
+            sensorValues = this.params.getNormalisedActiveValues()
+        } else {
+            sensorValues = this.mockValues;
+        }
         let x = this.x*this.p.width
         let y = this.y*this.p.height
-        let sensorValues = this.params.getNormalisedActiveValues()
 
         if (this.sensorDisplays.length > 1) {
             // turn on and off sensor display

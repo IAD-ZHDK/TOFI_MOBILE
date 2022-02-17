@@ -1,4 +1,5 @@
-//import {boolean, int8Array} from "@sindresorhus/is";
+import { map, constrain } from './views/utils/MathUtils'
+
 let logingData = true
 let threshold = 30 // only record data when above 30 pressure on sensor
 class Parameters {
@@ -6,8 +7,8 @@ class Parameters {
   // handles setting, saving and retrival of calibration settings
   // singleton class
   //
-  constructor (key) {
-    if(!Parameters.instance){
+  constructor(key) {
+    if (!Parameters.instance) {
       this.setupCookie(key)
       this.setupDataLoger()
       Parameters.instance = this;
@@ -19,19 +20,24 @@ class Parameters {
   ////////////
   // data handling
   ////////////
-  setupCookie(key){
+  setupCookie(key) {
     this.cookieID = key
     this.noChannels = 8
-    this.sensorLocationsV1 = [/*Ch 6*/{"x": 0.3, "y": 0.8},
-                            /*Ch 5*/{"x": 0.5, "y": 0.8},
-                            /*Ch 4*/{"x": 0.5, "y": 0.33},
-                            /*Ch 3*/{"x": 0.5, "y": 0.55},
-                            /*Ch 2*/{"x": 0.7, "y": 0.8},]; // todo: make these configurable in front end
-    this.sensorLocationsV2 = [/*Ch 5*/{"x": 0.7, "y": 0.8},
-                            /*Ch 4*/{"x": 0.5, "y": 0.55},
-                            /*Ch 3*/{"x": 0.5, "y": 0.33},
-                            /*Ch 2*/{"x": 0.5, "y": 0.8},
-                            /*Ch 1*/{"x": 0.3, "y": 0.8}]; // todo: make these configurable in front end
+    const exterior = { "x": 0.5, "y": 0.33 };
+    const incisivePapilla = { "x": 0.5, "y": 0.55 };
+    const hardpalateMiddle = { "x": 0.5, "y": 0.75 };
+    const hardpalateLeft = { "x": 0.3, "y": 0.8 };
+    const hardpalateRight = { "x": 0.7, "y": 0.8 };
+    this.sensorLocationsV1 = [/*Ch 6*/hardpalateLeft,
+                            /*Ch 5*/hardpalateMiddle,
+                            /*Ch 4*/exterior,
+                            /*Ch 3*/incisivePapilla,
+                            /*Ch 2*/hardpalateRight,]; // todo: make these configurable in front end
+    this.sensorLocationsV2 = [/*Ch 1*/hardpalateLeft,
+                            /*Ch 4*/incisivePapilla,
+                            /*Ch 3*/exterior,
+                            /*Ch 2*/hardpalateMiddle,
+                            /*Ch 5*/hardpalateRight]; // todo: make these configurable in front end
     this.activeChanels = [] // array of indexes for retrieving active chanels only
     this.activeSensorLocations = [] //
     this.chanelNames = ['Battery', 'Reference', 'Ch 6', 'Ch 5', 'Ch  4', 'Ch 3', 'Ch 2', 'Ch 1']
@@ -70,7 +76,7 @@ class Parameters {
     this.setCookie(myJSON, 2000)
   }
   // https://www.w3schools.com/js/js_cookies.asp
-  setCookie (cvalue, exdays) {
+  setCookie(cvalue, exdays) {
     let d = new Date()
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000))
     let expires = 'expires=' + d.toUTCString()
@@ -78,7 +84,7 @@ class Parameters {
     // console.log(this.getCookie(this.cookieID))
   }
 
-  getCookie (cname) {
+  getCookie(cname) {
     let name = cname + '='
     let ca = document.cookie.split(';')
     for (let i = 0; i < ca.length; i++) {
@@ -103,7 +109,7 @@ class Parameters {
       this.timeElapsed = Date.now()
       let n = Date.now()
       let key = this.cookieID
-        this.thisSession = {'start': n,'duration': 0, 'totalMovements': 0, 'viewNumber': view, 'log': [[],[],[],[],[],[],[],[]], 'time': []}
+      this.thisSession = { 'start': n, 'duration': 0, 'totalMovements': 0, 'viewNumber': view, 'log': [[], [], [], [], [], [], [], []], 'time': [] }
       //
       // console.log("local storage" + this.sessionKeys)
     }
@@ -124,24 +130,17 @@ class Parameters {
   }
 
   logdata(sensorValues) {
-    if (logingData) {
+    if (logingData && this.thisSession.start != null) {
       let millis = this.timeElapsed - this.thisSession.start
       sensorValues.forEach((value, index) => {
         this.thisSession.log[index].push(sensorValues[index])
         // todo: find more effiecient way of storing empty values
-        /*
-        if (sensorValues[index]>0) {
-          this.thisSession.log[index].push(sensorValues[index])
-        } else {
-          this.thisSession.log[index].push(null)
-        }
-         */
       })
       this.thisSession.time.push(millis)
     }
   }
 
-    detectPeaks(data, windowWidth, threshold) {
+  detectPeaks(data, windowWidth, threshold) {
     const peaks = [];
     for (let i = 0; i < data.length; i++) {
       const start = Math.max(0, i - windowWidth);
@@ -185,11 +184,11 @@ class Parameters {
       this.getSessionKeys()
       let data = []
       if (this.sessionKeys[index] != null) {
-          let data = JSON.parse(Storage.getItem(this.sessionKeys[index]))
-          return data
+        let data = JSON.parse(Storage.getItem(this.sessionKeys[index]))
+        return data
       } else {
-          let data = JSON.parse(Storage.getItem(this.sessionKeys[0]))
-          return data
+        let data = JSON.parse(Storage.getItem(this.sessionKeys[0]))
+        return data
       }
 
     } else {
@@ -206,46 +205,46 @@ class Parameters {
     }
   }
 
-//////
-// General Utilities
-/////
-  getFilters () {
+  //////
+  // General Utilities
+  /////
+  getFilters() {
     let filters = []
     for (let i = 0; i < this.noChannels; i++) {
       filters[i] = this.params[Object.keys(this.params)[i]].filter
     }
     return filters
   }
-  getThreshold (i) {
+  getThreshold(i) {
     return this.params[Object.keys(this.params)[i]].threshold
   }
-  atThreshold (i) {
+  atThreshold(i) {
     if (this.sensorValues[i] > this.getThreshold(i)) {
       return true
     } else {
       return false
     }
   }
-  getMin (i) {
+  getMin(i) {
     return this.params[Object.keys(this.params)[i]].min
   }
-  getMax (i) {
+  getMax(i) {
     return this.params[Object.keys(this.params)[i]].max
   }
 
   setSensorValues(sensorValues) {
     this.sensorValues = sensorValues;
-    if ( this.sensorValues != null) {
+    if (this.sensorValues != null) {
       let checkThreshold = false
       let percentValues = this.getPercentValues()
       for (let i = 0; i < this.sensorValues.length; i++) {
         if (percentValues[i] >= 30) {
-         checkThreshold = true
+          checkThreshold = true
         }
       }
       // log data if we reach peak of sensor press and 80 milis elapsed
       const millis = Date.now()
-      if (checkThreshold && millis>this.timeElapsed+80) {
+      if (checkThreshold && millis > this.timeElapsed + 80) {
         // log data if threshold reached
         this.logdata(percentValues)
         this.timeElapsed = millis
@@ -264,7 +263,7 @@ class Parameters {
   getPercentValues() {
     let Values = []
     for (let i = 0; i < this.sensorValues.length; i++) {
-      Values[i] = Math.floor(this.getNormalisedValue(i)*100)
+      Values[i] = Math.floor(this.getNormalisedValue(i) * 100)
     }
     return Values;
   }
@@ -287,25 +286,17 @@ class Parameters {
     let min = this.getMin(i)
     let max = this.getMax(i)
     if (active) {
-      normaliseValue = this.constrain(this.sensorValues[i], min, max)
-      normaliseValue = this.map(normaliseValue, min, max, 0.0, 1.0)
+      normaliseValue = constrain(this.sensorValues[i], min, max)
+      normaliseValue = map(normaliseValue, min, max, 0.0, 1.0)
     } else {
       normaliseValue = 0;
     }
     return normaliseValue
   }
-
-  map(value, low1, high1, low2, high2) {
-    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
-  }
-
-  constrain(num, min, max){
-    return Math.min(Math.max(num, min), max)
-  }
-
-////////////
-// methods for active chanels
-///////////
+ 
+  ////////////
+  // methods for active chanels
+  ///////////
   getNormalisedActiveValues() {
     let normaliseValues = []
     for (let i = 0; i < this.noActive; i++) {
@@ -319,19 +310,28 @@ class Parameters {
   }
 
 
-  getIsActive (i) {
-// get if the chanel is active
+  getIsActive(i) {
+    // get if the chanel is active
     return this.params[Object.keys(this.params)[i]].active
   }
 
-  getActive (i) {
-// get active chanel
+  getActive(i) {
+    // get active chanel value
     return this.sensorValues[this.activeChanels[i]];
   }
 
+  getAllActive() {
+    // get all active chanel values
+    let allActiveChanels = []
+    for (let i = 0; i < this.noActive; i++) {
+      allActiveChanels[i] = this.sensorValues[this.activeChanels[i]]
+    }
+    return allActiveChanels
+  }
 
-  getActiveAtThreshold (i) {
-    if (this.sensorValues[this.activeChanels[i]]> this.getThreshold(this.activeChanels[i])) {
+
+  getActiveAtThreshold(i) {
+    if (this.sensorValues[this.activeChanels[i]] > this.getThreshold(this.activeChanels[i])) {
       return true
     } else {
       return false
@@ -356,14 +356,14 @@ class Parameters {
     // this checks if sensors are configured for 1st of 2nd generation sensors
     this.checkNoActive()
     let sensorPositions
-    if (this.getIsActive(2) && !this.getIsActive(7)){
-     sensorPositions = this.sensorLocationsV1 // 1st generation
-    } else if (!this.getIsActive(2) && this.getIsActive(7)){
-        sensorPositions = this.sensorLocationsV2 // 2nd generation
+    if (this.getIsActive(2) && !this.getIsActive(7)) {
+      sensorPositions = this.sensorLocationsV1 // 1st generation
+    } else if (!this.getIsActive(2) && this.getIsActive(7)) {
+      sensorPositions = this.sensorLocationsV2 // 2nd generation
     } else {
-        sensorPositions = this.sensorLocationsV1
-        sensorPositions.push({"x": 0.9, "y": 0.9}) // add another sensor location for new chanel
-        console.log("more sensors active then alowed!")
+      sensorPositions = this.sensorLocationsV1
+      sensorPositions.push({ "x": 0.9, "y": 0.9 }) // add another sensor location for new chanel
+      console.log("more sensors active then alowed!")
     }
     return sensorPositions;
   }

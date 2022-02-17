@@ -1,4 +1,4 @@
-import { Tone } from 'tone/build/esm/core/Tone';
+//import { Tone } from 'tone/build/esm/core/Tone';
 import Ball from './Ball.js'
 // metaball example based on work by Richard Bourne
 // https://openprocessing.org/sketch/1229865
@@ -59,7 +59,7 @@ let scale2Notes4 = ["C5", "G5", "A5", "D5"];
 
 class Meta {
 
-  constructor (p, width, height, params, Tone, envelopes) {
+  constructor(p, width, height, params, Tone, envelopes) {
     this.p = p
     this.params = params
     this.balls = []
@@ -67,12 +67,12 @@ class Meta {
     this.height = height
     this.smoothedInputs = [0, 0, 0, 0, 0];
     for (let i = 0; i < ballCount; i++) {
-      this.balls.push(new Ball(p, Math.random()*this.width, p.random(0, height),Tone, envelopes))
+      this.balls.push(new Ball(p, Math.random() * this.width, p.random(0, height), Tone, envelopes))
     }
     this.density = 4 //p.displayDensity()
     this.pg = p.createGraphics(width, height, p.WEBGL)
     this.metaballsShader = this.pg.createShader(vertexShader, fragmentShader);
-    this.soundSetup(Tone,envelopes);
+    this.soundSetup(Tone, envelopes);
     // sound paramaters
     this.i = 0;
     this.j = 0;
@@ -81,11 +81,11 @@ class Meta {
     this.o = 0;
   }
 
-  update (Tone) {
+  update(Tone) {
     let sensorValues = this.params.getNormalisedActiveValues()
     //p.push()
-    let centerW = this.width/2
-    let centerH = this.height/2
+    let centerW = this.width / 2
+    let centerH = this.height / 2
     // p.translate(centerW, centerH)
     // todo: this is a very messy fix for cases with less than 5 sensors
     let modifier = [];
@@ -94,35 +94,35 @@ class Meta {
     modifier[2] = sensorValues[0]
     modifier[3] = sensorValues[0]
     modifier[4] = sensorValues[0]
-    for(let i = 0; i<sensorValues.length;i++) {
-        modifier[i] = sensorValues[i]
+    for (let i = 0; i < sensorValues.length; i++) {
+      modifier[i] = sensorValues[i]
     }
     let averagePos = this.p.createVector(0, 0);
     for (let i = 0; i < this.balls.length; i++) {
-      this.balls[i].addXamp((modifier[3]+modifier[4])*(this.width))
-      this.balls[i].addYamp((modifier[2]+modifier[4])*(this.height))
+      this.balls[i].addXamp((modifier[3] + modifier[4]) * (this.width))
+      this.balls[i].addYamp((modifier[2] + modifier[4]) * (this.height))
       this.balls[i].addRadius(modifier[1])
-      this.balls[i].addSpeed(modifier[0]*0.5)
+      this.balls[i].addSpeed(modifier[0] * 0.5)
       this.balls[i].update()
       averagePos.add(this.balls[i].x, this.balls[i].y)
     }
     averagePos.div(this.balls.length)
-    averagePos.div(this.width,this.height)
+    averagePos.div(this.width, this.height)
     let ballsUniformArray = [];
     for (const ball of this.balls) {
-      ballsUniformArray.push((ball.x+centerW))
-      ballsUniformArray.push((ball.y+centerH))
-      ballsUniformArray.push(ball.r*100)
+      ballsUniformArray.push((ball.x + centerW))
+      ballsUniformArray.push((ball.y + centerH))
+      ballsUniformArray.push(ball.r * 100)
     }
-    this.metaballsShader.setUniform("dim",[this.width,this.height]);
+    this.metaballsShader.setUniform("dim", [this.width, this.height]);
     this.metaballsShader.setUniform(`balls`, ballsUniformArray)
     this.render()
-    this.p.image(this.pg, 0,0)
+    this.p.image(this.pg, 0, 0)
 
 
 
     //// Sound Control Parameters
-    for (let n = 0; n < this.smoothedInputs.length; n++){
+    for (let n = 0; n < this.smoothedInputs.length; n++) {
       this.smoothInputs(modifier[n], n);
     }
 
@@ -130,7 +130,7 @@ class Meta {
     this.reverb1.wet.value = 0.2 + this.p.constrain(this.smoothedInputs[3], 0, 0.6);
 
     this.volArp.volume.value = -50 + this.smoothedInputs[2] * 50;
-    this.widener1.width.value = 0.8 * this.smoothedInputs[2]; 
+    this.widener1.width.value = 0.8 * this.smoothedInputs[2];
     this.reverb2.wet.value = 0.1 + this.p.constrain(this.smoothedInputs[2], 0, 0.9);
 
     this.synth2.volume.value = -7 + this.smoothedInputs[1] * 8;
@@ -138,22 +138,22 @@ class Meta {
     this.pingpongDelay3.feedback.value = 0.3 + this.p.constrain(this.smoothedInputs[1], 0, 0.3);
 
     Tone.Transport.bpm.value = 50 + this.smoothedInputs[0] * 100;
-    
+
   }
 
-  smoothInputs (inputValue, inputNumber) {
+  smoothInputs(inputValue, inputNumber) {
     this.smoothedInputs[inputNumber] = this.smoothedInputs[inputNumber] * this.balls[0].ballInertia + inputValue * (1 - this.balls[0].ballInertia);
     this.p.constrain(this.smoothedInputs[inputNumber], 0, 1);
   }
 
 
-  render () {
+  render() {
     this.pg.shader(this.metaballsShader); //Set active shader to metaballsShader
     this.pg.noStroke(); //Remove stroke around quad
     this.pg.quad(-1, -1, 1, -1, 1, 1, -1, 1); //Draw quad filling screen with currently active shader (metaballsShader)
   }
 
-  minMax (num, min, max) {
+  minMax(num, min, max) {
     const MIN = min || 1
     const MAX = max || 20
     const parsed = parseInt(num)
@@ -241,6 +241,41 @@ class Meta {
     this.volFX = new Tone.Volume(volumeFX);
 
 
+    //
+    this.params.toneObjects = []; // important! all tone.js objects need to be tracked in order to dispose after use.
+    this.params.toneObjects.push(this.synth1);
+    this.params.toneObjects.push(this.synth2);
+    this.params.toneObjects.push(this.synth3);
+    this.params.toneObjects.push(this.synth4);
+
+    this.params.toneObjects.push(this.chorus1);
+    this.params.toneObjects.push(this.chorus2);
+    this.params.toneObjects.push(this.chorus3);
+    this.params.toneObjects.push(this.chorus4);
+
+    this.params.toneObjects.push(this.reverb1);
+    this.params.toneObjects.push(this.reverb2);
+    this.params.toneObjects.push(this.reverb3);
+    this.params.toneObjects.push(this.reverb4);
+
+    this.params.toneObjects.push(this.pingpongDelay3);
+    this.params.toneObjects.push(this.pingpongDelay4);
+
+    this.params.toneObjects.push(this.filter);
+    this.params.toneObjects.push(this.filter1);
+
+    this.params.toneObjects.push(this.distortion1);
+
+    this.params.toneObjects.push(this.widener1);
+
+    this.params.toneObjects.push(this.volDry);
+    this.params.toneObjects.push(this.volArp);
+    this.params.toneObjects.push(this.volFX);
+
+   
+    //
+
+
     ////set parameters for synths and FX's
     Tone.Transport.bpm.value = bpmValue;
 
@@ -319,7 +354,7 @@ class Meta {
 
     ////set arpeggios
     this.arp1 = new Tone.Pattern((time, note) => {
-      this.synth1.triggerAttackRelease(note,"1n");
+      this.synth1.triggerAttackRelease(note, "1n");
 
     }, ["F2"], "random");
 
@@ -327,8 +362,8 @@ class Meta {
     this.arp1.values = scale1Notes1;
     this.arp1.playbackRate = 0.25;
 
-   this.arp2 = new Tone.Pattern((time, note) => {
-        this.synth2.triggerAttackRelease(note,"2n");
+    this.arp2 = new Tone.Pattern((time, note) => {
+      this.synth2.triggerAttackRelease(note, "2n");
 
     }, ["C3", "D3", "F3", "G3", "A3"], "random");
 
@@ -337,7 +372,7 @@ class Meta {
     this.arp2.playbackRate = 0.25;
 
     this.arp3 = new Tone.Pattern((time, note) => {
-        this.synth3.triggerAttackRelease(note,"16n");
+      this.synth3.triggerAttackRelease(note, "16n");
 
     }, ["D4", "F4", "G4", "A4"], "random");
 
@@ -346,7 +381,7 @@ class Meta {
     this.arp3.playbackRate = 2;
 
     this.arp4 = new Tone.Pattern((time, note) => {
-        this.synth4.triggerAttackRelease(note,"1n");
+      this.synth4.triggerAttackRelease(note, "1n");
 
     }, ["A4", "C5", "D5", "F5"], "random");  //upDown
 
@@ -366,12 +401,12 @@ class Meta {
     this.arp2.start("0:0:0");
     this.arp3.start("0:0:0");
     this.arp4.start("0:0:0");
-
-    Tone.start();
+    // todo: there is still an issue with the audio context 
+    // Tone.start();
     Tone.Transport.start();
   }
 
-  draw (p) {
+  draw(p) {
 
   }
 }

@@ -221,8 +221,15 @@ export function statisticsMenu() {
             for (let i = data.length - sliceIndex; i < data.length; i++) {
                 const dateObject = new Date(data[i])
                 let title = dateObject.toLocaleString() //2019-12-9 10:30:15
+                let metricName = params.loadLocal(i).metric
+                let metricValue = params.loadLocal(i).metricValue
+                if (metricName == "speedTest") {
+                    const menuItem = ons.createElement(`<ons-button modifier="large" style="margin-bottom: 10px;" onclick="EntryPoint.pushPage({'id':'graph.html', 'title':'graph', 'index':'${i}'})">speed test: ${metricValue}  ${title}</ons-button>`)
+                    menu.appendChild(menuItem)
+                } else {
                 const menuItem = ons.createElement(`<ons-button modifier="large" style="margin-bottom: 10px;" onclick="EntryPoint.pushPage({'id':'graph.html', 'title':'graph', 'index':'${i}'})">${title}</ons-button>`)
                 menu.appendChild(menuItem)
+                }
             }
         }
     } else {

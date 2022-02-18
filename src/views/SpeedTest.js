@@ -19,7 +19,7 @@ class SpeedTest extends View {
         this.counter = 0
         // speed
         this.speedTotal  = 0;
-        this.totalTouches  = 30;
+        this.totalTouches  = 5;
         this.remaningTouches  = this.totalTouches ;
         this.tofiTrainer = new tofi(p,0.5, 0.5, p.width,p.height*0.6, this.params, this.Tone)
         this.addBtn(function(){
@@ -185,10 +185,12 @@ class SpeedTest extends View {
             feedback: {
                 actions: {
                     onEnter() {
+                
                         binding.tofiTrainer.display(0,1,2,3,4,5)
                         let average = binding.speedTotal / binding.totalTouches  // millis
                         average = average/1000 // seconds
                         let rounded = Math.round((average + Number.EPSILON) * 100) / 100;
+                        binding.params.logSpeedResult(rounded);
                         binding.textBox.setText('your average speed was: '+rounded+' seconds')
                         binding.addBtn(function () {
                             let state = this.statesMachineNew.value

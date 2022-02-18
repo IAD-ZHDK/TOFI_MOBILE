@@ -31,23 +31,29 @@
    </div>  -->
    <div id="app">
    </div>
-   <ons-navigator swipeable id="myNavigator"s>
+   <ons-navigator swipeable id="myNavigator">
        <ons-page>
        <ons-tabbar swipeable position="auto">
-            <ons-tab page="profile.html">
+            <ons-tab page="profile.html" label="Settings">
+                <div>
                 <span class="circle-icon">
                  <ons-icon class="icon-equalizer fa-4x"/>
                 </span>
+            </div>
             </ons-tab>
-            <ons-tab page="training.html">
+            <ons-tab page="training.html" label="Games">
+                <div>
                 <span class="circle-icon">
                     <ons-icon class="icon-tofi fa-4x"/>
                 </span>
+            </div>
             </ons-tab>
-            <ons-tab page="statistics.html" >
+            <ons-tab page="statistics.html" label="Statistics">
+                <div>
                 <span class="circle-icon">
                     <ons-icon class="icon-stats-bars fa-4x" />
                 </span>
+            </div>
             </ons-tab>
             </ons-tab>
         </ons-tabbar>
@@ -60,11 +66,22 @@
                     <p style="text-align: center;">
                         The settings menu provides access for the calibration and connectivity of your Tofi trainer.
                     </p>
-                    <ons-button modifier="large" style="margin-bottom: 10px;" onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':0, 'title':'Sensor Histogram'})" id="push-button-00" >Sensor Histogram</ons-button>
-
-                    <ons-button modifier="large" style="margin-bottom: 10px;" onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':1, 'title':'calibration'})" id="push-button-01" >Calibrate Trainer</ons-button>
-
-                    <ons-button modifier="large" style="margin-bottom: 10px;" onclick="EntryPoint.connectBLE()" id="push-button-03" >Reconnect to Device</ons-button>
+                    <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':0, 'title':'Sensor Histogram'})">
+                        <div class="title">Sensor Histogram</div>
+                        <div class="content">A development tool for diagnosing problems with your device</div>
+                    </ons-card>
+                    <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':1, 'title':'calibration'})">
+                        <div class="title">Calibrate Trainer</div>
+                        <div class="content">Your device needs to be calibrated with each use. It may help to re-calibrate your device if you are experiencing problems</div>
+                    </ons-card>
+                    <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':3, 'title':'training'})">
+                        <div class="title">Sandbox</div>
+                        <div class="content">A sandbox for trying the TOFI Trainer</div>
+                    </ons-card>
+                    <ons-card tappable onclick="EntryPoint.connectBLE()">
+                        <div class="title">Reconnect to Device</div>
+                        <div class="content">Click here if you loose connection with your device. Select your device and then "pair".</div>
+                    </ons-card>
                 </section>
             </ons-page>
         </template>
@@ -87,15 +104,16 @@
                     <div class="title">Tilt Maze</div>
                     <div class="content">Challenging physics based game</div>
                 </ons-card>
-
                 <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':4, 'title':'Speed Test'})">
                     <div class="title">Speed Test</div>
                     <div class="content">A test for assessing the speed of your tongue muscle control</div>
                 </ons-card>
+            <!--
                 <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':7, 'title':'Strength Test\''})">
                     <div class="title">Strength Test</div>
                     <div class="content">A test for assessing the strength of your tongue muscles</div>
                 </ons-card>
+                 -->
                 <!--
                <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':8, 'title':'Statistics Test\''})">
                    <div class="title">Statistics test</div>
@@ -106,10 +124,6 @@
                <div class="content">A meditative free flow exercise</div>
            </ons-card>
            -->
-            <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':3, 'title':'training'})">
-                <div class="title">Sandbox</div>
-                <div class="content">A sandbox for trying the TOFI Trainer</div>
-            </ons-card></section>
         </ons-page>
     </template>
 

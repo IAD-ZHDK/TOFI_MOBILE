@@ -109,7 +109,7 @@ class Parameters {
       this.timeElapsed = Date.now()
       let n = Date.now()
       let key = this.cookieID
-      this.thisSession = { 'start': n, 'duration': 0, 'totalMovements': 0, 'viewNumber': view, 'log': [[], [], [], [], [], [], [], []], 'time': [] }
+      this.thisSession = { 'start': n, 'start': n, 'duration': 0, 'totalMovements': 0, 'viewNumber': view, 'log': [[], [], [], [], [], [], [], []], 'time': [], 'metric': "none", 'metricValue':0 }
       //
       // console.log("local storage" + this.sessionKeys)
     }
@@ -136,6 +136,15 @@ class Parameters {
         this.thisSession.log[index].push(sensorValues[index])
         // todo: find more effiecient way of storing empty values
       })
+      this.thisSession.time.push(millis)
+    }
+  }
+
+  logSpeedResult(speedTime) {
+    if (logingData && this.thisSession.start != null) {
+      let millis = this.timeElapsed - this.thisSession.start
+        this.thisSession.metric = "speedTest"
+        this.thisSession.metricValue = speedTime
       this.thisSession.time.push(millis)
     }
   }

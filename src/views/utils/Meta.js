@@ -397,7 +397,7 @@ class Meta {
     this.chorus3.start();
     this.chorus4.start();
 
-    this.arp1.start("0:0:0");
+    //this.arp1.start("0:0:0");
     this.arp2.start("0:0:0");
     this.arp3.start("0:0:0");
     this.arp4.start("0:0:0");

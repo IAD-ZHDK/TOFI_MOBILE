@@ -81,6 +81,15 @@ backButton:hover {
 .tabbar__button {
     color: #ffffff;
     height: 100%;
+    cursor: pointer;
+    line-height: 0%;
+}
+.tabbar__label {
+    color: #ffffff;
+    height: 100%;
+    line-height: 50%;
+    margin-top: 0%;
+    margin-bottom: 3%;
 }
 
 
@@ -91,7 +100,7 @@ backButton:hover {
 }
 
 .responsiveMenu{
-    padding: 10px; !important;
+    padding: 10px;
 }
 
 .circle-icon {
@@ -109,9 +118,7 @@ backButton:hover {
     /*background-color: #0F0D31*/
 }
 
-.tabbar__button {
-    cursor: pointer;
-}
+
 .ons-fab {
     cursor: pointer;
 }

@@ -1,5 +1,6 @@
 import P5 from 'p5'
 import P5ble from 'p5ble'
+import { pushPage } from './index.js' 
 import {map, constrain, moveingWeightedAverageArray} from './views/utils/MathUtils'
 let that
 class BLEhandler {
@@ -38,7 +39,6 @@ class BLEhandler {
       // console.log('address: ' + that.myBLE.address)
       console.log(characteristics[0])
       // Check if myBLE is connected
-
       that.isConnected = that.myBLE.isConnected()
       console.log('BLE connected: '+that.isConnected )
       that.id = that.myBLE.device.id
@@ -58,6 +58,7 @@ class BLEhandler {
           console.log("characteristic doesn't match.")
         }
       }
+      pushPage({'id':'canvas.html', 'view':1, 'title':'calibration'})
     }
   }
 

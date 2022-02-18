@@ -21,7 +21,7 @@ class Game01 extends View {
         this.midiNotes = [60, 62, 64, 67, 69, 72, 74] // C D E G A C
         this.colorPallet = [196, 330, 36, 159, 312, 60, 250]
         this.totalSensors = this.params.getNoActive()
-        this.visualWidth = this.p.windowWidth * 0.7
+
         this.isConnected = false
         this.sequenceCorrectSofar = true
         // states
@@ -34,7 +34,8 @@ class Game01 extends View {
         // p.textFont(myFont)
         this.textBox = new TextBox(this.p,'Please put your TOFI-TRAINER on',0,0,p.width/2,p.height/2)
         //  create new tofi visualization just for getting sensor locations.
-        this.tofiTrainer = new Tofi(p,.5, .5, p.width*0.5,p.height*0.8, this.params, this.Tone)
+        this.tofiTrainer = new Tofi(p,.5, .60, p.width*0.5,p.height*0.8, this.params, this.Tone)
+        this.tofiTrainer.hideSensors()
         this.setupSoundObjects(this.tofiTrainer.sensorLocations)
         this.newSimonSequence()
         this.addBtn(function(){
@@ -47,7 +48,8 @@ class Game01 extends View {
     draw () {
         this.p.clear()
         this.p.background(249, 60, 20, 10)
-        this.textBox.display(this.p.width/2, this.p.height*.2)  
+        this.textBox.display(this.p.width/2, this.p.height*.1)  
+        this.tofiTrainer.showOutline()
         if (this.statesMachineNew.value === 'intro') {
             this.drawDemo()
         } else if (this.statesMachineNew.value === 'player') {
@@ -174,7 +176,7 @@ class Game01 extends View {
     addBtn(callback, label) {
         const containerElement = document.getElementById('p5-container')
         let div = document.createElement("div");
-        div.style.cssText = 'position:absolute; top:85%; left:50%; transform:translate(-50%, -50%);'
+        div.style.cssText = 'position:absolute; top:15%; left:50%; transform:translate(-50%, -50%);'
         let btn = document.createElement("ons-button")
         btn.innerHTML = label
         btn.onclick = function () {
@@ -193,12 +195,12 @@ class Game01 extends View {
 
     setupSoundObjects (sensorLocations) {
        // let initialOffsetX = (this.p.windowWidth - this.visualWidth) / 2
-        let diameter = this.visualWidth / 5 // slightly overlaping
+        let diameter = this.tofiTrainer.width*0.2;
        // let spacing = this.visualWidth / this.totalSensors
        // initialOffsetX += spacing / 2
         for (let i = 0; i < this.totalSensors; i++) {
-            let x =  sensorLocations[i].x * this.p.width
-            let y =  (sensorLocations[i].y - 0.05) * this.p.height
+            let x =  (sensorLocations[i].x * this.tofiTrainer.width ) + this.tofiTrainer.centerX
+            let y =  (sensorLocations[i].y * this.tofiTrainer.height) + this.tofiTrainer.centerY
            // this.Notes[i] = new Note(this.p, this.Tone, this.midiNotes[i], (spacing * i) + initialOffsetX, this.p.windowHeight / 2, diameter, this.colorPallet[i], this.Timer.envelopes)
             this.Notes[i] = new Note(this.p, this.Tone, this.midiNotes[i], x, y, diameter, this.colorPallet[i], this.Timer.envelopes)
         }

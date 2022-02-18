@@ -224,7 +224,7 @@ export function statisticsMenu() {
                 let metricName = params.loadLocal(i).metric
                 let metricValue = params.loadLocal(i).metricValue
                 if (metricName == "speedTest") {
-                    const menuItem = ons.createElement(`<ons-button modifier="large" style="margin-bottom: 10px;" onclick="EntryPoint.pushPage({'id':'graph.html', 'title':'graph', 'index':'${i}'})">speed test: ${metricValue}  ${title}</ons-button>`)
+                    const menuItem = ons.createElement(`<p style="text-align: center;""> speed test: ${metricValue}  ${title} </p>`)
                     menu.appendChild(menuItem)
                 } else {
                 const menuItem = ons.createElement(`<ons-button modifier="large" style="margin-bottom: 10px;" onclick="EntryPoint.pushPage({'id':'graph.html', 'title':'graph', 'index':'${i}'})">${title}</ons-button>`)

@@ -12,8 +12,11 @@ class tofiVisualiser {
         this.Tone = Tone
         this.sensorLocations = this.params.getActiveSensorLocations()
         this.sensorDisplays = []
-        this.x = x
-        this.y = y
+        this.x = x*this.p.width
+        this.y = y*this.p.height
+        this.centerX = this.x-(this.width/2);
+        this.centerY = this.y-(this.height/2);
+        this.sensorDisplayOptions = 
         // load and resize image to maintain aspect ratio
         this.img = this.p.loadImage('./img/tofiTopDown.png', img => {
             // fit and presserve aspect ratio pattern
@@ -41,6 +44,25 @@ class tofiVisualiser {
         // set mock sensor values
         this.mockValues = mockValues
     }
+    hideSensors() {
+        for (let i = 0; i < this.sensorDisplays.length; i++) {
+            this.sensorDisplays[i].hide(true)
+        }
+    }
+    showSensors() {
+        for (let i = 0, j = this.sensorDisplays.setMockValues; i < j; i++) {
+                this.sensorDisplays[i].hide(false)
+        }
+    }
+
+    showOutline() {
+        this.p.push();
+        this.centerX = this.x-(this.width/2);
+        this.centerY = this.y-(this.height/2);
+        this.p.translate(this.centerX, this.centerY);
+        this.p.image(this.img, 0, 0);
+        this.p.pop();
+    }
 
     display(option0,option1,option2,option3,option4,option5,option6) {
         let sensorValues 
@@ -49,29 +71,23 @@ class tofiVisualiser {
         } else {
             sensorValues = this.mockValues;
         }
-        let x = this.x*this.p.width
-        let y = this.y*this.p.height
 
         if (this.sensorDisplays.length > 1) {
             // turn on and off sensor display
             if (arguments.length > 0) {
-                for (let i = 0; i < this.sensorDisplays.length; i++) {
-                    this.sensorDisplays[i].hide(true)
-                }
+                this.hideSensors()
                 for (let i = 0, j = arguments.length; i < j; i++) {
                     if (arguments[i] < this.sensorDisplays.length) {
                         this.sensorDisplays[arguments[i]].hide(false)
                     }
                 }
-            } else if (arguments.length == 0) {
-                for (let i = 0; i < this.sensorDisplays.length; i++) {
-                    this.sensorDisplays[i].hide(false)
-                }
-            }
+            } 
             // draw from middle
+            this.centerX = this.x-(this.width/2);
+            this.centerY = this.y-(this.height/2);
+            this.showOutline() 
             this.p.push();
-            this.p.translate(x-(this.width/2), y-(this.height/2));
-            this.p.image(this.img, 0, 0);
+            this.p.translate(this.centerX, this.centerY);
             for (let i = 0; i < sensorValues.length; i++) {
                 // convert from normalised to cartesian coordinates
                 let x = this.sensorLocations[i].x * this.width;

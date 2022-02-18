@@ -27,7 +27,7 @@ Open at https://localhost:9000/
 
 * Run `cordova build`
 
-## Updating github pages
+## Build for github pages
 
 * Run `cordova build browser`
 

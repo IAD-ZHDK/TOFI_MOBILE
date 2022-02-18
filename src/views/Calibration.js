@@ -127,7 +127,8 @@ class Calibration extends View {
 
     finished() {
         this.textBox.display(this.p.width / 2, this.p.height * .1)
-        this.tofiTrainer.setMockValues()
+        this.tofiTrainer.showSensors()
+        this.tofiTrainer.setMockValues() 
         this.tofiTrainer.display()
     }
 
@@ -218,7 +219,6 @@ class Calibration extends View {
                             state = this.machine.transition(state, 'next')
                             this.counter = Math.floor(this.p.millis() / 1000) + testDuration
                         }.bind(binding), "I'M READY")
-
                     },
                     onExit() {
                         console.log('nextMeasurement: onExit')

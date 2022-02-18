@@ -36,12 +36,12 @@ class Note {
   display (state) {
   this.state = state
     let offset = 0
-    if (this.amp > 5) {
-      this.amp *= 0.99
+    if (this.amp > 1) {
+      this.amp *= 0.95
       let angle = this.p.millis() * (this.freq / 1000) * (this.p.PI * 2)
-      offset = this.p.sin(this.p.radians(angle)) * this.amp
+      offset = this.p.sin(this.p.radians(angle)) * this.amp * 0.5
     } else {
-      this.amp = 5
+      this.amp = 1
     }
     /*
      if (this.NoteFlag) {
@@ -53,14 +53,14 @@ class Note {
     if (this.state == 0) {
     // Player Mode
         this.p.fill(this.HSBColor, 255, this.amp)
-        this.p.noStroke()
-        this.p.ellipse(this.x, this.y + offset, this.diameter, this.diameter)
+        this.p.stroke(this.HSBColor, 255, 255,255)
+        this.p.ellipse(this.x, this.y , this.diameter+ offset, this.diameter+ offset)
     } else {
        // Simon Mode
            this.p.strokeWeight(4)
            this.p.noFill()
            this.p.stroke(this.HSBColor, 255, this.amp)
-           this.p.ellipse(this.x, this.y + offset, this.diameter, this.diameter)
+           this.p.ellipse(this.x, this.y, this.diameter+ offset, this.diameter+ offset)
     }
   }
 
@@ -79,7 +79,7 @@ class Note {
       this.NoteFlag = true
       this.envelope.triggerAttackRelease(1.0)
      // this.envelope.play()
-      this.amp = 50
+      this.amp = 80
       return true
     }
   }

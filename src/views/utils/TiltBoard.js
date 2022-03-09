@@ -655,7 +655,7 @@ class TiltBoard {
 
     for (let i = 0; i < this.obstacles.length; i++) {
       //this.collisionDetection2(player, this.obstacles[i]);
-      this.collisionDetection(obstacles[i]);
+      this.collisionDetection(this.obstacles[i]);
     }
 
     this.collisionDetection(wallLeft);

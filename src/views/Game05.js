@@ -10,10 +10,9 @@ import { pushPage } from '..';
 class Game05 extends View {
     constructor (p, Tone, Timer, params) {
         super(p, Tone, Timer, params);
-        this.tiltboard = new TiltBoard(p, p.width, p.height, params, Tone, this.Timer.envelopes);
+        this.tiltboard = new TiltBoard(p, p.width, p.height, params, Tone, this.Timer.envelopes, this.colorPallet);
         this.messageNo = 0;
-        this.messages = ['Please put your TOFI - TRAINER on',
-                         'Press the sensors to tilt the board and move the ball',
+        this.messages = ['Press the sensors to tilt the board and move the ball',
                          'Reach the hole to progress to the next level']
         this.textBox = new TextBox(this.p,this.messages[this.messageNo], 0, - this.p.height*.4,p.width*0.4,p.height*0.5)
         this.messageNo++
@@ -34,7 +33,7 @@ class Game05 extends View {
     draw () {
         this.p.clear();
         // this.Tone.start();
-      
+     
         this.textBox.display(0, 0)
         this.p.translate(0,0,-100)
         if (this.timer < this.p.millis()) {
@@ -46,7 +45,7 @@ class Game05 extends View {
                 this.textBox.setText("")
             }
         }
-
+        this.p.directionalLight(255, 0, 0, 0.25, 0.25, 0);
         if (this.tiltboard.gameState == "intro") {
             this.tiltboard.initializeGame();
             this.tiltboard.gameState = "maze";

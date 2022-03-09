@@ -83,12 +83,14 @@ backButton:hover {
     height: 100%;
     cursor: pointer;
     line-height: 0%;
+    font-size: 14px;
 }
 .tabbar__label {
     color: #ffffff;
     height: 100%;
-    line-height: 50%;
-    margin-top: 0%;
+    font-size:14px;
+    line-height: 60%;
+    margin-top: 2%;
     margin-bottom: 3%;
 }
 

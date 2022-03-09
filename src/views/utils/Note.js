@@ -22,7 +22,7 @@ class Note {
      }).connect(this.envelope).start()
 
     envelopes.push(this.envelope)
-    this.HSBColor = color
+    this.RGBColor = color
     this.freq = 261
     //this.oscillator.freq(this.freq)// set frequency
     //this.oscillator.start() // start oscillating
@@ -30,18 +30,16 @@ class Note {
     this.amp = 0 // simulate amplitude
     this.x = x
     this.y = y
-    this.state = 0
   }
 
-  display (state) {
-  this.state = state
+  display (value) {
     let offset = 0
-    if (this.amp > 1) {
-      this.amp *= 0.95
+    if (this.amp > 5) {
+      this.amp *= 0.96
       let angle = this.p.millis() * (this.freq / 1000) * (this.p.PI * 2)
       offset = this.p.sin(this.p.radians(angle)) * this.amp * 0.5
     } else {
-      this.amp = 1
+      this.amp = 5
     }
     /*
      if (this.NoteFlag) {
@@ -50,18 +48,24 @@ class Note {
         this.p.fill(this.HSBColor, 255, 5)
       }
     */
-    if (this.state == 0) {
+    if (value >= 0) {
     // Player Mode
-        this.p.fill(this.HSBColor, 255, this.amp)
-        this.p.stroke(this.HSBColor, 255, 255,255)
-        this.p.ellipse(this.x, this.y , this.diameter+ offset, this.diameter+ offset)
+        this.p.fill(this.colorAlpha(this.RGBColor, 0.4+(this.amp*0.01)))
+        this.p.stroke(this.RGBColor)
+        this.p.ellipse(this.x, this.y , this.diameter+offset, this.diameter+offset)
+        this.p.noFill()
+        this.p.ellipse(this.x, this.y , value*this.diameter,  value*this.diameter)
     } else {
        // Simon Mode
-           this.p.strokeWeight(4)
-           this.p.noFill()
-           this.p.stroke(this.HSBColor, 255, this.amp)
-           this.p.ellipse(this.x, this.y, this.diameter+ offset, this.diameter+ offset)
+       this.p.fill(this.colorAlpha(this.RGBColor, 0.2+(this.amp*0.01)))
+       this.p.stroke(this.RGBColor)
+       this.p.ellipse(this.x, this.y , this.diameter+offset, this.diameter+offset)
     }
+  }
+
+    colorAlpha(aColor, alpha) {
+    var c = this.p.color(aColor);
+    return this.p.color('rgba(' +  [this.p.red(c), this.p.green(c), this.p.blue(c), alpha].join(',') + ')');
   }
 
   checkMouseOver () {

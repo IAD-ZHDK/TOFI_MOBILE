@@ -16,8 +16,20 @@ class tofiVisualiser {
         this.y = y*this.p.height
         this.centerX = this.x-(this.width/2);
         this.centerY = this.y-(this.height/2);
-        this.sensorDisplayOptions = 
         // load and resize image to maintain aspect ratio
+        this.setUpimage()
+        this.opacity = 20;
+    }
+    
+    resize(x, y, width, height) {
+        this.width = width
+        this.height = height
+        this.x = x*this.p.width
+        this.y = y*this.p.height
+        this.setUpimage();
+    }
+
+    setUpimage() {
         this.img = this.p.loadImage('./img/tofiTopDown.png', img => {
             // fit and presserve aspect ratio pattern
             let ratio = (this.width / img.width)
@@ -38,8 +50,7 @@ class tofiVisualiser {
             }
         });
     }
-
-
+    
     setMockValues(mockValues) {
         // set mock sensor values
         this.mockValues = mockValues
@@ -50,7 +61,7 @@ class tofiVisualiser {
         }
     }
     showSensors() {
-        for (let i = 0, j = this.sensorDisplays.setMockValues; i < j; i++) {
+        for (let i = 0; i < this.sensorDisplays.length; i++) {
                 this.sensorDisplays[i].hide(false)
         }
     }
@@ -60,6 +71,10 @@ class tofiVisualiser {
         this.centerX = this.x-(this.width/2);
         this.centerY = this.y-(this.height/2);
         this.p.translate(this.centerX, this.centerY);
+        // todo: tint function not working on transparent png
+       // if (this.opacity<=100) {
+        //    this.p.tint(255, this.opacity); // Display at half opacity
+        //}
         this.p.image(this.img, 0, 0);
         this.p.pop();
     }
@@ -74,6 +89,7 @@ class tofiVisualiser {
 
         if (this.sensorDisplays.length > 1) {
             // turn on and off sensor display
+            /*
             if (arguments.length > 0) {
                 this.hideSensors()
                 for (let i = 0, j = arguments.length; i < j; i++) {
@@ -82,12 +98,14 @@ class tofiVisualiser {
                     }
                 }
             } 
+            */
             // draw from middle
             this.centerX = this.x-(this.width/2);
             this.centerY = this.y-(this.height/2);
-            this.showOutline() 
+            
             this.p.push();
             this.p.translate(this.centerX, this.centerY);
+            this.p.image(this.img, 0, 0);
             for (let i = 0; i < sensorValues.length; i++) {
                 // convert from normalised to cartesian coordinates
                 let x = this.sensorLocations[i].x * this.width;

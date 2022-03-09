@@ -28,7 +28,7 @@ class BleSimulator {
   handleSensor () {
     for (let i = 0; i < this.noChannels; i++) {
       let step = this.params.getMax(i)-this.params.getMin(i)
-      step = step*0.05
+      step = step*0.01
       if (this.keyControl[i] > this.params.getMin(i)) {
         this.keyControl[i] -= step
       }

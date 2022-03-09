@@ -1,3 +1,5 @@
+//this version of the calibration goes through each channel individuly 
+//
 import P5 from 'p5'
 require('../index.js')
 import View from './View'
@@ -5,8 +7,10 @@ import TextBox from './utils/TextBox'
 import tofi from './utils/tofiVisualiser'
 import * as EntryPoint from "../index"
 import { createMachine } from './utils/StateMachine.js'
-//import Game02 from "./Game02";
+
 import {map, constrain, moveingWeightedAverageFloat} from './utils/MathUtils'
+
+
 
 const testDuration = 6;
 
@@ -26,7 +30,7 @@ class Calibration extends View {
             this.mockNormalised[i] = 0.1
         }
         console.log("mockNormalised"+this.mockNormalised);
-        this.textBox = new TextBox(this.p, 'Please put your TOFI-TRAINER on. During the callibration, press on each sensor as hard as you can with your tongue ', 0, 0, p.width / 2, p.height / 2)
+        this.textBox = new TextBox(this.p, 'Please put your TOFI-TRAINER on. Get ready to press the sensors with your tongue with all your strength until the counter is finished', 0, 0, p.width / 2, p.height / 2)
         this.counterTextBox = new TextBox(this.p, '0', 0, 0, p.width / 4, p.height / 4)
         this.counterTextBox.settextSize(40)
         this.counter = 10
@@ -36,18 +40,18 @@ class Calibration extends View {
             let state = this.machine.value
             state = this.machine.transition(state, 'next')
             this.counter = Math.floor(this.p.millis() / 1000) + testDuration
-            this.textBox.setText('press on each sensor as hard as you can!')
+            this.textBox.setText('Press the following sensor with your maximum strength until the counter is finished')
         }.bind(this), "I'M READY")
-        
     }
 
     draw() {
         this.p.clear()
         if (this.machine.value === 'intro') {
-            this.tofiTrainer.hideSensors()
             this.intro()
         } else if (this.machine.value === 'measuring') {
             this.measuring()
+        } else if (this.machine.value === 'nextMeasurement') {
+            this.nextMeasurement()
         } else if (this.machine.value === 'finished') {
             this.finished()
         }
@@ -61,7 +65,19 @@ class Calibration extends View {
 
     measuring() {
         this.textBox.display(this.p.width / 2, this.p.height * .1)
-    //  this.tofiTrainer.showSensors()
+        let countdown = this.counter - Math.floor(this.p.millis() / 1000)
+        if (countdown >= 0) {
+            this.counterTextBox.setText(countdown)
+            this.counterTextBox.display(this.p.width / 2, this.p.height * .35)
+        } else {
+            let state = this.machine.value
+            if (this.currentSensor < this.totalSensors - 1) {
+                state = this.machine.transition(state, 'next')
+            } else {
+                state = this.machine.transition(state, 'last')
+            }
+        }
+        let currentSensorValue = this.params.getActive(this.currentSensor)
         // look for variation in low and high values in all sensors 
         for (let i = 0; i < this.totalSensors; i++) {
             let sensorValue = this.params.getActive(i)
@@ -80,7 +96,7 @@ class Calibration extends View {
         }
         */
         this.tofiTrainer.setMockValues(this.normalisedSensorValues())
-        this.tofiTrainer.display()
+        this.tofiTrainer.display(this.currentSensor)
     }
 
     normalisedSensorValues() {
@@ -104,11 +120,17 @@ class Calibration extends View {
         return this.mockNormalised;
     } 
 
+  
 
+    nextMeasurement() {
+        this.tofiTrainer.setMockValues(this.normalisedSensorValues())
+        this.textBox.display(this.p.width / 2, this.p.height * .1)
+        this.tofiTrainer.display(this.currentSensor)
+    }
 
     finished() {
         this.textBox.display(this.p.width / 2, this.p.height * .1)
-        //this.tofiTrainer.showSensors()
+        this.tofiTrainer.showSensors()
         this.tofiTrainer.setMockValues() 
         this.tofiTrainer.display()
     }
@@ -141,9 +163,6 @@ class Calibration extends View {
         }
         this.params.save()
     }
-    windowResized() {
-        this.tofiTrainer.resize(0.5, 0.6, this.p.width * 0.8, this.p.height * 0.8);
-    }
 
     stateMachine() {
         let binding = this
@@ -152,7 +171,6 @@ class Calibration extends View {
             intro: {
                 actions: {
                     onEnter() {
-                        binding.tofiTrainer.hideSensors()
                         console.log('intro: onEnter')
                     },
                     onExit() {
@@ -171,12 +189,7 @@ class Calibration extends View {
             measuring: {
                 actions: {
                     onEnter() {
-                        binding.tofiTrainer.showSensors()
                         binding.textBox.setText('Press as hard as you can!')
-                        binding.addBtn(function () {
-                            let state = this.machine.value
-                            state = this.machine.transition(state, 'next')
-                        }.bind(binding), "Finished")
                         console.log('measuring: onEnter')
                     },
                     onExit() {
@@ -185,6 +198,43 @@ class Calibration extends View {
                 },
                 transitions: {
                     next: {
+                        target: 'nextMeasurement',
+                        action() {
+                            console.log('transition to nextMeasurement')
+                        },
+                    },
+                    last: {
+                        target: 'finished',
+                        action() {
+                            console.log('transition to finished')
+                        },
+                    },
+                },
+            },
+            nextMeasurement: {
+                actions: {
+                    onEnter() {
+                        console.log('nextMeasurement: onEnter')
+                        binding.textBox.setText('Get ready to press the next sensor')
+                        binding.currentSensor++
+                        binding.addBtn(function () {
+                            let state = this.machine.value
+                            state = this.machine.transition(state, 'next')
+                            this.counter = Math.floor(this.p.millis() / 1000) + testDuration
+                        }.bind(binding), "I'M READY")
+                    },
+                    onExit() {
+                        console.log('nextMeasurement: onExit')
+                    },
+                },
+                transitions: {
+                    next: {
+                        target: 'measuring',
+                        action() {
+                            console.log('transition to measuring')
+                        },
+                    },
+                    last: {
                         target: 'finished',
                         action() {
                             console.log('transition to finished')

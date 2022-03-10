@@ -365,16 +365,32 @@ class Parameters {
     // this checks if sensors are configured for 1st of 2nd generation sensors
     this.checkNoActive()
     let sensorPositions
+    let startIndex = 1;
+    let endIndex = 8;
     if (this.getIsActive(2) && !this.getIsActive(7)) {
+      startIndex = 2;
+      endIndex = 6;
       sensorPositions = this.sensorLocationsV1 // 1st generation
     } else if (!this.getIsActive(2) && this.getIsActive(7)) {
+      startIndex = 3;
+      endIndex = 7;
       sensorPositions = this.sensorLocationsV2 // 2nd generation
     } else {
       sensorPositions = this.sensorLocationsV1
       sensorPositions.push({ "x": 0.9, "y": 0.9 }) // add another sensor location for new chanel
       console.log("more sensors active then alowed!")
     }
-    return sensorPositions;
+    let sensorPositionsUpdated = []
+    // remove any diactivated sensors 
+    let index = 0
+    for (let i = startIndex; i <= endIndex; ++i) {
+      let active = this.getIsActive(i)
+      if (active) { 
+        sensorPositionsUpdated.push(sensorPositions[index])
+      }
+      index++
+    }
+    return sensorPositionsUpdated;
   }
 
   getNoActive() {

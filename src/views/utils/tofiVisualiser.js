@@ -89,7 +89,6 @@ class tofiVisualiser {
 
         if (this.sensorDisplays.length > 1) {
             // turn on and off sensor display
-            /*
             if (arguments.length > 0) {
                 this.hideSensors()
                 for (let i = 0, j = arguments.length; i < j; i++) {
@@ -98,7 +97,6 @@ class tofiVisualiser {
                     }
                 }
             } 
-            */
             // draw from middle
             this.centerX = this.x-(this.width/2);
             this.centerY = this.y-(this.height/2);

@@ -19,7 +19,7 @@ class SpeedTest extends View {
         this.counter = 0
         // speed
         this.speedTotal  = 0;
-        this.totalTouches  = 5;
+        this.totalTouches  = 10;
         this.remaningTouches  = this.totalTouches ;
         this.tofiTrainer = new tofi(p,0.5, 0.5, p.width,p.height*0.6, this.params, this.Tone)
         this.addBtn(function(){
@@ -65,7 +65,7 @@ class SpeedTest extends View {
             let state = this.statesMachineNew.value
             state = this.statesMachineNew.transition(state, 'next')
         } else {
-            let threshold = 0.5
+            let threshold = 0.8
             let currentSensorValue = this.params.getNormalisedActive(this.currentSensor)
             if (currentSensorValue > threshold) {
                 if (this.remaningTouches === this.totalTouches) {

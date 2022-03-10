@@ -36,7 +36,7 @@ class Calibration extends View {
             let state = this.machine.value
             state = this.machine.transition(state, 'next')
             this.counter = Math.floor(this.p.millis() / 1000) + testDuration
-            this.textBox.setText('press on each sensor as hard as you can!')
+            this.textBox.setText('Press on each sensor as hard as you can!')
         }.bind(this), "I'M READY")
         
     }

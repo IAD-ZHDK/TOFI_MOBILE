@@ -3,8 +3,8 @@
 
 const world = {
   gravity: 9.82,
-  friction: 0.01,
-  ballhardness: 0.7,
+  friction: 0.99,
+  ballhardness: 0.9,
   angleScaling: 30,
   playerSensitivity: 0.008,
   collisionBoundary: 1.2,
@@ -24,10 +24,9 @@ const player = {
   posX: 0,
   posY: 0,  // m
   posZ: 0,
-  accX: 0,  // m/s^2
-  accY: 0,
-  speedX: 0,  // m/s
-  speedY: 0,
+  velX: 0,  // m/s^2
+  velY: 0,
+  speed: 0,
   mass: 1,    // kg
   collision: false,
 }
@@ -404,23 +403,7 @@ class TiltBoard {
       this.p.pop();
       this.p.push();
     }
-    /*
-    this.p.translate(obstacle1.posX, obstacle1.posY,0);
-    this.p.fill(this.colorObstacle1);
-    this.p.box(obstacle1.width, obstacle1.height, obstacle1.thickness);
-    this.p.pop();
-    this.p.push();
-    this.p.translate(obstacle2.posX, obstacle2.posY,0);
-    this.p.fill(this.colorObstacle2);
-    this.p.box(obstacle2.width, obstacle2.height, obstacle2.thickness);
-    this.p.pop();
-    this.p.push();
-    this.p.translate(obstacle3.posX, obstacle3.posY,0);
-    this.p.fill(this.colorObstacle3);
-    this.p.box(obstacle3.width, obstacle3.height, obstacle3.thickness);
-    this.p.pop();
-    this.p.push();
-    */
+
     this.p.translate(wallFront.posX, wallFront.posY, 0);
     this.p.fill(this.colorWalls);
     this.p.box(wallFront.width, wallFront.height, wallFront.thickness);
@@ -448,86 +431,73 @@ class TiltBoard {
     this.p.pop();
   }
 
-  calculateFriction() {
-    player.speedX = player.speedX - world.friction * player.speedX;
-    player.speedY = player.speedY - world.friction * player.speedY;
+
+  resolveRectCircleCollision(ball, obstacle) {
+    // https://stackoverflow.com/questions/55419162/corner-collision-angles-in-p5-js
+    var hx = 0.5 * obstacle.width
+    var hy = 0.5 * obstacle.height;
+    //var rx = obstacle.posX + hx
+    //var ry = obstacle.posY + hy;
+    var rx = obstacle.posX;
+    var ry = obstacle.posY;
+    var dx = ball.posX - rx, dy = ball.posY - ry;
+
+    var sx = dx < -hx ? -1 : (dx > hx ? 1 : 0);
+    var sy = dy < -hy ? -1 : (dy > hy ? 1 : 0);
+
+    var tx = sx * (Math.abs(dx) - hx);
+    var ty = sy * (Math.abs(dy) - hy);
+    var dc = Math.hypot(tx, ty);
+    if (dc > ball.radius) {
+      // no collision 
+      return false;
+    }
+
+    var nx = 0, ny = 0, nl = 0;
+
+    if (sx == 0 && sy == 0) {
+      nx = dx > 0 ? 1 : -1; ny = dy > 0 ? 1 : -1;
+      nl = Math.hypot(nx, ny);
+    } else {
+      nx = tx; ny = ty;
+      nl = dc;
+    }
+
+    nx /= nl;
+    ny /= nl;
+    // avoid penetration
+    ball.posX += (ball.radius - dc) * nx;
+    ball.posY += (ball.radius - dc) * ny;
+    var dv = ball.velX * nx + ball.velY * ny;
+
+    if (dv >= 0.0) {
+      /* exit and don't do anything else */
+      // console.log("dv"+dv)
+      return false;
+    }
+    // reflect the ball's velocity in direction of the normal
+    ball.velX -= 2.0 * dv * nx;
+    ball.velY -= 2.0 * dv * ny;
+    return true;
   }
 
-  collisionDetection(collisionObject) {
-    if ((collisionObject.posX + collisionObject.width / 2) > (player.posX + (1 + world.collisionBoundary) * player.speedX - player.radius) && (collisionObject.posX - collisionObject.width / 2) < (player.posX + (1 + world.collisionBoundary) * player.speedX + player.radius)) {
-      if ((collisionObject.posY + collisionObject.height / 2) > (player.posY + (1 + world.collisionBoundary) * player.speedY - player.radius) && (collisionObject.posY - collisionObject.height / 2) < (player.posY + (1 + world.collisionBoundary) * player.speedY + player.radius)) {
-        if (collisionObject.name == "winningArea") {
-          if (this.gameState == "maze") {
-            this.gameState = "won";
-            // winning sound
-            this.synth5.triggerAttackRelease("G5", "16n");
-          }
-        } else {
-          if ((collisionObject.posY - collisionObject.height / 2) > player.posY + player.radius || (collisionObject.posY + collisionObject.height / 2) < player.posY - player.radius) {
-            this.collisionReaction("y");
-          }
-          else if ((collisionObject.posX - collisionObject.width / 2) > player.posX + player.radius || (collisionObject.posX + collisionObject.width / 2) < player.posX - player.radius) {
-            this.collisionReaction("x");
-          }
-          player.collision = true;
+  collisionDetectionWinning(ball, obstacle) {
+    let left = (obstacle.posX + obstacle.width / 2)
+    let right = (obstacle.posX - obstacle.width / 2)
+    let top = (obstacle.posY + obstacle.height / 2)
+    let btm = (obstacle.posY - obstacle.height / 2)
+    let leftInside = left > (player.posX - player.radius)
+    let rightInside = right < (player.posX + player.radius)
+    let topInside = top > (player.posY - player.radius)
+    let btmInside = btm < (player.posY + player.radius)
+    if (leftInside && rightInside && topInside && btmInside) {
+      if (obstacle.name == "winningArea") {
+        if (this.gameState == "maze") {
+          this.gameState = "won";
+          // winning sound
+          this.synth5.triggerAttackRelease("G5", "16n");
         }
       }
-    }
-  }
-
-
-  collisionReaction(axis) {
-    switch (axis) {
-      case "x":
-        player.posX = player.posX - player.speedX * world.collisionBoundary;
-        player.speedX = - player.speedX * world.ballhardness;
-        break;
-      case "y":
-        player.posY = player.posY - player.speedY * world.collisionBoundary;
-        player.speedY = - player.speedY * world.ballhardness;
-        break;
-    }
-  }
-
-
-  collisionDetection2(rect, circle){
-    // from https://stackoverflow.com/questions/45370692/circle-rectangle-collision-response
-    var NearestX = Math.max(rect.x, Math.min(circle.posY, rect.x + rect.width));
-    var NearestY = Math.max(rect.y, Math.min(circle.posX, rect.y + rect.height));    
-    var dist = this.p.createVector(circle.posX - NearestX, circle.posY - NearestY);
-  
-   // if (circle.vel.dot(dist) < 0) { //if circle is moving toward the rect
-      //update circle.vel 
-  //    var tangent_vel = dist.normalize().dot(circle.vel);
-   //   circle.vel = circle.vel.sub(tangent_vel.mult(2));
-  //  }
-    var penetrationDepth = circle.radius - dist.mag();
-    var penetrationVector = dist.normalize()
-    penetrationVector.mult(penetrationDepth);
-    circle.posX -= penetrationVector.x;
-    circle.posY -= penetrationVector.y;
-  }
-
-
- 
-  collisionReaction2(direction, location) {
-    switch (direction) {
-      case "left":
-        player.posX = location-player.radius 
-        player.speedX = - player.speedX * world.ballhardness;
-        break;
-      case "right":
-        player.posX = location+player.radius 
-        player.speedX = - player.speedX * world.ballhardness;
-        break;
-      case "up":
-        player.posY = location-player.radius 
-        player.speedY = - player.speedY * world.ballhardness;
-        break;
-      case "down":
-        player.posY = location+player.radius 
-        player.speedY = - player.speedY * world.ballhardness;
-        break;
     }
   }
 
@@ -548,9 +518,17 @@ class TiltBoard {
     // check collisions 
     let coliding = false
     do {
+      console.log("try new winning area")
       coliding = false;
-      winningArea.posX = this.p.random(- board.boardWidth / 200 * 90, board.boardWidth / 200 * 90);
-      winningArea.posY = this.p.random(- board.boardWidth / 200 * 90, board.boardWidth / 200 * 90);
+      // make sure winning area is never too close to midle 
+      var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+      let distanceFromMiddleX = this.p.random(0.2, 0.45)
+      let distanceFromMiddleY = this.p.random(0.2, 0.45)
+      // random left/right and up/down
+      distanceFromMiddleX = distanceFromMiddleX* (Math.random() < 0.5 ? -1 : 1);
+      distanceFromMiddleY = distanceFromMiddleY* (Math.random() < 0.5 ? -1 : 1);
+      winningArea.posX = distanceFromMiddleX * board.boardWidth
+      winningArea.posY = distanceFromMiddleX * board.boardHeight
       for (let i = 0; i < this.obstacles.length; i++) {
         if (this.collisionPlacing(this.obstacles[i], winningArea) == true) {
           coliding = true;
@@ -561,7 +539,7 @@ class TiltBoard {
   }
 
 
-  generateObstacles() {
+  generateObstaclesv1() {
     obstacle1.width = this.p.random(board.boardWidth / 100 * 25, board.boardWidth / 100 * 38);
     obstacle1.height = this.p.random(board.boardWidth / 100 * 2, board.boardWidth / 100 * 15);
     obstacle1.posX = this.p.random(1 * (- board.boardWidth / 2 + obstacle1.width), 1 * (board.boardWidth / 2 - obstacle1.width));
@@ -593,10 +571,52 @@ class TiltBoard {
     }
   }
 
+  generateObstacles() {
+    this.obstacles = []
+    let tempObstacle;
+    do {
+      console.log("try1")
+      tempObstacle = this.generateObsticle();
+    } while (this.collisionPlacing(startingArea, tempObstacle) == true)
+    this.obstacles.push(tempObstacle)
+
+    let tempObstacle2
+    do {
+      console.log("try2")
+      tempObstacle2 = this.generateObsticle();
+    } while (this.collisionPlacing(startingArea, tempObstacle2) == true || this.collisionPlacing(tempObstacle, tempObstacle2) == true)
+    this.obstacles.push(tempObstacle2)
+
+    let tempObstacle3 = new obstacle()
+    do {
+      console.log("try3")
+      tempObstacle3 = this.generateObsticle();
+    } while (this.collisionPlacing(startingArea, tempObstacle3) == true || this.collisionPlacing(tempObstacle, tempObstacle3) == true || this.collisionPlacing(tempObstacle2, tempObstacle3) == true)
+    this.obstacles.push(tempObstacle3)
+
+    let tempObstacle4 = new obstacle()
+    do {
+      console.log("try4")
+      tempObstacle4 = this.generateObsticle();
+    } while (this.collisionPlacing(startingArea, tempObstacle4) == true || this.collisionPlacing(tempObstacle, tempObstacle4) == true || this.collisionPlacing(tempObstacle2, tempObstacle4) == true)
+    this.obstacles.push(tempObstacle4)
+
+
+  }
+
+  generateObsticle() {
+    let tempObstacle = new obstacle()
+    tempObstacle.width = this.p.random(board.boardWidth * .1, board.boardWidth * .3);
+    tempObstacle.height = this.p.random(board.boardHeight * .1, board.boardHeight * .3);
+    tempObstacle.posX = this.p.random(1 * (- board.boardWidth / 2 + tempObstacle.width), 1 * (board.boardWidth / 2 - tempObstacle.width));
+    tempObstacle.posY = this.p.random(1 * (- board.boardHeight / 2 + tempObstacle.height), 1 * (board.boardHeight / 2 - tempObstacle.height));
+    return tempObstacle
+  }
+
   initializeGame() {
     this.objectSetup();
     //random obstacle generator - gets sometimes stuck in while loop in generateObstacles()
-    // this.generateObstacles();
+    this.generateObstacles();
     //random winning area generator 
     this.generateWinningArea();
   }
@@ -623,12 +643,11 @@ class TiltBoard {
       board.angleX = board.angleX * 0.9;
       board.angleX += 0 - (modifier[3] * world.playerSensitivity) * 0.1;
       this.synth1.triggerAttack("A3");
-    }
+    } 
     else {
       this.synth2.triggerRelease();
       this.synth1.triggerRelease();
       board.angleX = board.angleX * 0.9;
-      // board.angleX += 0*0.1; 
     }
 
     if (modifier[0] >= this.inputThreshold) {
@@ -640,7 +659,7 @@ class TiltBoard {
       board.angleY = board.angleY * 0.9;
       board.angleY += (modifier[4] * world.playerSensitivity) * 0.1;
       this.synth3.triggerAttack("G3");
-    }
+    } 
     else {
       board.angleY = board.angleY * 0.9;
       // board.angleY += 0*0.1;
@@ -651,29 +670,38 @@ class TiltBoard {
 
   update() {
     this.updateInputs();
-    this.calculateFriction();
 
+
+    // update player 
+
+    player.velX += world.gravity * Math.sin(board.angleY);
+    player.velY += world.gravity * Math.sin(board.angleX);
+    player.velX = world.friction * player.velX;
+    player.velY = world.friction * player.velY;
+    //
+    //player.speedX = player.speedX + player.velX;
+    //player.speedY = player.speedY + player.velY;
+    player.posX = player.posX + player.velX;
+    player.posY = player.posY + player.velY;
+
+    // collisions
     for (let i = 0; i < this.obstacles.length; i++) {
       //this.collisionDetection2(player, this.obstacles[i]);
-      this.collisionDetection(this.obstacles[i]);
+      //this.collisionDetection2(this.obstacles[i]);
+      this.resolveRectCircleCollision(player, this.obstacles[i])
     }
 
-    this.collisionDetection(wallLeft);
-    this.collisionDetection(wallRight);
-    this.collisionDetection(wallFront);
-    this.collisionDetection(wallBack);
-    this.collisionDetection(winningArea);
+    this.resolveRectCircleCollision(player, wallLeft);
+    this.resolveRectCircleCollision(player, wallRight);
+    this.resolveRectCircleCollision(player, wallFront);
+    this.resolveRectCircleCollision(player, wallBack);
+    this.collisionDetectionWinning(player, winningArea);
 
     player.collision = false;
-    player.accX = world.gravity * Math.sin(board.angleY);
-    player.accY = world.gravity * Math.sin(board.angleX);
-    player.speedX = player.speedX + player.accX;
-    player.speedY = player.speedY + player.accY;
-    player.posX = player.posX + player.speedX;
-    player.posY = player.posY + player.speedY;
+
     if (this.gameState == "next") {
-      player.speedX = 0;
-      player.speedY = 0;
+      // player.velX = 0;
+      // player.velY = 0;
       player.posZ = player.posZ - 0.3;
       player.posX = player.posX + (winningArea.posX - player.posX) * 0.1;
       player.posY = player.posY + (winningArea.posY - player.posY) * 0.1;

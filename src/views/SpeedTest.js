@@ -44,6 +44,7 @@ class SpeedTest extends View {
 
     windowResized(){
         this.textBox.resize(this.p.width/2, this.p.height*.1,this.p.width*0.4,this.p.height*0.5);
+        this.tofiTrainer.resize(0.5, 0.5, this.p.width, this.p.height * 0.6)
     }
 
 

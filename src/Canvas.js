@@ -15,16 +15,20 @@ let debug
 let View
 let Tone
 let WEGL3D
+let tofiTopDown
 let removeSketch = false;
 let Timer = {"event":null, "envelopes":[]} // timeout object for game timing
 const Canvas = (p) => {
     let Views = [SensorHistogram, Calibration, Game01, Game02, SpeedTest, Game03, Game04, StrengthTest, StatisticsOverview, Game05]
     let myFont
     let sensorValues = []
+    p.disableFriendlyErrors = true; // disables FES
+
     p.preload = function () {
         //todo: fix font load
         myFont = p.loadFont('./css/fonts/barlow_condensed.otf')
         Tone.Master.mute = false
+        tofiTopDown = p.loadImage('./img/tofiTopDown.png')
     }
 
     p.setup = function () {
@@ -44,6 +48,10 @@ const Canvas = (p) => {
         p.textAlign(p.CENTER, p.CENTER)
         View = new Views[viewNumber](p, Tone, Timer, params)
         params.newLogSession(viewNumber)
+
+        // prevent screen from sleeping when canvas is on
+            let wakeLock = navigator.wakeLock.request('screen');
+            console.log(wakeLock);
     }
 
     p.draw = function () {

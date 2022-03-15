@@ -32,7 +32,7 @@ class Game01 extends View {
         // p.textFont(myFont)
         this.textBox = new TextBox(this.p,'Please put your TOFI-TRAINER on',0,0,p.width/2,p.height/2)
         //  create new tofi visualization just for getting sensor locations.
-        this.tofiTrainer = new Tofi(p,.5, .60, p.width*0.5,p.height*0.8, this.params, this.Tone)
+        this.tofiTrainer = new Tofi(p,.5, .60, p.width*0.8, p.height*0.8, this.params, this.Tone)
         this.tofiTrainer.hideSensors()
         this.tofiTrainer.opacity = 30;
         this.setupSoundObjects(this.tofiTrainer.sensorLocations)
@@ -206,7 +206,18 @@ class Game01 extends View {
     }
 
     windowResized() {
-        this.tofiTrainer.resize(0.5, 0.6, this.p.width * 0.8, this.p.height * 0.8);
+        this.tofiTrainer.resize(0.5, 0.6, this.p.width * 0.8, this.p.height * 0.8)
+        let diameter = this.tofiTrainer.height*0.14
+        let sensorLocations = this.tofiTrainer.sensorLocations
+        for (let i = 0; i < this.totalSensors; i++) {
+        
+            let X =  (sensorLocations[i].x * this.tofiTrainer.width) + this.tofiTrainer.centerX
+            let Y =  (sensorLocations[i].y * this.tofiTrainer.height) + this.tofiTrainer.centerY
+           // this.Notes[i] = new Note(this.p, this.Tone, this.midiNotes[i], (spacing * i) + initialOffsetX, this.p.windowHeight / 2, diameter, this.colorPallet[i], this.Timer.envelopes)
+            this.Notes[i].x = X
+            this.Notes[i].y = Y
+            this.Notes[i].diameter = diameter
+        }
     }
 
     stateMachine() {

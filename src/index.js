@@ -5,12 +5,13 @@ import Parameters from './Parameters'
 import BleSimulator from './BleSimulator'
 import CalibrationGUI from './CalibrationGUI'
 import Stats from './Stats.js'
+import statisticsMenu from './StatsMenu.js'
 
 import * as Tone from 'tone'
 let ons = require('onsenui')
 //
 ons.disableIconAutoPrefix() // Disable adding fa- prefix automatically to ons-icon classes. Useful when including custom icon packs.
-
+ons.platform.select("ios")
 let blehandler
 let currentView = 1
 let calibrationGUI
@@ -19,6 +20,7 @@ let WEBGL = false
 let params
 let PFIVE
 let userStats
+let mobileDevice = false
 
 class GUIInterface {
     constructor(object) {
@@ -41,9 +43,15 @@ function onDeviceReady() {
     blehandler = new BleSimulator(params)
     calibrationGUI = new CalibrationGUI(params)
     calibrationGUI.toggle(false)
-    document.addEventListener("click", RunToneConext, false);
+    document.addEventListener("click", HIDsetup, false);
     // populate statistics menu
-    statisticsMenu()
+    statisticsMenu(ons, params)
+
+    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+        // true for mobile device
+        mobileDevice = true;
+      }
+        // fal
 }
 
 // splash and loading screen
@@ -53,15 +61,15 @@ const wait = (delay = 0) =>
 
 const setVisible = (elementOrSelector, visible) =>
     (typeof elementOrSelector === 'string'
-            ? document.querySelector(elementOrSelector)
-            : elementOrSelector
+        ? document.querySelector(elementOrSelector)
+        : elementOrSelector
     ).style.display = visible ? 'block' : 'none';
 
 //setVisible('.page', false);
 setVisible('#loading', true);
 
 // user keyboard for debuging when device not connected
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     if (blehandler instanceof BleSimulator) {
         if (event.key == 1) {
             blehandler.setSensorFake(0)
@@ -75,7 +83,7 @@ document.addEventListener('keydown', function(event) {
             blehandler.setSensorFake(4)
         } else if (event.key == 6) {
             blehandler.setSensorFake(5)
-        }else if (event.key == 7) {
+        } else if (event.key == 7) {
             blehandler.setSensorFake(6)
         } else if (event.key == 8) {
             blehandler.setSensorFake(7)
@@ -102,37 +110,52 @@ function DOMContentLoadedEvent() {
     // check for  p5-containerafter onsen UI dom change
     const containerElement = document.getElementById('p5-container')
     if (containerElement) {
-        PFIVE = new P5(defineSketch({"viewNumber" : currentView, "blehandler":blehandler, "params" : params, "tone":Tone, "WEGL3D" : WEBGL }), containerElement)
+        PFIVE = new P5(defineSketch({ "viewNumber": currentView, "blehandler": blehandler, "params": params, "tone": Tone, "WEGL3D": WEBGL }), containerElement)
         if (currentView == 0) {
             calibrationGUI.toggle(true)
         }
     }
-        let ctx = document.getElementById('myChart')
-        if (ctx) {
-            console.log("found graph")
-            userStats = new Stats(ctx, params, currentPage.index)
-        }
+    let ctx = document.getElementById('myChart')
+    if (ctx) {
+        console.log("found graph")
+        userStats = new Stats(ctx, params, currentPage.index)
+    }
 }
 
 // sound
-function RunToneConext() {
+function HIDsetup() {
 
-    console.log("sound state "+Tone.context.state )
-   // if (Tone.disposed == true) {
-        //Tone = new Tone()
-   // }
+    // setup fullscreen on mobile
+    if (mobileDevice) {
+        var doc = window.document;
+        var docEl = doc.documentElement;
+
+        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+        var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+        if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+            requestFullScreen.call(docEl);
+        }
+    }
+
+
+    // setupSound
+    console.log("sound state " + Tone.context.state)
+    // if (Tone.disposed == true) {
+    //Tone = new Tone()
+    // }
 
     if (Tone.context.state === 'closed') {
         console.log("start sound")
-       // Tone.start();
-         Tone.Master.mute = false;
+        // Tone.start();
+        Tone.Master.mute = false;
         Tone.context.resume()
-    
+
     } else if (Tone.context.state !== 'running') {
         Tone.context.resume()
         Tone.Master.mute = false;
         console.log("resume sound")
-    } 
+    }
 
 }
 
@@ -149,7 +172,7 @@ export function splash(time) {
         document
             .getElementById('splashscreen')
             .hide()
-     }, t)
+    }, t)
 }
 
 document.addEventListener('postchange', function (event) {
@@ -178,7 +201,7 @@ export function pushPage(page, anim) {
         console.log(document.getElementById('myNavigator').pushPage(page.id, { data: { title: page.title } }));
     }
     if (page.WEBGL) {
-    WEBGL = page.WEBGL;
+        WEBGL = page.WEBGL;
     } else {
         WEBGL = false
     }
@@ -190,8 +213,8 @@ export function pushPage(page, anim) {
 export function backButton() {
     document.querySelector('#myNavigator').popPage()
     calibrationGUI.toggle(false)
-    defineSketch({"remove" : true})
-    statisticsMenu()
+    defineSketch({ "remove": true })
+    statisticsMenu(ons, params)
 }
 export function changeButton() {
     document.getElementById('segment').setActiveButton(1)
@@ -204,36 +227,9 @@ export function createBLEDialog() {
         dialog.show();
     } else {
         ons.createElement('ble-alert-dialog.html', { append: true })
-            .then(function(dialog) {
+            .then(function (dialog) {
                 dialog.show()
             })
-    }
-}
-
-export function statisticsMenu() {
-    // populate statiticsMenu with Items
-    const menu = document.querySelector('#statsList')
-    let data = params.getSessionKeys()
-    if (data !== null) {
-        let sliceIndex = data.length - menu.childElementCount
-        if (sliceIndex > 0) {
-            // add missing menu items
-            for (let i = data.length - sliceIndex; i < data.length; i++) {
-                const dateObject = new Date(data[i])
-                let title = dateObject.toLocaleString() //2019-12-9 10:30:15
-                let metricName = params.loadLocal(i).metric
-                let metricValue = params.loadLocal(i).metricValue
-                if (metricName == "speedTest") {
-                    const menuItem = ons.createElement(`<p style="text-align: center;""> speed test: ${metricValue}  ${title} </p>`)
-                    menu.appendChild(menuItem)
-                } else {
-                const menuItem = ons.createElement(`<ons-button modifier="large" style="margin-bottom: 10px;" onclick="EntryPoint.pushPage({'id':'graph.html', 'title':'graph', 'index':'${i}'})">${title}</ons-button>`)
-                menu.appendChild(menuItem)
-                }
-            }
-        }
-    } else {
-        //TODO: add message that there is no data recorded yet
     }
 }
 
@@ -243,7 +239,7 @@ export function statisticsMenu() {
 //////////////////////////////////////////// BLE /////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-let setupBLE = function() {
+let setupBLE = function () {
     //   - "Android"
     //   - "BlackBerry 10"
     //   - "browser"

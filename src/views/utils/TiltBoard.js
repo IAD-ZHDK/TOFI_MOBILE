@@ -375,6 +375,7 @@ class TiltBoard {
     this.p.translate(player.posX, player.posY, player.posZ + player.radius);
     this.p.push();
     // rotate ball
+    //ball.velX * nx + ball.velY * ny;
     this.p.rotateY(player.posX * 0.05);
     this.p.rotateX(player.posY * -0.05);
     this.p.sphere(player.radius);

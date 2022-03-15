@@ -8,3 +8,17 @@ export * from './StrengthTest.js'
 export * from './SensorHistogram.js'
 export * from './Calibration.js'
 export * from './StatisticsOverview.js'
+
+let viewNames = [
+    'SensorHistogram',
+    'Calibration',
+    'Sonic Simon',
+    'Sand Box',
+    'Speed Test',
+    'Meditation',
+    'Waves',
+    'StrengthTest',
+    'StatisticsOverview',
+    'Tilt Maze',
+]
+export default viewNames

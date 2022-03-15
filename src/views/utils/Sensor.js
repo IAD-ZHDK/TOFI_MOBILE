@@ -5,7 +5,6 @@ class Sensor {
     constructor (p, radius, Tone) {
         this.p = p
         this.radius = radius;
-        console.log("radius:"+this.radius)
         this.osc = null
         this.Tone = Tone
         this.hiden = false

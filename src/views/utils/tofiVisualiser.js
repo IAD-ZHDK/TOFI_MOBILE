@@ -12,12 +12,8 @@ class tofiVisualiser {
         this.Tone = Tone
         this.sensorLocations = this.params.getActiveSensorLocations()
         this.sensorDisplays = []
-        this.x = x*this.p.width
-        this.y = y*this.p.height
-        this.centerX = this.x-(this.width/2);
-        this.centerY = this.y-(this.height/2);
+        this.resize(x, y, width, height)
         // load and resize image to maintain aspect ratio
-        this.setUpimage()
         this.opacity = 20;
     }
     
@@ -26,12 +22,14 @@ class tofiVisualiser {
         this.height = height
         this.x = x*this.p.width
         this.y = y*this.p.height
+        this.centerX = this.x-(this.width/2);
+        this.centerY = this.y-(this.height/2);
         this.setUpimage();
     }
 
     setUpimage() {
         this.img = this.p.loadImage('./img/tofiTopDown.png', img => {
-            // fit and presserve aspect ratio pattern
+            // fit and presserve aspect ratio 
             let ratio = (this.width / img.width)
             let newHeight = img.height * ratio
             if (newHeight < this.height) {
@@ -41,11 +39,17 @@ class tofiVisualiser {
                 this.width = img.width*ratio
             }
             this.img.resize(this.width, this.height) //
+            this.centerX = this.x-(this.width/2);
+            this.centerY = this.y-(this.height/2);
             if (this.sensorDisplays.length < 1) {
                 // add sensors if they don't exist already
                 let sensorValues = this.params.getSensorValues()
                 for (let i = 0; i < sensorValues.length; i++) {
                     this.sensorDisplays[i] = new Sensor(this.p,this.width * 0.21, this.Tone)
+                }
+            } else {
+                for (let i = 0; i < this.sensorDisplays.length; i++) {
+                    this.sensorDisplays[i].radius = this.width * 0.21
                 }
             }
         });
@@ -98,12 +102,12 @@ class tofiVisualiser {
                 }
             } 
             // draw from middle
-            this.centerX = this.x-(this.width/2);
-            this.centerY = this.y-(this.height/2);
+
             
             this.p.push();
             this.p.translate(this.centerX, this.centerY);
             this.p.image(this.img, 0, 0);
+           // this.p.rect(0,0,this.width,this.height)
             for (let i = 0; i < sensorValues.length; i++) {
                 // convert from normalised to cartesian coordinates
                 let x = this.sensorLocations[i].x * this.width;

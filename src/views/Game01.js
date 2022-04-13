@@ -24,25 +24,18 @@ class Game01 extends View {
         this.sequenceCorrectSofar = true
         // states
         this.statesMachineNew = this.stateMachine();
-        //this.GamePlayer = 0
-        //this.GameSimon = 1
-        //this.state = this.GamePlayer
         this.p.colorMode(this.p.HSB)
-       // this.p.blendMode(this.p.SCREEN)
-        // p.textFont(myFont)
         this.textBox = new TextBox(this.p,'Please put your TOFI-TRAINER on',0,0,p.width/2,p.height/2)
-        //  create new tofi visualization just for getting sensor locations.
         this.tofiTrainer = new Tofi(p,.5, .60, p.width*0.8, p.height*0.8, this.params, this.Tone)
         this.tofiTrainer.hideSensors()
         this.tofiTrainer.opacity = 30;
         this.setupSoundObjects(this.tofiTrainer.sensorLocations)
         this.newSimonSequence()
         this.addBtn(function(){
-            //this.statesMachine.dispatch('next')
             let state = this.statesMachineNew.value
             state = this.statesMachineNew.transition(state, 'next')
         }.bind(this),"Play Simon")
-        this.threshold  = 0.85 // important, this is the mimum power required to set off note 
+        this.threshold  = 0.90 // important, this is the mimum power required to set off note 
     }
 
     draw () {
@@ -73,11 +66,9 @@ class Game01 extends View {
     drawGameSimon () {
         if (this.SimonSequence.length === 0) {
             this.newSimonSequence()
-            //console.log('this.newSimonSequence')
         }
         if (this.sequenceStartFlag === false) {
             this.sequenceStartFlag = true
-            //console.log("SimonSequenceIndex"+this.SimonSequenceIndex)
             this.Timer.event = setTimeout(function () { this.playSequence() }.bind(this), this.interval)
         }
         for (let i = 0; i < this.totalSensors; i++) {
@@ -88,7 +79,6 @@ class Game01 extends View {
         if (this.SimonSequenceIndex < this.SimonSequenceLength) {
             this.releaseAllNotes()
             this.Notes[this.SimonSequence[this.SimonSequenceIndex]].trigger()
-            //console.log(this.SimonSequence[this.SimonSequenceIndex])
             this.SimonSequenceIndex++
             this.Timer.event = setTimeout(function () { this.playSequence() }.bind(this), this.interval)
         } else {
@@ -101,9 +91,11 @@ class Game01 extends View {
 
     drawDemo () {
         let sensorValues = this.params.getNormalisedActiveValues()
-
         for (let i = 0; i < this.totalSensors; i++) {
-            this.Notes[i].display(sensorValues[i])
+            let x =  (this.tofiTrainer.sensorLocations[i].x * this.tofiTrainer.width) + this.tofiTrainer.centerX
+            let y =  (this.tofiTrainer.sensorLocations[i].y * this.tofiTrainer.height) + this.tofiTrainer.centerY
+            this.Notes[i].diameter = this.tofiTrainer.width*0.14;
+            this.Notes[i].display(sensorValues[i],x,y)
             //let radius = p.map(sensorValues[i], 0, 16384, 10, spacing * 0.3)
             if (sensorValues[i]> this.threshold ) {
                 this.Notes[i].trigger()
@@ -198,7 +190,7 @@ class Game01 extends View {
        // let spacing = this.visualWidth / this.totalSensors
        // initialOffsetX += spacing / 2
         for (let i = 0; i < this.totalSensors; i++) {
-            let x =  (sensorLocations[i].x * this.tofiTrainer.width ) + this.tofiTrainer.centerX
+            let x =  (sensorLocations[i].x * this.tofiTrainer.width) + this.tofiTrainer.centerX
             let y =  (sensorLocations[i].y * this.tofiTrainer.height) + this.tofiTrainer.centerY
            // this.Notes[i] = new Note(this.p, this.Tone, this.midiNotes[i], (spacing * i) + initialOffsetX, this.p.windowHeight / 2, diameter, this.colorPallet[i], this.Timer.envelopes)
             this.Notes[i] = new Note(this.p, this.Tone, this.midiNotes[i], x, y, diameter, this.colorPallet[i], this.Timer.envelopes)
@@ -210,7 +202,6 @@ class Game01 extends View {
         let diameter = this.tofiTrainer.height*0.14
         let sensorLocations = this.tofiTrainer.sensorLocations
         for (let i = 0; i < this.totalSensors; i++) {
-        
             let X =  (sensorLocations[i].x * this.tofiTrainer.width) + this.tofiTrainer.centerX
             let Y =  (sensorLocations[i].y * this.tofiTrainer.height) + this.tofiTrainer.centerY
            // this.Notes[i] = new Note(this.p, this.Tone, this.midiNotes[i], (spacing * i) + initialOffsetX, this.p.windowHeight / 2, diameter, this.colorPallet[i], this.Timer.envelopes)

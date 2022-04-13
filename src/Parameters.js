@@ -172,6 +172,14 @@ class Parameters {
     return this.sessionKeys
   }
 
+  getLocalStorage() {
+    let cookieData = this.getCookie(this.cookieID)
+    let StorageString = JSON.stringify(window.localStorage)
+    cookieData += StorageString
+    return cookieData
+  }
+
+
   saveLocal() {
     let Storage = window.localStorage;
     if (this.thisSession != null) {

@@ -15,7 +15,6 @@ let debug
 let View
 let Tone
 let WEGL3D
-let tofiTopDown
 let removeSketch = false;
 let Timer = {"event":null, "envelopes":[]} // timeout object for game timing
 const Canvas = (p) => {
@@ -28,7 +27,6 @@ const Canvas = (p) => {
         //todo: fix font load
         myFont = p.loadFont('./css/fonts/barlow_condensed.otf')
         Tone.Master.mute = false
-        tofiTopDown = p.loadImage('./img/tofiTopDown.png')
     }
 
     p.setup = function () {

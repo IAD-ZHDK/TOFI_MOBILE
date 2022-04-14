@@ -82,14 +82,17 @@ function onDeviceReady() {
     blehandler = new BleSimulator(params)
     calibrationGUI = new CalibrationGUI(params)
     calibrationGUI.toggle(false)
-    if (!params.deviceProfile.BLE_ID === "not defined") {
-        writeTODataBase(params.deviceProfile.Random_ID, params.getDeviceProfileJson(), params.loadLocal())
-    } else {
-        console.log("no ble ide found")
-    }
+   
     document.addEventListener("click", HIDsetup, false);
     // populate statistics menu
     statisticsMenu(ons, params)
+
+    if (params.deviceProfile.BLE_ID === "not defined") {
+        console.log("no ble id found")
+    } else {
+        console.log("database save")
+        writeTODataBase(params.deviceProfile.Random_ID, params.getDeviceProfileJson(), params.loadLocal())
+    }
 
     if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
         // true for mobile device
@@ -164,6 +167,7 @@ function DOMContentLoadedEvent() {
         console.log("found graph")
         userStats = new Stats(ctx, params, currentPage.index)
     }
+
 }
 
 // sound

@@ -49,7 +49,6 @@ function statisticsMenu(ons, params) {
             menu.appendChild(document.createElement("br"))
             menu.appendChild(document.createElement("br"))
             document.getElementById("dwn-btn").addEventListener("click", function(){
-                // Generate download of hello.txt file with some content
                 var text =  params.getLocalStorage()
                 var filename = "statistics.txt";
                 download(filename, text);

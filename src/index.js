@@ -39,16 +39,13 @@ const analytics = getAnalytics(app);
 // Get a reference to the database service
 const database = getDatabase(app);
 
-function writeUserData(userId, name, email, imageUrl) {
+function writeTODataBase(userId, deviceData, stats) {
   const db = getDatabase();
   set(ref(db, 'users/' + userId), {
-    username: name,
-    email: email,
-    profile_picture : imageUrl
+    device: deviceData,
+    statistics: stats,
   });
 }
-
-writeUserData("userId", "name","email.com", "imageUrl")
 
 
 ///
@@ -85,6 +82,11 @@ function onDeviceReady() {
     blehandler = new BleSimulator(params)
     calibrationGUI = new CalibrationGUI(params)
     calibrationGUI.toggle(false)
+    if (!params.deviceProfile.BLE_ID === "not defined") {
+        writeTODataBase(params.deviceProfile.Random_ID, params.getDeviceProfileJson(), params.loadLocal())
+    } else {
+        console.log("no ble ide found")
+    }
     document.addEventListener("click", HIDsetup, false);
     // populate statistics menu
     statisticsMenu(ons, params)

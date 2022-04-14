@@ -1,3 +1,4 @@
+import { connectDatabaseEmulator } from 'firebase/database'
 import { map, constrain } from './views/utils/MathUtils'
 
 let logingData = true
@@ -187,6 +188,13 @@ class Parameters {
     return cookieData
   }
 
+  
+
+  getDeviceProfileJson() {
+    let cookieData = this.getCookie(this.cookieID)
+    let json = JSON.parse(cookieData)
+    return json
+  }
 
   saveLocal() {
     let Storage = window.localStorage;
@@ -423,6 +431,8 @@ class Parameters {
   }
   setDeviceId(iD) {
     this.deviceProfile.BLE_ID = iD; 
+  }
+  getData() {
   }
 }
 const instance = new Parameters(4265345);

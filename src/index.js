@@ -84,15 +84,11 @@ function onDeviceReady() {
     calibrationGUI.toggle(false)
    
     document.addEventListener("click", HIDsetup, false);
+ 
+
+ 
     // populate statistics menu
     statisticsMenu(ons, params)
-
-    if (params.deviceProfile.BLE_ID === "not defined") {
-        console.log("no ble id found")
-    } else {
-        console.log("database save")
-        writeTODataBase(params.deviceProfile.Random_ID, params.getDeviceProfileJson(), params.loadLocal())
-    }
 
     if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
         // true for mobile device
@@ -263,6 +259,13 @@ export function backButton() {
     calibrationGUI.toggle(false)
     defineSketch({ "remove": true })
     statisticsMenu(ons, params)
+    if (params.deviceProfile.BLE_ID === "not defined") {
+        console.log("no ble id found")
+    } else {
+        console.log("database save")
+        writeTODataBase(params.deviceProfile.Random_ID, params.getDeviceProfileJson(), params.loadLocal())
+    }
+
 }
 export function changeButton() {
     document.getElementById('segment').setActiveButton(1)

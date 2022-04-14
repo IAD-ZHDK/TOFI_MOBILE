@@ -41,11 +41,11 @@ class Parameters {
     this.activeChanels = [] // array of indexes for retrieving active chanels only
     this.activeSensorLocations = [] //
     this.chanelNames = ['Battery', 'Reference', 'Ch 6', 'Ch 5', 'Ch  4', 'Ch 3', 'Ch 2', 'Ch 1']
-    this.params = {}
+    this.deviceProfile = {}
     for (let i = 0; i < this.noChannels; ++i) {
-      this.params[this.chanelNames[i]] = {
+      this.deviceProfile[this.chanelNames[i]] = {
         'active': true,
-        'filter': 0.1,
+        'filter': 0.6,
         'min': 30700,
         'max': 32000,
         'threshold': 31000,
@@ -53,18 +53,26 @@ class Parameters {
         'y': 0.0
       }
     }
+    // random userName 
+    let randomNouns = ["time","year","way","day","thing","world","life","hand","part","eye","place","work","week","case","point","government","company","number","group","problem","fact"];
+    let randomAdective = ["good","new","first","last","long","great","little","own","other","right","big","high","different","small","large","next","early","young","important","few","public","same","able"];
+    let adjective = randomAdective[Math.floor(Math.random() * randomNouns.length)];
+    let noun = randomNouns[Math.floor(Math.random() * randomAdective.length)];
+    this.deviceProfile.Random_ID = adjective+noun+Math.floor(Math.random() * 100);
+    this.deviceProfile.BLE_ID = "not defined";
     // hard code default chanel configuration
-    this.params[Object.keys(this.params)[0]].active = false // Battery
-    this.params[Object.keys(this.params)[1]].active = false // Reference
-    this.params[Object.keys(this.params)[7]].active = false // Ch 1
+    this.deviceProfile[Object.keys(this.deviceProfile)[0]].active = false // Battery
+    this.deviceProfile[Object.keys(this.deviceProfile)[1]].active = false // Reference
+    this.deviceProfile[Object.keys(this.deviceProfile)[7]].active = false // Ch 1
 
     let cookieData = this.getCookie(this.cookieID)
     if (cookieData !== '' && cookieData !== 'undefined') {
       let obj = JSON.parse(cookieData)
       console.log('old cookie')
-      Object.assign(this.params, obj)
+      Object.assign(this.deviceProfile, obj)
     } else {
-      console.log('no cookie')
+      console.log('no cookie')  
+      this.save();
     }
   }
 
@@ -72,7 +80,7 @@ class Parameters {
     this.checkNoActive()
     // creat Json object and set cookie
     console.log('object to json cookie set')
-    let myJSON = JSON.stringify(this.params)
+    let myJSON = JSON.stringify(this.deviceProfile)
     this.setCookie(myJSON, 2000)
   }
   // https://www.w3schools.com/js/js_cookies.asp
@@ -228,12 +236,12 @@ class Parameters {
   getFilters() {
     let filters = []
     for (let i = 0; i < this.noChannels; i++) {
-      filters[i] = this.params[Object.keys(this.params)[i]].filter
+      filters[i] = this.deviceProfile[Object.keys(this.deviceProfile)[i]].filter
     }
     return filters
   }
   getThreshold(i) {
-    return this.params[Object.keys(this.params)[i]].threshold
+    return this.deviceProfile[Object.keys(this.deviceProfile)[i]].threshold
   }
   atThreshold(i) {
     if (this.sensorValues[i] > this.getThreshold(i)) {
@@ -243,10 +251,10 @@ class Parameters {
     }
   }
   getMin(i) {
-    return this.params[Object.keys(this.params)[i]].min
+    return this.deviceProfile[Object.keys(this.deviceProfile)[i]].min
   }
   getMax(i) {
-    return this.params[Object.keys(this.params)[i]].max
+    return this.deviceProfile[Object.keys(this.deviceProfile)[i]].max
   }
 
   setSensorValues(sensorValues) {
@@ -329,7 +337,7 @@ class Parameters {
 
   getIsActive(i) {
     // get if the chanel is active
-    return this.params[Object.keys(this.params)[i]].active
+    return this.deviceProfile[Object.keys(this.deviceProfile)[i]].active
   }
 
   getActive(i) {
@@ -407,11 +415,14 @@ class Parameters {
 
   setMin(i, value) {
     let index = this.activeChanels[i]
-    this.params[Object.keys(this.params)[index]].min = value
+    this.deviceProfile[Object.keys(this.deviceProfile)[index]].min = value
   }
   setMax(i, value) {
     let index = this.activeChanels[i]
-    this.params[Object.keys(this.params)[index]].max = value
+    this.deviceProfile[Object.keys(this.deviceProfile)[index]].max = value
+  }
+  setDeviceId(iD) {
+    this.deviceProfile.BLE_ID = iD; 
   }
 }
 const instance = new Parameters(4265345);

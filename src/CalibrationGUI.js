@@ -2,7 +2,8 @@ class CalibrationGUI {
   constructor (Cookie) {
     this.Cookie = Cookie
     this.display = true
-    this.buildGUI(this.Cookie.params)
+    this.buildGUI(this.Cookie.deviceProfile)
+    console.log("cookies "+this.Cookie.deviceProfile);
   }
 
   writeCookie () {
@@ -24,7 +25,7 @@ class CalibrationGUI {
   toggle (bool) {
     console.log("toggle+"+this.display)
     if (bool) {
-      this.buildGUI(this.Cookie.params)
+      this.buildGUI(this.Cookie.deviceProfile)
     } else if (!bool && this.display != bool){
       this.removeGui()
     }

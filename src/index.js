@@ -9,7 +9,49 @@ import statisticsMenu from './StatsMenu.js'
 
 import * as Tone from 'tone'
 let ons = require('onsenui')
-//
+// firebase
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+//import { getDatabase } from "firebase/database";
+import { getDatabase, ref, set } from "firebase/database";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDPRZBAHchzk6sAWxnvojUy5GqqoQPr2pU",
+  authDomain: "tofi-database.firebaseapp.com",
+  databaseURL: "https://tofi-database-default-rtdb.europe-west1.firebasedatabase.app/",
+  projectId: "tofi-database",
+  storageBucket: "tofi-database.appspot.com",
+  messagingSenderId: "245711251379",
+  appId: "1:245711251379:web:ada882217aff57f4b94dc6",
+  measurementId: "G-ZFMEML92FF"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+// Get a reference to the database service
+const database = getDatabase(app);
+
+function writeUserData(userId, name, email, imageUrl) {
+  const db = getDatabase();
+  set(ref(db, 'users/' + userId), {
+    username: name,
+    email: email,
+    profile_picture : imageUrl
+  });
+}
+
+writeUserData("userId", "name","email.com", "imageUrl")
+
+
+///
 ons.disableIconAutoPrefix() // Disable adding fa- prefix automatically to ons-icon classes. Useful when including custom icon packs.
 ons.platform.select("ios")
 let blehandler

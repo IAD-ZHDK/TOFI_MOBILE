@@ -29,7 +29,6 @@ class StatisticsOverview extends View {
                         dateContainer.date = date
                         dateContainer.data.push(data)
                         dateContainer.duration += data.duration
-
                         this.dataEntries.push(dateContainer)
                         console.log(i);
                         console.log(data);
@@ -65,7 +64,6 @@ class StatisticsOverview extends View {
                 this.p.pop()
                 totalDuration += length+5
             }
-
         }
     }
 }

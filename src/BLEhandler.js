@@ -32,12 +32,12 @@ class BLEhandler {
     this.myBLE.connect(this.serviceUuid, this.gotCharacteristics)
   }
   gotCharacteristics (error, characteristics) {
-    // A function that will be called once got characteristics
+    // A function that will be called after got characteristics
     if (error) {
       console.log('error: ', error)
     } else {
-      // console.log('address: ' + that.myBLE.address)
-      console.log(characteristics[0])
+      that.params.setDeviceId(that.myBLE.device.id);
+      console.log("BLE DEVICE ID"+that.myBLE.device.id)
       // Check if myBLE is connected
       that.isConnected = that.myBLE.isConnected()
       console.log('BLE connected: '+that.isConnected )

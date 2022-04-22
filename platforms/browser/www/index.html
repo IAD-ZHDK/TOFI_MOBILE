@@ -1,15 +1,147 @@
-<!doctype html>
-<html lang="en" dir="ltr">
-<head>
+<!DOCTYPE html>
 
-<meta charset="utf-8">
+<html>
+    <head>
+        <meta charset="utf-8">
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
 
-<meta http-equiv="refresh" content="0;URL=http://localhost:8080/">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+         
+       // https://* wss://* -->
+      
+       <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.googleapis.com/ https://www.googletagmanager.com wss://*.firebasedatabase.app https://*.firebasedatabase.app/ https://www.google-analytics.com/  data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; script-src 'self' https://*.googleapis.com/ https://*.firebasedatabase.app https://www.googletagmanager.com 'unsafe-eval' 'unsafe-inline'; worker-src blob:; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' www.googletagmanager.com data: content:;">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+        <meta name="color-scheme" content="light dark">
+        <link rel="stylesheet" href="css/onsenui.min.css">
+        <link rel="stylesheet" href="css/dark-onsen-css-components.min.css">
+        <link rel="stylesheet" href="css/style.css?v=2.1">
+        <link rel="stylesheet" href="css/index.css?v=2.1">
+        <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+        <title>TOFI</title>
+    </head>
+    <body>
+    <!--<body onload="EntryPoint.splash(4000)">
+    <div id="splashscreen">
+   </div>  -->
+   <div id="app">
+   </div>
+   <ons-navigator swipeable id="myNavigator">
+       <ons-page>
+       <ons-tabbar swipeable position="auto">
+            <ons-tab page="profile.html" label="Settings">
+                <div>
+                <span class="circle-icon">
+                 <ons-icon class="icon-equalizer fa-4x"/>
+                </span>
+            </div>
+            </ons-tab>
+            <ons-tab page="training.html" label="Games" active>
+                <div>
+                <span class="circle-icon">
+                    <ons-icon class="icon-tofi fa-4x"/>
+                </span>
+            </div>
+            </ons-tab>
+            <ons-tab page="statistics.html" label="Statistics" onclick="EntryPoint.populateStats()">
+                <div>
+                <span class="circle-icon">
+                    <ons-icon class="icon-stats-bars fa-4x" />
+                </span>
+            </div>
+            </ons-tab>
+            </ons-tab>
+        </ons-tabbar>
 
+        </ons-page>
+    </ons-navigator>
+        <template id="profile.html" >
+            <ons-page id="profile">
+                <section class="responsiveMenu">
+                    <p style="text-align: center;">
+                        The settings menu provides access for the calibration and connectivity of your Tofi trainer
+                    </p>
+                    <ons-card tappable onclick="EntryPoint.openSensorHistogram()">
+                        <div class="title">Sensor Histogram</div>
+                        <div class="content">A development tool for diagnosing problems with your device</div>
+                    </ons-card>
+                    <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':1, 'title':'calibration'})">
+                        <div class="title">Calibrate Trainer</div>
+                        <div class="content">Your device needs to be calibrated with each use. It may help to re-calibrate your device if you are experiencing problems</div>
+                    </ons-card>
+                    <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':3, 'title':'training'})">
+                        <div class="title">Sandbox</div>
+                        <div class="content">A sandbox for trying the TOFI Trainer</div>
+                    </ons-card>
+                    <ons-card tappable onclick="EntryPoint.connectBLE()">
+                        <div class="title">Reconnect to Device</div>
+                        <div class="content">Click here if you loose connection with your device. Select your device and then "pair"</div>
+                    </ons-card>
+                </section>
+            </ons-page>
+        </template>
 
-</head>
-<body>
+    <template id="training.html" class="responsiveMenu">
+        <ons-page id="training">
+            <section class="responsiveMenu">
+                <p style="text-align: center;">
+                    The training menu provides activities for the training your tongue to reduce snoring
+                </p>
+            <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':2, 'title':'training'})">
+                <div class="title">Sonic Simon</div>
+                <div class="content">A simple game for getting to know the TOFI Trainer</div>
+            </ons-card>
+            <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':5, 'title':'training'})">
+                <div class="title">Meditation</div>
+                <div class="content">Free flowing play</div>
+            </ons-card>
+                <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':9, 'title':'training', 'WEBGL':true})">
+                    <div class="title">Tilt Maze</div>
+                    <div class="content">Challenging physics based game</div>
+                </ons-card>
+                <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':4, 'title':'Speed Test'})">
+                    <div class="title">Speed Test</div>
+                    <div class="content">A test for assessing the speed of your tongue muscle control</div>
+                </ons-card>
+            <!--
+                <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':7, 'title':'Strength Test\''})">
+                    <div class="title">Strength Test</div>
+                    <div class="content">A test for assessing the strength of your tongue muscles</div>
+                </ons-card>
+                 -->
+                <!--
+               <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':8, 'title':'Statistics Test\''})">
+                   <div class="title">Statistics test</div>
+                   <div class="content">Test Setup of Statistics view</div>
+               </ons-card>
+          <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':6, 'title':'training'})">
+               <div class="title">Ripples</div>
+               <div class="content">A meditative free flow exercise</div>
+           </ons-card>
+           -->
+        </ons-page>
+    </template>
 
-
-</body>
+    <template id="ble-alert-dialog.html">
+        <ons-alert-dialog id="my-alert-dialog" modifier="rowfooter">
+            <div class="alert-dialog-title">Alert</div>
+            <div class="alert-dialog-content">
+                The TOFI trainer is not connected.
+            </div>
+            <div class="alert-dialog-footer">
+                <ons-alert-dialog-button onclick="EntryPoint.connectBLE()">Connect</ons-alert-dialog-button>
+                <ons-alert-dialog-button onclick="EntryPoint.hideAlertDialog()">Skip</ons-alert-dialog-button>
+            </div>
+        </ons-alert-dialog>
+    </template>
+    <div id="loading"></div>
+    <script src="index.bundle.js?v=2.1"></script>
+ </body>
 </html>

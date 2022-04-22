@@ -50,7 +50,7 @@
                 </span>
             </div>
             </ons-tab>
-            <ons-tab page="statistics.html" label="Statistics">
+            <ons-tab page="statistics.html" label="Statistics" onclick="EntryPoint.populateStats()">
                 <div>
                 <span class="circle-icon">
                     <ons-icon class="icon-stats-bars fa-4x" />
@@ -68,7 +68,7 @@
                     <p style="text-align: center;">
                         The settings menu provides access for the calibration and connectivity of your Tofi trainer
                     </p>
-                    <ons-card tappable onclick="EntryPoint.pushPage({'id':'canvas.html', 'view':0, 'title':'Sensor Histogram'})">
+                    <ons-card tappable onclick="EntryPoint.openSensorHistogram()">
                         <div class="title">Sensor Histogram</div>
                         <div class="content">A development tool for diagnosing problems with your device</div>
                     </ons-card>

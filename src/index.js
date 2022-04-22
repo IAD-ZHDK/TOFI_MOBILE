@@ -15,7 +15,7 @@ let ons = require('onsenui')
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 //import { getDatabase } from "firebase/database";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, set, child, get} from "firebase/database";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -46,6 +46,10 @@ function writeTODataBase(userId, deviceData, stats) {
     statistics: stats,
   });
 }
+
+
+
+
 
 
 ///
@@ -80,15 +84,26 @@ function onDeviceReady() {
     createBLEDialog()
     params = Parameters // myBLE.id // handles storage for paremeters for interpreting sensor values
     blehandler = new BleSimulator(params)
-    calibrationGUI = new CalibrationGUI(params)
-    calibrationGUI.toggle(false)
-   
     document.addEventListener("click", HIDsetup, false);
  
 
  
-    // populate statistics menu
-    statisticsMenu(ons, params)
+    // get user name from database if it exists 
+    const dbRef = ref(getDatabase());
+
+    get(child(dbRef, `users/${params.deviceProfile.Random_ID}/device/USER_ID`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log("USER_ID: "+snapshot.val());
+        if (params.deviceProfile.USER_ID === "not defined") {
+            params.deviceProfile.USER_ID = snapshot.val();
+            params.save();
+        }
+      } else {
+        console.log("No data available");
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
 
     if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
         // true for mobile device
@@ -154,9 +169,7 @@ function DOMContentLoadedEvent() {
     const containerElement = document.getElementById('p5-container')
     if (containerElement) {
         PFIVE = new P5(defineSketch({ "viewNumber": currentView, "blehandler": blehandler, "params": params, "tone": Tone, "WEGL3D": WEBGL }), containerElement)
-        if (currentView == 0) {
-            calibrationGUI.toggle(true)
-        }
+
     }
     let ctx = document.getElementById('myChart')
     if (ctx) {
@@ -236,6 +249,13 @@ export function connectBLE() {
     setupBLE()
     hideAlertDialog()
 }
+export function populateStats() {
+    statisticsMenu(ons, params)
+}
+export function openSensorHistogram() {
+    this.pushPage({'id':'canvas.html', 'view':0, 'title':'Sensor Histogram'})
+    calibrationGUI = new CalibrationGUI(params)
+}
 
 export function pushPage(page, anim) {
 
@@ -256,9 +276,11 @@ export function pushPage(page, anim) {
 }
 export function backButton() {
     document.querySelector('#myNavigator').popPage()
-    calibrationGUI.toggle(false)
+    if (typeof calibrationGUI != "undefined") {
+        calibrationGUI.removeGui()
+     }
+   
     defineSketch({ "remove": true })
-    statisticsMenu(ons, params)
     if (params.deviceProfile.BLE_ID === "not defined") {
         console.log("no ble id found")
     } else {

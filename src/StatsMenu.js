@@ -3,6 +3,7 @@ import viewNames from './views/Views.js'
 function statisticsMenu(ons, params) {
     // populate statiticsMenu with Items
     const menu = document.querySelector('#statsList')
+    menu.innerHTML = "";  // clear all existing stats
     let data = params.getSessionKeys()
     let dateOptions = {year: '2-digit', month: 'numeric', day: 'numeric' };
     if (data !== null) {

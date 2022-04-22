@@ -25,7 +25,6 @@ class Calibration extends View {
             this.minValues[i] = 0xFFFF
             this.mockNormalised[i] = 0.1
         }
-        console.log("mockNormalised"+this.mockNormalised);
         this.textBox = new TextBox(this.p, 'Please put your TOFI-TRAINER on. During the callibration, press on each sensor as hard as you can with your tongue ', 0, 0, p.width / 2, p.height / 2)
         this.counterTextBox = new TextBox(this.p, '0', 0, 0, p.width / 4, p.height / 4)
         this.counterTextBox.settextSize(40)
@@ -93,14 +92,11 @@ class Calibration extends View {
             let max = this.maxValues[i] + (buffer * 0.15)
             let normalised = constrain(sensorValue, min, max)
             normalised = map(normalised, min, max, 0.0, 1.0)
-           // this.mockNormalised[i] = normalised
-            // console.log(normalised);
             this.mockNormalised[i] = moveingWeightedAverageFloat(normalised,  this.mockNormalised[i], 0.7)
             } else {
                 this.mockNormalised[i] = 0.01
             }
         }
-       
         return this.mockNormalised;
     } 
 

@@ -1,28 +1,29 @@
 class CalibrationGUI {
-  constructor (Cookie) {
+  constructor(Cookie) {
     this.Cookie = Cookie
     this.display = true
     this.buildGUI(this.Cookie.deviceProfile)
-    console.log("cookies "+this.Cookie.deviceProfile);
+    console.log("cookies " + this.Cookie.deviceProfile);
   }
 
-  writeCookie () {
+  writeCookie() {
     this.Cookie.save()
   }
   // automaticly building dat gui taken from:  https://gist.github.com/heaversm/b159b51f4e68603b05dc417dfadb43c5
-  buildGUI (config) {
+  buildGUI(config) {
     const dat = require('dat.gui')
     this.gui = new dat.GUI()
     this.guiFolder = this.gui.addFolder('Calibration')
     this.addToGui(config, this.guiFolder)
-    // add a button to be able to update your scene with changed variables if they don't auto-update things on screen
   }
 
-  removeGui () {
+  removeGui() {
     this.gui.destroy()
   }
 
-  toggle (bool) {
+  toggle(bool) {
+    this.removeGui()
+    /*
     console.log("toggle+"+this.display)
     if (bool) {
       this.buildGUI(this.Cookie.deviceProfile)
@@ -30,8 +31,9 @@ class CalibrationGUI {
       this.removeGui()
     }
     this.display = bool
+    */
   }
-  addToGui (obj, folder) {
+  addToGui(obj, folder) {
     let bindCallback = this.writeCookie.bind(this)
     for (const key in obj) { // for each key in your object
       if (obj.hasOwnProperty(key)) {
@@ -57,10 +59,22 @@ class CalibrationGUI {
           folder.add(obj, key).onChange(function () {
             bindCallback()
           }) // add a radio button to GUI folder
+        } else if (typeof val === 'string') {
+          let props = {doNothing:function () {
+            //do whatever
+          }};
+            folder.add(props, 'doNothing')
+            .name(key+": "+val);
+          //var objNew = { add:function(){ console.log("clicked") }};
+          //folder.add(objNew)
+          //folder.add(obj, key).onChange(function () {
+          // bindCallback()
+          // }) // add a radio button to GUI folder
+          //   strings non-editable 
         } else {
           folder.add(obj, key).onChange(function () {
             bindCallback()
-          }) // ...this would include things like boolean values as checkboxes, and strings as text fields
+          }) // ...this would include things like boolean values as checkboxes,
         }
       }
     }

@@ -61,6 +61,7 @@ class Parameters {
     let noun = randomNouns[Math.floor(Math.random() * randomAdective.length)];
     this.deviceProfile.Random_ID = adjective+noun+Math.floor(Math.random() * 100);
     this.deviceProfile.BLE_ID = "not defined";
+    this.deviceProfile.USER_ID = "not defined";
     // hard code default chanel configuration
     this.deviceProfile[Object.keys(this.deviceProfile)[0]].active = false // Battery
     this.deviceProfile[Object.keys(this.deviceProfile)[1]].active = false // Reference

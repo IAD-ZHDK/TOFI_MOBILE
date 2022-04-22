@@ -48,9 +48,21 @@ const Canvas = (p) => {
         params.newLogSession(viewNumber)
 
         // prevent screen from sleeping when canvas is on
-            let wakeLock = navigator.wakeLock.request('screen');
-            console.log(wakeLock);
+        requestWakeLock();     
     }
+    
+    const requestWakeLock = async () => {
+        try {
+      
+          const wakeLock = await navigator.wakeLock.request('screen');
+      
+        } catch (err) {
+          // The wake lock request fails - usually system-related, such as low battery.
+          console.log(`${err.name}, ${err.message}`);
+        }
+      }
+      
+      
 
     p.draw = function () {
         p.updateSensorValues()

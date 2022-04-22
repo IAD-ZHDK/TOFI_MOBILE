@@ -13,7 +13,8 @@ class BLEhandler {
     }
     */
     this.id = 'default'
-    this.serviceUuid = 'A22A0001-AD0B-4DF2-A4E2-1745CBB4dCEE' // The UUID for the main service on the TOFI trainer
+    this.serviceUuid = 'A22A0001-AD0B-4DF2-A4E2-1745CBB4dCEE' // The UUID for the main service on the TOFI trainer sensors
+    this.serviceUuidLED = 'A22B0001-AD0B-4DF2-A4E2-1745CBB4dCEE' // The UUID for the main service on the TOFI trainer
     // this.SensorServiceUuid = 'A22A0001-AD0B-4DF2-A4E2-1745CBB4dCEE'
     console.log('looking for:' + this.serviceUuid)
     this.myBLE = new P5ble()
@@ -30,6 +31,10 @@ class BLEhandler {
     // Connect to a device by passing the service UUID
     this.myBLE.disconnect()
     this.myBLE.connect(this.serviceUuid, this.gotCharacteristics)
+    let gotValue = "";
+   // this.myBLE.read(this.serviceUuidLED , 'string', gotValue)
+    //console.log("led_"+gotValue)
+   // this.myBLE.connect(this.serviceUuidLED, this.gotCharacteristicsLED)
   }
   gotCharacteristics (error, characteristics) {
     // A function that will be called after got characteristics
@@ -47,6 +52,7 @@ class BLEhandler {
       for (let i = 0; i < characteristics.length; i++) {
         if (i === 0) {
           const sensorCharacteristic = characteristics[i]
+          console.log(sensorCharacteristic);
           // Set datatype to 'custom', p5.ble.js won't parse the data, will return data as it is.
           that.myBLE.startNotifications(sensorCharacteristic, that.handleSensor, 'custom')
           console.log('characteristics: 1')
@@ -62,6 +68,14 @@ class BLEhandler {
     }
   }
 
+  gotCharacteristicsLED(error, characteristics) {
+    if (error) console.log('error: ', error);
+    console.log('characteristics: ', characteristics);
+    // Set the first characteristic as myCharacteristic
+    let myCharacteristic = characteristics[0];
+    writeToBle(myCharacteristic, "af")
+  }
+
   onDisconnected () {
     console.log('Device was disconnected.')
     this.isCjonnected = false
@@ -70,6 +84,12 @@ class BLEhandler {
   getSensorValues() {
     return this.sensorValues;
   }
+ writeToBle(myCharacteristic, input) {
+  let inputValue = Math.floor(Math.random() * 0xff).toString(16);
+  // Write the value of the input to the myCharacteristic
+  console.log("write led Characteristic")
+  myBLE.write(myCharacteristic, inputValue);
+}
 
   handleSensor (data) {
     // apply filtering

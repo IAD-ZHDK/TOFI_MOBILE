@@ -47,3 +47,4 @@ integrate with https://github.com/don/cordova-plugin-ble-central
 Modify status bar appearance on different platforms
 https://cordova.apache.org/docs/en/10.x/reference/cordova-plugin-statusbar/
 
+Firebase login support to be added

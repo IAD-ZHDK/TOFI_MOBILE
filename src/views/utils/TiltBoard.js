@@ -114,6 +114,7 @@ const wallBack = {
   height: 1,
   thickness: 100,
 }
+let rotationAmount = 0;
 
 class TiltBoard {
   constructor(p, width, height, params, Tone, envelopes, colorPallet) {
@@ -383,6 +384,52 @@ class TiltBoard {
     this.p.pop();
   }
 
+   vectorMagnitude(x, y){
+    // Stores the sum of squares
+    // of coordinates of a vector
+    var sum = x * x + y * y;
+ 
+    // Return the magnitude
+    return Math.sqrt(sum);
+}
+
+
+  drawPlayerMatrix3D() {
+   // console.log("matrix 3d")
+    this.p.push()
+    let velocityMag = this.vectorMagnitude(player.velX,player.velY)
+    rotationAmount += -(velocityMag / (player.radius * this.p.TWO_PI)) * this.p.TWO_PI
+    let n = this.p.createVector(0, 0, 1); //- floor normal vector
+    let t = this.p.createVector(player.velX, player.velY,0)  // - movement direction parallel with floor (tangent)
+    t.normalize()
+    let b = t.cross(n)
+   // b.cross(n);//what current axis should the ball roll around
+
+    let c = Math.cos(rotationAmount)
+    let s = Math.sin(rotationAmount)
+
+    let tx = player.posX
+    let ty = player.posY
+    let tz = player.posZ + player.radius
+    //line(pos.x, pos.y, 0, pos.x + b.x, pos.y + b.y, 0)
+
+    this.p.applyMatrix(t.x, b.x, n.x, 0.0,
+                      t.y, b.y, n.y, 0.0,
+                      t.z, b.z, n.z, 0.0,
+                      tx, ty, tz, 1.0);
+
+    //rotateY(rotationAmount);
+    this.p.applyMatrix(c, 0.0, s, 0.0,
+                        0.0, 1.0, 0.0, 0.0,
+                        -s, 0.0, c, 0.0,
+                        0.0, 0.0, 0.0, 1.0);
+      
+    //	rotateY(rotationAmount);
+    this.p.texture(this.sphereTexture)
+    this.p.sphere(player.radius);
+    this.p.pop()
+  }
+
   drawBoard() {
     this.p.normalMaterial();
     this.p.push();
@@ -526,8 +573,8 @@ class TiltBoard {
       let distanceFromMiddleX = this.p.random(0.2, 0.45)
       let distanceFromMiddleY = this.p.random(0.2, 0.45)
       // random left/right and up/down
-      distanceFromMiddleX = distanceFromMiddleX* (Math.random() < 0.5 ? -1 : 1);
-      distanceFromMiddleY = distanceFromMiddleY* (Math.random() < 0.5 ? -1 : 1);
+      distanceFromMiddleX = distanceFromMiddleX * (Math.random() < 0.5 ? -1 : 1);
+      distanceFromMiddleY = distanceFromMiddleY * (Math.random() < 0.5 ? -1 : 1);
       winningArea.posX = distanceFromMiddleX * board.boardWidth
       winningArea.posY = distanceFromMiddleX * board.boardHeight
       for (let i = 0; i < this.obstacles.length; i++) {
@@ -644,7 +691,7 @@ class TiltBoard {
       board.angleX = board.angleX * 0.9;
       board.angleX += 0 - (modifier[3] * world.playerSensitivity) * 0.1;
       this.synth1.triggerAttack("A3");
-    } 
+    }
     else {
       this.synth2.triggerRelease();
       this.synth1.triggerRelease();
@@ -660,7 +707,7 @@ class TiltBoard {
       board.angleY = board.angleY * 0.9;
       board.angleY += (modifier[4] * world.playerSensitivity) * 0.1;
       this.synth3.triggerAttack("G3");
-    } 
+    }
     else {
       board.angleY = board.angleY * 0.9;
       // board.angleY += 0*0.1;
@@ -704,8 +751,8 @@ class TiltBoard {
       // player.velX = 0;
       // player.velY = 0;
       player.posZ = player.posZ - 0.3;
-      player.posX = player.posX + (winningArea.posX - player.posX) * 0.1;
-      player.posY = player.posY + (winningArea.posY - player.posY) * 0.1;
+      player.posX = player.posX + (winningArea.posX - player.posX) * 0.3;
+      player.posY = player.posY + (winningArea.posY - player.posY) * 0.3;
     }
     else {
       player.posZ = -(player.posX * Math.sin(board.angleY * world.angleScaling) + player.posY * Math.sin(board.angleX * world.angleScaling));
@@ -721,6 +768,7 @@ class TiltBoard {
       this.update();
     }
     this.drawPlayer();
+    //this.drawPlayerMatrix3D()
     this.drawBoard();
   }
 }

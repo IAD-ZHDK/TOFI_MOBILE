@@ -7,7 +7,7 @@
 //import StrengthTest from './views/StrengthTest.js'
 //import SensorHistogram from './views/SensorHistogram.js'
 //import Calibration from './views/Calibration.js'
-import {StatisticsOverview, Game01, Game02, Game03, Game04, SpeedTest, StrengthTest, SensorHistogram, Calibration, Game05} from './views/Views.js';
+import {StatisticsOverview, Game01, Game02, Game03, Game04, SpeedTest, StrengthTest, SensorHistogram, Calibration, Game05, Game06} from './views/Views.js';
 let viewNumber
 let blehandler
 let params
@@ -18,7 +18,7 @@ let WEGL3D
 let removeSketch = false;
 let Timer = {"event":null, "envelopes":[]} // timeout object for game timing
 const Canvas = (p) => {
-    let Views = [SensorHistogram, Calibration, Game01, Game02, SpeedTest, Game03, Game04, StrengthTest, StatisticsOverview, Game05]
+    let Views = [SensorHistogram, Calibration, Game01, Game02, SpeedTest, Game03, Game04, StrengthTest, StatisticsOverview, Game05, Game06] // !important, this order defines view numbers
     let myFont
     let sensorValues = []
     p.disableFriendlyErrors = true; // disables FES
@@ -33,6 +33,7 @@ const Canvas = (p) => {
         if (!WEGL3D) {
             p.createCanvas(document.documentElement.clientWidth, document.documentElement.clientHeight)
         } else {
+            p.setAttributes('antialias', true);
             p.createCanvas(document.documentElement.clientWidth, document.documentElement.clientHeight, p.WEBGL)
         }
         p.windowWidth = document.documentElement.clientWidth

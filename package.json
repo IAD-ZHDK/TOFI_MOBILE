@@ -36,6 +36,7 @@
     "firebase": "^9.6.10",
     "has-binary2": "^2.0.0",
     "machina": "^4.0.2",
+    "matter-js": "^0.18.0",
     "objectorarray": "^1.0.5",
     "onsenui": "^2.11.2",
     "p5": "^1.0.0",

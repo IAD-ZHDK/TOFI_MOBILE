@@ -3,6 +3,7 @@ export * from './Game02.js'
 export * from './Game03.js'
 export * from './Game04.js'
 export * from './Game05.js'
+export * from './Game06.js'
 export * from './SpeedTest.js'
 export * from './StrengthTest.js'
 export * from './SensorHistogram.js'
@@ -20,5 +21,6 @@ let viewNames = [
     'StrengthTest',
     'StatisticsOverview',
     'Tilt Maze',
+    'Meditation 2',
 ]
 export default viewNames

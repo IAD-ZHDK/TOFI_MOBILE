@@ -82,6 +82,9 @@ function onDeviceReady() {
     // show connect device dialog
     console.log("new dialog")
     createBLEDialog()
+    // this line can be uncommented to junp to a view during development 
+    //EntryPoint.pushPage({'id':'canvas.html', 'view':10, 'title':'meditation'})
+    
     params = Parameters // myBLE.id // handles storage for paremeters for interpreting sensor values
     blehandler = new BleSimulator(params)
     document.addEventListener("click", HIDsetup, false);

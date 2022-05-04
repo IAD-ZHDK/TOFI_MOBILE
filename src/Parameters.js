@@ -2,7 +2,6 @@ import { connectDatabaseEmulator } from 'firebase/database'
 import { map, constrain } from './views/utils/MathUtils'
 
 let logingData = true
-let threshold = 30 // only record data when above 30 pressure on sensor
 class Parameters {
   //
   // handles setting, saving and retrival of calibration settings
@@ -55,11 +54,8 @@ class Parameters {
       }
     }
     // random userName 
-    let randomNouns = ["time","year","way","day","thing","world","life","hand","part","eye","place","work","week","case","point","government","company","number","group","problem","fact"];
-    let randomAdective = ["good","new","first","last","long","great","little","own","other","right","big","high","different","small","large","next","early","young","important","few","public","same","able"];
-    let adjective = randomAdective[Math.floor(Math.random() * randomNouns.length)];
-    let noun = randomNouns[Math.floor(Math.random() * randomAdective.length)];
-    this.deviceProfile.Random_ID = adjective+noun+Math.floor(Math.random() * 100);
+   // console.log('uid'+uid)
+   this.deviceProfile.uid = "not defined";
     this.deviceProfile.BLE_ID = "not defined";
     this.deviceProfile.USER_ID = "not defined";
     // hard code default chanel configuration
@@ -203,13 +199,18 @@ class Parameters {
       let millis = this.timeElapsed - this.thisSession.start
       this.thisSession.duration = millis
       //todo: add count of total activations and maximum preasure
-      if (this.thisSession.log[0].length > 20) {
-        //only save session if there are at least 20 entries in log
+      if (this.thisSession.log[0].length > 10) {
+        //only save session if there are at least 10 entries in log
         this.saveSessionKeys()
         Storage.setItem(this.thisSession.start, JSON.stringify(this.thisSession))
       }
-      this.thisSession = null
+     // this.thisSession = null
     }
+    return this.thisSession
+  }
+
+  lastSession(index) { 
+
   }
 
   loadLocal(index) {
@@ -436,5 +437,5 @@ class Parameters {
   getData() {
   }
 }
-const instance = new Parameters(4265345);
+const instance = new Parameters(4265345); // this value can be changed to overwrite all existing local data
 export default instance

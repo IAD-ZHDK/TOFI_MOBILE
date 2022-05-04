@@ -129,9 +129,9 @@ function defineSketch(options) {
             //Tone.Transport.dispose()
         }
         // save data if the params object exists
-        if (typeof params != "undefined") {
-                params.saveLocal()
-        }
+       // if (typeof params != "undefined") {
+               // params.saveLocal()
+       // }
         removeSketch = true
     }
 }

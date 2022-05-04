@@ -10,26 +10,31 @@ import statisticsMenu from './StatsMenu.js'
 import * as Tone from 'tone'
 let ons = require('onsenui')
 // firebase
+let uid;
 
-// Import the functions you need from the SDKs you need
+// Import the functions you need from the SDKs
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-//import { getDatabase } from "firebase/database";
-import { getDatabase, ref, set, child, get} from "firebase/database";
+
+import { getDatabase, ref, set, child, get, push} from "firebase/database";
+import { getAuth, EmailAuthProvider, onAuthStateChanged, signOut} from "firebase/auth";
+
+
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDPRZBAHchzk6sAWxnvojUy5GqqoQPr2pU",
-  authDomain: "tofi-database.firebaseapp.com",
-  databaseURL: "https://tofi-database-default-rtdb.europe-west1.firebasedatabase.app/",
-  projectId: "tofi-database",
-  storageBucket: "tofi-database.appspot.com",
-  messagingSenderId: "245711251379",
-  appId: "1:245711251379:web:ada882217aff57f4b94dc6",
-  measurementId: "G-ZFMEML92FF"
+    apiKey: "AIzaSyCaPlD2xiKEjD-VOEYCtuBM-j5NZr2OPw8",
+    authDomain: "tofi-authenticated.firebaseapp.com",
+    databaseURL: "https://tofi-authenticated-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "tofi-authenticated",
+    storageBucket: "tofi-authenticated.appspot.com",
+    messagingSenderId: "373383815047",
+    appId: "1:373383815047:web:cba620c889c5fd8607fd22",
+    measurementId: "G-ZTQXRTSSN8"
 };
 
 // Initialize Firebase
@@ -37,20 +42,87 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
 // Get a reference to the database service
-const database = getDatabase(app);
 
-function writeTODataBase(userId, deviceData, stats) {
+
+const database = getDatabase(app);
+const auth = getAuth(app);
+var firebaseui = require('firebaseui');
+
+var ui = new firebaseui.auth.AuthUI(auth);
+
+
+function writeToDB(userId, deviceData) {
+    // overwrites existing data
   const db = getDatabase();
-  set(ref(db, 'users/' + userId), {
-    device: deviceData,
-    statistics: stats,
+  const writeRef = ref(db, 'users/' + userId + '/device');
+  set(writeRef, {
+    deviceData,
   });
 }
+function appendToDB(userId, data) {
+      // adds existing data
+    const db = getDatabase();
+    const postListRef = ref(db, 'users/' + userId +'/statistics');
+    const newPostRef = push(postListRef);
+    set(newPostRef,{
+        data    
+    });
+}
+
+function createLogin() {
+    var uiConfig = {
+        callbacks: {
+          signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+            // User successfully signed in.
+            // Return type determines whether we continue the redirect automatically
+            // or whether we leave that to developer to handle.
+            document.getElementById('splashscreen').style.display = 'none';
+            return true;
+          },
+          uiShown: function() {
+            // The widget is rendered.
+            // Hide the loader.
+           // document.getElementById('loader').style.display = 'none';
+          }
+        },
+        // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+       // signInFlow: 'popup',
+       // signInSuccessUrl: '<url-to-redirect-to-on-success>',
+        signInOptions: [
+          // Leave the lines as is for the providers you want to offer your users.
+          {
+            provider: EmailAuthProvider.PROVIDER_ID,
+            requireDisplayName: true
+          }
+        ],
+        // Terms of service url.
+        //tosUrl: '<your-tos-url>',
+        // Privacy policy url.
+        //privacyPolicyUrl: '<your-privacy-policy-url>'
+      };
+
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // User is signed in, see docs for a list of available properties
+          // https://firebase.google.com/docs/reference/js/firebase.User
+          uid = user.uid;
+          console.log("uid "+uid)
+          console.log("display name "+user.displayName)
+          document.getElementById('splashscreen').style.display = 'none';
+          updateUserName(uid);
+          params.deviceProfile.uid = uid
+          createBLEDialog();
+          // ...
+        } else {
+          // User is signed out
+          // ...
+          document.getElementById('logo').style.visibility = 'visible';
+          ui.start('#splashscreen', uiConfig);
+        }
+      });    
 
 
-
-
-
+}
 
 ///
 ons.disableIconAutoPrefix() // Disable adding fa- prefix automatically to ons-icon classes. Useful when including custom icon packs.
@@ -78,32 +150,13 @@ document.addEventListener('deviceready', onDeviceReady, false)
 function onDeviceReady() {
     // Cordova is now initialized.
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version)
-    // add gui
-    // show connect device dialog
-    console.log("new dialog")
-    createBLEDialog()
+    createLogin()
     params = Parameters // myBLE.id // handles storage for paremeters for interpreting sensor values
+
     blehandler = new BleSimulator(params)
     document.addEventListener("click", HIDsetup, false);
  
 
- 
-    // get user name from database if it exists 
-    const dbRef = ref(getDatabase());
-
-    get(child(dbRef, `users/${params.deviceProfile.Random_ID}/device/USER_ID`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        console.log("USER_ID: "+snapshot.val());
-        if (params.deviceProfile.USER_ID === "not defined") {
-            params.deviceProfile.USER_ID = snapshot.val();
-            params.save();
-        }
-      } else {
-        console.log("No data available");
-      }
-    }).catch((error) => {
-      console.error(error);
-    });
 
     if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
         // true for mobile device
@@ -149,13 +202,71 @@ document.addEventListener('keydown', function (event) {
     }
 });
 
+function updateUserName(uid) {
+    const dbRef = ref(getDatabase());
+    get(child(dbRef, `users/${uid}/deviceData/USER_ID`)).then((snapshot) => {
+        console.log("USER_ID: "+snapshot.val());
+      if (snapshot.exists()) {
+        console.log("USER_ID: "+snapshot.val());
+        if (params.deviceProfile.USER_ID === "not defined") {
+            params.deviceProfile.USER_ID = snapshot.val();
+            params.save();
+        }
+      } else {
+        console.log("No data available");
+      }
+    }).catch((error) => {
+        // todo: add client is offline message to app 
+      console.error(error);
+    });
+}
+
+
+function updateLocalData(uid) { 
+    const dbRef = ref(getDatabase());
+    get(child(dbRef, `users/${uid}/statistics`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log(snapshot.val());
+           let data = snapshot.val()
+      /*  for(let i = 0; i<data.length;i++) {
+            console.log(data[i].data);
+        }
+        */
+        for (const [key, entries] of Object.entries(data)) {
+            console.log(`${key}: ${entries}`);
+            for (const [key, value] of Object.entries(entries)) {
+                console.log(`${key}: ${value}`);
+              }
+          }
+      } else {
+        console.log("No data available");
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+}
+
+function pulldatabase(uid) {
+    const dbRef = ref(getDatabase());
+    get(child(dbRef, `users/${uid}/statistics`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        return snapshot.val()
+      } else {
+        console.log("No data available");
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+    return false
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////// Initial Setup ///////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // loading / splash screen
 document.addEventListener('DOMContentLoaded', () =>
-    wait(2000).then(() => {
+    wait(100).then(() => {
         //setVisible('.page', true);
         setVisible('#loading', false);
     }));
@@ -169,7 +280,6 @@ function DOMContentLoadedEvent() {
     const containerElement = document.getElementById('p5-container')
     if (containerElement) {
         PFIVE = new P5(defineSketch({ "viewNumber": currentView, "blehandler": blehandler, "params": params, "tone": Tone, "WEGL3D": WEBGL }), containerElement)
-
     }
     let ctx = document.getElementById('myChart')
     if (ctx) {
@@ -181,7 +291,7 @@ function DOMContentLoadedEvent() {
 
 // sound
 function HIDsetup() {
-
+    // signInWithPopup(auth, provider)
     // setup fullscreen on mobile
     if (mobileDevice) {
         var doc = window.document;
@@ -250,6 +360,8 @@ export function connectBLE() {
     hideAlertDialog()
 }
 export function populateStats() {
+    // save cloud data to local
+    updateLocalData(uid);
     statisticsMenu(ons, params)
 }
 export function openSensorHistogram() {
@@ -279,15 +391,19 @@ export function backButton() {
     if (typeof calibrationGUI != "undefined") {
         calibrationGUI.removeGui()
      }
-   
+    let lastEntry = params.saveLocal();
+    console.log("database save")
+    appendToDB(uid, lastEntry) 
+    writeToDB(params.deviceProfile.uid , params.getDeviceProfileJson())
     defineSketch({ "remove": true })
-    if (params.deviceProfile.BLE_ID === "not defined") {
-        console.log("no ble id found")
-    } else {
-        console.log("database save")
-        writeTODataBase(params.deviceProfile.Random_ID, params.getDeviceProfileJson(), params.loadLocal())
-    }
-
+}
+export function signOutFireBase() {
+signOut(auth).then(() => {
+    location.reload()
+    // Sign-out successful.
+  }).catch((error) => {
+    // An error happened.
+  });
 }
 export function changeButton() {
     document.getElementById('segment').setActiveButton(1)

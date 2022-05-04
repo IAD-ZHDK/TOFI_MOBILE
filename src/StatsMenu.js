@@ -1,6 +1,7 @@
 import viewNames from './views/Views.js'
 
-function statisticsMenu(ons, params) {
+function statisticsMenu(ons, params, stats) {
+    //console.log("stats_:"+stats.length)
     // populate statiticsMenu with Items
     const menu = document.querySelector('#statsList')
     menu.innerHTML = "";  // clear all existing stats

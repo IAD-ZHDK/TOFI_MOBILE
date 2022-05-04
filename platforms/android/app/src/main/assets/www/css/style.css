@@ -47,13 +47,24 @@ backButton:hover {
 
 #splashscreen {
     z-index: 10000 !important;
-    position: absolute;
+    position: relative;
+    width:100%;
+    height:100%;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
     overflow: hidden;
-    background: linear-gradient(180deg, #00205b 0%, #FF3F6D 100%);
+    background-color: #0F0D31;
+}
+#logo {
+    background-image: url("../img/logo.png");
+    width: 30%;
+    height: 30%;
+    margin:auto;
+    visibility: hidden;
+    background-position: center;
+    background-repeat: no-repeat, no-repeat;
 }
 
 #p5-container {
@@ -132,7 +143,8 @@ backButton:hover {
     z-index: 100;
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, #2D2D64 0%, #000000 100%);
+    background-color: #0F0D31;
+     /*background: linear-gradient(180deg, #2D2D64 0%, #000000 100%); */
     /*background-image: url("../img/MnyxU.gif");*/
     background-repeat: no-repeat;
     background-position: center;

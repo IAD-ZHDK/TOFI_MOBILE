@@ -16,7 +16,7 @@
          
        // https://* wss://* -->
       
-       <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.googleapis.com/ https://www.googletagmanager.com wss://*.firebasedatabase.app https://*.firebasedatabase.app/ https://www.google-analytics.com/  data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; script-src 'self' https://*.googleapis.com/ https://*.firebasedatabase.app https://www.googletagmanager.com 'unsafe-eval' 'unsafe-inline'; worker-src blob:; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' www.googletagmanager.com data: content:;">
+       <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.googleapis.com/ https://www.googletagmanager.com wss://*.firebasedatabase.app https://*.firebasedatabase.app/ https://www.google-analytics.com/  data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; script-src 'self' https://*.googleapis.com/ https://*.firebasedatabase.app https://www.googletagmanager.com https://apis.google.com/ 'unsafe-eval' 'unsafe-inline'; worker-src blob:; style-src 'self' https://www.gstatic.com/ https://fonts.googleapis.com/ 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com/ 'unsafe-inline';  media-src *; img-src 'self' www.googletagmanager.com data: content:; frame-src https://tofi-authenticated.firebaseapp.com/ data:;">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
         <meta name="color-scheme" content="light dark">
@@ -24,13 +24,17 @@
         <link rel="stylesheet" href="css/dark-onsen-css-components.min.css">
         <link rel="stylesheet" href="css/style.css?v=2.1">
         <link rel="stylesheet" href="css/index.css?v=2.1">
+        <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
         <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+        
         <title>TOFI</title>
     </head>
     <body>
-    <!--<body onload="EntryPoint.splash(4000)">
+    <!--<body onload="EntryPoint.splash(4000)"> -->
     <div id="splashscreen">
-   </div>  -->
+        <div id="logo">
+        </div> 
+   </div> 
    <div id="app">
    </div>
    <ons-navigator swipeable id="myNavigator">
@@ -83,6 +87,10 @@
                     <ons-card tappable onclick="EntryPoint.connectBLE()">
                         <div class="title">Reconnect to Device</div>
                         <div class="content">Click here if you loose connection with your device. Select your device and then "pair"</div>
+                    </ons-card>
+                    <ons-card tappable onclick="EntryPoint.signOutFireBase()">
+                        <div class="title">Sign Out</div>
+                        <div class="content"></div>
                     </ons-card>
                 </section>
             </ons-page>

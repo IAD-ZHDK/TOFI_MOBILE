@@ -10,7 +10,7 @@ class Parameters {
   constructor(key) {
     if (!Parameters.instance) {
       this.setupCookie(key)
-      this.setupDataLoger()
+    // this.setupDataLoger()
       Parameters.instance = this;
     }
     this.checkNoActive() // run once to count active channels
@@ -40,7 +40,7 @@ class Parameters {
                             /*Ch 5*/hardpalateRight]; // todo: make these configurable in front end
     this.activeChanels = [] // array of indexes for retrieving active chanels only
     this.activeSensorLocations = [] //
-    this.chanelNames = ['Battery', 'Reference', 'Ch 6', 'Ch 5', 'Ch  4', 'Ch 3', 'Ch 2', 'Ch 1']
+    this.chanelNames = ['Battery', 'Reference', 'Ch 6', 'Ch 5', 'Ch 4', 'Ch 3', 'Ch 2', 'Ch 1']
     this.deviceProfile = {}
     for (let i = 0; i < this.noChannels; ++i) {
       this.deviceProfile[this.chanelNames[i]] = {
@@ -54,8 +54,8 @@ class Parameters {
       }
     }
     // random userName 
-   // console.log('uid'+uid)
-   this.deviceProfile.uid = "not defined";
+    // console.log('uid'+uid)
+    this.deviceProfile.uid = "not defined";
     this.deviceProfile.BLE_ID = "not defined";
     this.deviceProfile.USER_ID = "not defined";
     // hard code default chanel configuration
@@ -69,7 +69,7 @@ class Parameters {
       console.log('old cookie')
       Object.assign(this.deviceProfile, obj)
     } else {
-      console.log('no cookie')  
+      console.log('no cookie')
       this.save();
     }
   }
@@ -105,53 +105,68 @@ class Parameters {
     return ''
   }
   // localStorage
-
+/*
   setupDataLoger() {
     this.getSessionKeys()
   }
-
+*/
   newLogSession(view) {
     if (logingData) {
       this.timeElapsed = Date.now()
       let n = Date.now()
-      let key = this.cookieID
-      this.thisSession = { 'start': n, 'start': n, 'duration': 0, 'totalMovements': 0, 'viewNumber': view, 'log': [[], [], [], [], [], [], [], []], 'time': [], 'metric': "none", 'metricValue':0 }
-      //
+      this.thisSession = { 'start': n, 'duration': 0, 'totalMovements': 0, 'viewNumber': view, 'log': { '0': {}, '1': {}, '2': {}, '3': {}, '4': {} }, 'metric': "none", 'metricValue': 0 }
       // console.log("local storage" + this.sessionKeys)
     }
   }
-
-  saveSessionKeys() {
-    let Storage = window.localStorage
+/*
+  saveSessionKeys(newKeys) {
+    console.log("saveSessionKeys")
     let key = this.cookieID
-    // create a list of all previous sessions
-    if (this.sessionKeys !== null && this.sessionKeys !== '' && this.sessionKeys !== 'undefined') {
-      this.sessionKeys.push(this.thisSession.start)
+    let Storage = window.localStorage
+    if (typeof newKeys === "undefined") {
+      console.log("add to old keys:" + this.thisSession.start)
+      console.log("sessionKeys:" + this.sessionKeys)
+      // create a list of all previous sessions
+      if (this.sessionKeys !== null && this.sessionKeys !== '' && this.sessionKeys !== 'undefined') {
+        this.sessionKeys.push(this.thisSession.start)
+      } else {
+        this.sessionKeys = [1]
+        this.sessionKeys[0] = this.thisSession.start
+      }
+      // add new sessionkey
+      Storage.setItem(key, JSON.stringify(this.sessionKeys))
     } else {
-      this.sessionKeys = [1]
-      this.sessionKeys[0] = this.thisSession.start
+      console.log("replace keys")
+      Storage.setItem(key, JSON.stringify(newKeys))
     }
-    // add new sessionkey
-    Storage.setItem(key, JSON.stringify(this.sessionKeys))
   }
-
+*/
   logdata(sensorValues) {
     if (logingData && this.thisSession.start != null) {
       let millis = this.timeElapsed - this.thisSession.start
       sensorValues.forEach((value, index) => {
-        this.thisSession.log[index].push(sensorValues[index])
+        this.thisSession.log[index].push(value)
         // todo: find more effiecient way of storing empty values
       })
       this.thisSession.time.push(millis)
     }
   }
 
+  logDataSparse(index, value) {
+    let millis = Date.now()
+    if (millis > this.timeElapsed + 100) {
+      // log data if 200 milis elapsed
+      let timeStamp = millis - this.thisSession.start
+      this.thisSession.log[index.toString()][timeStamp.toString()] = value;
+      this.timeElapsed = millis
+    }
+  }
+
   logSpeedResult(speedTime) {
     if (logingData && this.thisSession.start != null) {
       let millis = this.timeElapsed - this.thisSession.start
-        this.thisSession.metric = "speedTest"
-        this.thisSession.metricValue = speedTime
-      this.thisSession.time.push(millis)
+      this.thisSession.metric = "speedTest"
+      this.thisSession.metricValue = speedTime
     }
   }
 
@@ -170,12 +185,17 @@ class Parameters {
     }
     return peaks;
   }
-
+/*
   getSessionKeys() {
     let key = this.cookieID
     let Storage = window.localStorage
-    this.sessionKeys = JSON.parse(Storage.getItem(key))
-    return this.sessionKeys
+    let storedKeys = Storage.getItem(key)
+    if (storedKeys != null && storedKeys != undefined && storedKeys !== "undefined") {
+      this.sessionKeys = JSON.parse(storedKeys)
+      return this.sessionKeys
+    } else {
+      return null
+    }
   }
 
   getLocalStorage() {
@@ -184,33 +204,36 @@ class Parameters {
     cookieData += StorageString
     return cookieData
   }
-
-  
-
+*/
   getDeviceProfileJson() {
     let cookieData = this.getCookie(this.cookieID)
     let json = JSON.parse(cookieData)
     return json
   }
 
-  saveLocal() {
-    let Storage = window.localStorage;
+  getSessionData() {
+    console.log("session complete")
+    //let Storage = window.localStorage;
     if (this.thisSession != null) {
+      console.log(this.thisSession)
       let millis = this.timeElapsed - this.thisSession.start
       this.thisSession.duration = millis
       //todo: add count of total activations and maximum preasure
       if (this.thisSession.log[0].length > 10) {
-        //only save session if there are at least 10 entries in log
-        this.saveSessionKeys()
-        Storage.setItem(this.thisSession.start, JSON.stringify(this.thisSession))
+      //only save session if there are at least 20 entries in log
+      return this.thisSession
       }
-     // this.thisSession = null
     }
-    return this.thisSession
+    return null
   }
 
-  lastSession(index) { 
+/*
+  setLocal(timeStamp, data) {
+    let Storage = window.localStorage;
+    Storage.setItem(timeStamp, JSON.stringify(data))
+  }
 
+  lastSession(index) {
   }
 
   loadLocal(index) {
@@ -238,6 +261,23 @@ class Parameters {
       }
       return data
     }
+  }
+*/
+  getStatistics() {
+    let statistics = [];
+    let Storage = window.localStorage;
+    for (var i = 0; i < Storage.length; i++) {
+      try {
+        const temp = JSON.parse(Storage.getItem(Storage.key(i)));
+        if (typeof temp.start !== "undefined") {
+          console.log(temp.start);
+          statistics.push(temp);
+        }
+      } catch (e) {
+      //  alert(e); ignore error
+      }
+    }
+    return statistics
   }
 
   //////
@@ -270,20 +310,23 @@ class Parameters {
   setSensorValues(sensorValues) {
     this.sensorValues = sensorValues;
     if (this.sensorValues != null) {
-      let checkThreshold = false
-      let percentValues = this.getPercentValues()
-      for (let i = 0; i < this.sensorValues.length; i++) {
+      const millis = Date.now()
+      //let checkThreshold = false
+      let percentValues = this.getPercentActiveValues()
+      for (let i = 0; i < percentValues.length; i++) {
+
         if (percentValues[i] >= 30) {
-          checkThreshold = true
+          // checkThreshold = true
+          this.logDataSparse(i, percentValues[i]);
         }
       }
       // log data if we reach peak of sensor press and 80 milis elapsed
-      const millis = Date.now()
-      if (checkThreshold && millis > this.timeElapsed + 80) {
-        // log data if threshold reached
-        this.logdata(percentValues)
-        this.timeElapsed = millis
-      }
+      // const millis = Date.now()
+      // if (checkThreshold && millis > this.timeElapsed + 80) {
+      // log data if threshold reached
+      // this.logdata(percentValues)
+
+      // }
     }
   }
 
@@ -303,17 +346,23 @@ class Parameters {
     return Values;
   }
 
-  getNormalisedValues() {
-    let normaliseValues = []
-    for (let i = 0; i < this.sensorValues.length; i++) {
-      normaliseValues[i] = this.getNormalisedValue(i)
+  getPercentActiveValues() {
+    let Values = []
+    for (let i = 0; i < this.noActive; i++) {
+      Values[i] = Math.floor(this.getNormalisedActive(i) * 100)
     }
-    return normaliseValues;
+    return Values;
   }
 
-  getNormalisedValuesByte() {
-    // TODO: for storing log in bytes
+  getNormalisedValues() {
+    let Values = []
+    for (let i = 0; i < this.sensorValues.length; i++) {
+      Values[i] = this.getNormalisedValue(i)
+    }
+    return Values;
   }
+
+
 
   getNormalisedValue(i) {
     let normaliseValue
@@ -328,7 +377,13 @@ class Parameters {
     }
     return normaliseValue
   }
- 
+
+  appendToStorage(name, data) {
+    let old = localStorage.getItem(name);
+    if (old === null) old = "";
+    localStorage.setItem(name, old + data);
+  }
+
   ////////////
   // methods for active chanels
   ///////////
@@ -411,7 +466,7 @@ class Parameters {
     let index = 0
     for (let i = startIndex; i <= endIndex; ++i) {
       let active = this.getIsActive(i)
-      if (active) { 
+      if (active) {
         sensorPositionsUpdated.push(sensorPositions[index])
       }
       index++
@@ -432,10 +487,10 @@ class Parameters {
     this.deviceProfile[Object.keys(this.deviceProfile)[index]].max = value
   }
   setDeviceId(iD) {
-    this.deviceProfile.BLE_ID = iD; 
+    this.deviceProfile.BLE_ID = iD;
   }
   getData() {
   }
 }
-const instance = new Parameters(4265345); // this value can be changed to overwrite all existing local data
+const instance = new Parameters(4265345); // randomish number for storing key values
 export default instance

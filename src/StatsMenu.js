@@ -1,30 +1,28 @@
 import viewNames from './views/Views.js'
+let ons = require('onsenui')
 
-function statisticsMenu(ons, params, stats) {
+function statisticsMenu(data) {
     //console.log("stats_:"+stats.length)
     // populate statiticsMenu with Items
     const menu = document.querySelector('#statsList')
     menu.innerHTML = "";  // clear all existing stats
-    let data = params.getSessionKeys()
     let dateOptions = {year: '2-digit', month: 'numeric', day: 'numeric' };
     if (data !== null) {
-        let sliceIndex = data.length - menu.childElementCount
-        if (sliceIndex > 0) {
+        //let sliceIndex = data.length - menu.childElementCount
             // add missing menu items
             let date = ''
-            for (let i = data.length - sliceIndex; i < data.length; i++) {
-                const dateObject = new Date(data[i])
-               // let title = dateObject.toLocaleString() //2019-12-9 10:30:15
+            //for (let i = 0; i < data.length; i++) {
+            for (const [key, entry] of Object.entries(data)) {
+                const dateObject = new Date(entry.start)
                 let newDate = dateObject.toLocaleDateString("en-GB", dateOptions)
-                let time = dateObject.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                let viewNumber = params.loadLocal(i).metric
-                let title = `${viewNames[params.loadLocal(i).viewNumber]}`
-                let metricName = params.loadLocal(i).metric
-                let metricValue = params.loadLocal(i).metricValue
-                let duration = params.loadLocal(i).duration/1000 // convert to seconds 
-                let minutes = Math.floor(duration/60)
-                let seconds = ('0'+duration%60).slice(-2)
-                let timeFormated =  `${minutes}:${seconds}`
+                let viewNumber = entry.metric
+                let title = `${viewNames[entry.viewNumber]}`
+                let metricName = viewNumber
+                let metricValue = entry.metricValue
+                let duration = Math.floor(entry.duration/1000.0) // convert to seconds 
+                let minutes = Math.floor(duration/60.0)
+                let seconds = duration%60
+                let timeFormated =  `${minutes}:${pad(seconds,2)}`
                 if (newDate === date) {
 
                 } else {
@@ -38,7 +36,7 @@ function statisticsMenu(ons, params, stats) {
                     const menuItem = ons.createElement(`<p style="text-align: center;""> SPEED TEST: ${metricValue} </p>`)
                     menu.appendChild(menuItem)
                 } else {
-                    const menuItem = ons.createElement(`<ons-button modifier="large" style="margin-bottom: 10px;" onclick="EntryPoint.pushPage({'id':'graph.html', 'title':'graph', 'index':'${i}'})"> ${title}, duration: ${timeFormated}</ons-button>`)
+                    const menuItem = ons.createElement(`<ons-button modifier="large" style="margin-bottom: 10px;" onclick="EntryPoint.pushPage({'id':'graph.html', 'title':'graph', 'index':'${key}'})"> ${title}, duration: ${timeFormated}</ons-button>`)
                     menu.appendChild(menuItem)
                 }
             }
@@ -57,12 +55,19 @@ function statisticsMenu(ons, params, stats) {
             }, false);
            
            // download("statistics.txt",params.getLocalStorage());
-        }
+        
     } else {
         const menuItem = ons.createElement(`<p style="text-align: center;""> No statistics have been recorded yet.</p>`)
         menu.appendChild(menuItem)
     }
 }
+
+function pad(num, size) {
+    num = num.toString();
+    while (num.length < size) num = "0" + num;
+    return num;
+}
+
 
 
 function download(filename, text) {

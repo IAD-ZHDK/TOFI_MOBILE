@@ -112,7 +112,7 @@ class Game01 extends View {
         for (let i = 0; i < this.totalSensors; i++) {
             this.Notes[i].display(sensorValues[i])
             //let radius = p.map(sensorValues[i], 0, 16384, 10, spacing * 0.3)
-            if (sensorValues[i]>  this.threshold ) {
+            if (sensorValues[i] > this.threshold ) {
                 if (this.Notes[i].trigger()) {
                         //console.log(i)
                         this.checkSequence(i)

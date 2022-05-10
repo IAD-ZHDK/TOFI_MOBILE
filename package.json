@@ -29,7 +29,7 @@
     "@util.js/numbers": "^0.41.0",
     "after": "^0.8.2",
     "ajax": "^0.0.4",
-    "chart.js": "^3.4.1",
+    "chart.js": "^3.7.1",
     "create-html": "^4.1.0",
     "csp-parse": "^0.0.2",
     "dat.gui": "^0.7.7",

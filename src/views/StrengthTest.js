@@ -1,11 +1,11 @@
 import P5 from 'p5'
 require('../index.js')
 import View from './View'
-import TextBox from './utils/TextBox'
-import tofi from './utils/tofiVisualiser'
-import Sensor from './utils//Sensor'
+import TextBox from './viewUtils/TextBox'
+import tofi from './viewUtils/tofiVisualiser'
+import Sensor from './viewUtils/Sensor'
 import * as EntryPoint from "../index"
-import { createMachine } from './utils/StateMachine.js'
+import { createMachine } from './viewUtils/StateMachine.js'
 
 
 class StrengthTest extends View {

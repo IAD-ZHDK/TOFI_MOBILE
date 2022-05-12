@@ -1,7 +1,7 @@
 import P5 from 'p5'
 import View from './View'
-import Wave from './utils/Wave.js'
-import Tofi from './utils/tofiVisualiser'
+import Wave from './viewUtils/Wave.js'
+import Tofi from './viewUtils/tofiVisualiser'
 
 
 class Game04 extends View {

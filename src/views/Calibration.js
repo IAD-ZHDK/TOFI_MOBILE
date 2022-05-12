@@ -1,12 +1,12 @@
 import P5 from 'p5'
 require('../index.js')
 import View from './View'
-import TextBox from './utils/TextBox'
-import tofi from './utils/tofiVisualiser'
+import TextBox from './viewUtils/TextBox'
+import tofi from './viewUtils/tofiVisualiser'
 import * as EntryPoint from "../index"
-import { createMachine } from './utils/StateMachine.js'
+import { createMachine } from './viewUtils/StateMachine.js'
 //import Game02 from "./Game02";
-import {map, constrain, moveingWeightedAverageFloat} from './utils/MathUtils'
+import {map, constrain, moveingWeightedAverageFloat} from './viewUtils/MathUtils'
 
 const testDuration = 6;
 

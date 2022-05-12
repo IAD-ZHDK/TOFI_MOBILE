@@ -46,7 +46,6 @@ const Canvas = (p) => {
         p.textAlign(p.CENTER, p.CENTER)
         View = new Views[viewNumber](p, Tone, Timer, params)
         params.newLogSession(viewNumber)
-
         // prevent screen from sleeping when canvas is on
         requestWakeLock();     
     }

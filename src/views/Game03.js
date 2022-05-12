@@ -1,8 +1,8 @@
 import P5 from 'p5'
 import View from './View'
-import Meta from './utils/Meta.js'
-import TextBox from "./utils/TextBox";
-import { addBtn } from "./utils/DomButton.js";
+import Meta from './viewUtils/Meta.js'
+import TextBox from "./viewUtils/TextBox";
+import { addBtn } from "./viewUtils/DomButton.js";
 
 class Game03 extends View {
     constructor (p, Tone, Timer, params) {
@@ -19,7 +19,8 @@ class Game03 extends View {
             this.timer = this.p.millis() + 7000
             this.textBox.setText(this.messages[this.messageNo])
             this.messageNo++
-        }.bind(this),"I am ready!")
+            params.enableLogingSave()
+        }.bind(this),"Start")
     }
     draw () {
         this.p.clear()

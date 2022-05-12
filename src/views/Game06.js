@@ -19,7 +19,8 @@ class Game06 extends View {
             this.timer = this.p.millis() + 7000
             this.textBox.setText(this.messages[this.messageNo])
             this.messageNo++
-        }.bind(this),"I am ready!")
+            params.enableLogingSave()
+        }.bind(this),"Start")
     }
     draw () {
         this.p.clear()

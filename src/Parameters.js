@@ -1,7 +1,6 @@
 import { connectDatabaseEmulator } from 'firebase/database'
-import { map, constrain } from './views/utils/MathUtils'
+import { map, constrain } from './views/viewUtils/MathUtils'
 
-let logingData = true
 class Parameters {
   //
   // handles setting, saving and retrival of calibration settings
@@ -72,6 +71,10 @@ class Parameters {
       console.log('no cookie')
       this.save();
     }
+    this.deltaPercentChange = {}
+    this.deltaPercentChange.lastValues = this.getPercentActiveValues(); // for comparing changes in inputs
+    this.deltaPercentChange.loged = [false,false,false,false,false,false,false];
+    this.deltaPercentChange.prevousMillis = 0;
   }
 
   save() {
@@ -111,13 +114,20 @@ class Parameters {
   }
 */
   newLogSession(view) {
-    if (logingData) {
       this.timeElapsed = Date.now()
       let n = Date.now()
-      this.thisSession = { 'start': n, 'duration': 0, 'totalMovements': 0, 'viewNumber': view, 'log': { '0': {}, '1': {}, '2': {}, '3': {}, '4': {} }, 'metric': "none", 'metricValue': 0 }
+      this.thisSession = {'loging': false,'start': n, 'duration': 0, 'totalMovements': 0, 'viewNumber': view, 'log': { '0': {}, '1': {}, '2': {}, '3': {}, '4': {} }, 'metric': "none", 'metricValue': 0 }
       // console.log("local storage" + this.sessionKeys)
-    }
   }
+
+  resetLogs() {
+      this.thisSession.loging = false;
+      this.thisSession = null;
+  }
+
+  enableLogingSave() {
+    this.thisSession.loging = true;
+}
 /*
   saveSessionKeys(newKeys) {
     console.log("saveSessionKeys")
@@ -142,29 +152,22 @@ class Parameters {
   }
 */
   logdata(sensorValues) {
-    if (logingData && this.thisSession.start != null) {
+    if (this.thisSession.start != null) {
       let millis = this.timeElapsed - this.thisSession.start
       sensorValues.forEach((value, index) => {
         this.thisSession.log[index].push(value)
-        // todo: find more effiecient way of storing empty values
       })
       this.thisSession.time.push(millis)
     }
   }
 
-  logDataSparse(index, value) {
-    let millis = Date.now()
-    if (millis > this.timeElapsed + 100) {
-      // log data if 200 milis elapsed
-      let timeStamp = millis - this.thisSession.start
+  logDataSparse(index, value, timeStamp) {
       this.thisSession.log[index.toString()][timeStamp.toString()] = value;
-      this.timeElapsed = millis
-    }
   }
 
   logSpeedResult(speedTime) {
-    if (logingData && this.thisSession.start != null) {
-      let millis = this.timeElapsed - this.thisSession.start
+    if (this.thisSession.start != null) {
+     // let millis = this.timeElapsed - this.thisSession.start
       this.thisSession.metric = "speedTest"
       this.thisSession.metricValue = speedTime
     }
@@ -214,15 +217,15 @@ class Parameters {
   getSessionData() {
     console.log("session complete")
     //let Storage = window.localStorage;
-    if (this.thisSession != null) {
+    if (this.thisSession != null && this.thisSession.loging == true) {
       console.log(this.thisSession)
       let millis = this.timeElapsed - this.thisSession.start
       this.thisSession.duration = millis
       //todo: add count of total activations and maximum preasure
-      if (this.thisSession.log[0].length > 10) {
+     // if (this.thisSession.log[0].length > 10) {
       //only save session if there are at least 20 entries in log
       return this.thisSession
-      }
+     // }
     }
     return null
   }
@@ -307,18 +310,37 @@ class Parameters {
     return this.deviceProfile[Object.keys(this.deviceProfile)[i]].max
   }
 
+  
   setSensorValues(sensorValues) {
     this.sensorValues = sensorValues;
     if (this.sensorValues != null) {
-      const millis = Date.now()
       //let checkThreshold = false
       let percentValues = this.getPercentActiveValues()
-      for (let i = 0; i < percentValues.length; i++) {
-
-        if (percentValues[i] >= 30) {
-          // checkThreshold = true
-          this.logDataSparse(i, percentValues[i]);
+      let millis = Date.now()
+      const interval = 50;
+      const nominalChange = 6
+      if (millis > this.timeElapsed + interval) {
+        let timeStamp = millis - this.thisSession.start;
+        this.timeElapsed = millis;
+        for (let i = 0; i < percentValues.length; i++) {
+          if (Math.abs(percentValues[i]-this.deltaPercentChange.lastValues[i]) >= nominalChange) {
+            // log data if interval over 
+  
+            if (this.deltaPercentChange.loged[i] == false)  {
+                        // log the last value too. 
+              this.logDataSparse(i, this.deltaPercentChange.lastValues[i], this.deltaPercentChange.prevousMillis);
+            }
+            this.logDataSparse(i, percentValues[i], timeStamp);
+            this.deltaPercentChange.loged[i] = true;
+          } else if (this.deltaPercentChange.loged[i] == true) {
+            // log one more value after each log event
+            this.logDataSparse(i, percentValues[i], timeStamp);
+            this.deltaPercentChange.loged[i] = false;
+          }
         }
+        this.deltaPercentChange.lastValues = percentValues;
+     
+        this.deltaPercentChange.prevousMillis = timeStamp;
       }
       // log data if we reach peak of sensor press and 80 milis elapsed
       // const millis = Date.now()

@@ -16,13 +16,11 @@ let ons = require('onsenui')
 ons.disableIconAutoPrefix() // Disable adding fa- prefix automatically to ons-icon classes. Useful when including custom icon packs.
 ons.platform.select("ios")
 let blehandler
-let currentView = 1
 let calibrationGUI
 let currentPage
 let WEBGL = false
 let params
 let PFIVE
-let userStats
 let mobileDevice = false
 
 class GUIInterface {
@@ -107,22 +105,25 @@ document.addEventListener("init", DOMContentLoadedEvent, false)
 function DOMContentLoadedEvent() {
     // run function after every dom content load
     // check for  p5-containerafter onsen UI dom change
-    const containerElement = document.getElementById('p5-container')
-    if (containerElement) {
-        PFIVE = new P5(defineSketch({ "viewNumber": currentView, "blehandler": blehandler, "params": params, "tone": Tone, "WEGL3D": WEBGL }), containerElement)
-    }
-    let ctx = document.getElementById('myChart')
-    if (ctx) {
-        console.log("found graph")
+ 
+    let chart = document.getElementById('myChart')
+    if (chart) {
+        // handling graph creation
         const promise = getStatisticsHistogram(currentPage.index);
         promise.then((snapshot) => {
            if (snapshot.exists()) {
                let data = snapshot.val()
-               userStats = new Stats(ctx, data)
+               console.log(data);
+               const userStats = new Stats(chart, data)
                // expected output: "Success!"
              } else {
                console.log("No data available");
            }});
+    } else {
+        const containerElement = document.getElementById('p5-container')
+        if (containerElement) {
+            PFIVE = new P5(defineSketch({ "viewNumber": currentPage.view, "blehandler": blehandler, "params": params, "tone": Tone, "WEGL3D": WEBGL }), containerElement)
+        }
     }
 
 }
@@ -228,33 +229,48 @@ export function pushPage(page, anim) {
     } else {
         WEBGL = false
     }
-    currentView = page.view;
     currentPage = page
     console.log("set view" + page.title)
     //
 }
 export function backButton() {
-    document.querySelector('#myNavigator').popPage()
-    if (typeof calibrationGUI != "undefined") {
-        calibrationGUI.removeGui()
-     }
+
+    // document.querySelector('#myNavigator').pushPage({'id':'canvas.html', 'view':0, 'title':'Sensor Histogram'})
+
+  
+    let key = 0;
     let lastEntry = params.getSessionData();
     if (lastEntry != null) {
-        console.log("database save")
-        appendStatisticsFB(lastEntry) 
+        console.log("saveing... ")
+        key = lastEntry.start
+        // chaining promises of all database actions 
+        appendStatisticsFB(lastEntry).then(() => {
+            return writeToFB(params.getDeviceProfileJson())
+        }).then(() => {
+            console.log("saved to db")
+            params.resetLogs()
+            currentPage = {'id':'graph.html', 'title':'graph', 'index':key, 'view':key}
+            document.querySelector('#myNavigator').replacePage('graph.html')
+            //document.querySelector('#myNavigator').popPage()
+        })
+        //document.querySelector('#myNavigator').replacePage('graph.html')
+       // document.querySelector('#myNavigator').popPage()
+    } else {
+        console.log("no database save!")
+        if (typeof calibrationGUI != "undefined") {
+             calibrationGUI.removeGui()
+         }
+        document.querySelector('#myNavigator').popPage()
     }
-    writeToFB(params.getDeviceProfileJson())
     defineSketch({ "remove": true })
 }
+
 export function signOutFireBase() {
     signOutFB();
 }
 export function changeButton() {
     document.getElementById('segment').setActiveButton(1)
 }
-
-
-
 
 
 

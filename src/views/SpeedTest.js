@@ -1,10 +1,10 @@
 import P5 from 'p5'
 require('../index.js')
 import View from './View'
-import TextBox from './utils/TextBox'
-import tofi from './utils/tofiVisualiser'
+import TextBox from './viewUtils/TextBox'
+import tofi from './viewUtils/tofiVisualiser'
 import * as EntryPoint from "../index"
-import { createMachine } from './utils/StateMachine.js'
+import { createMachine } from './viewUtils/StateMachine.js'
 
 
 class SpeedTest extends View {
@@ -148,7 +148,7 @@ class SpeedTest extends View {
                         binding.addBtn(function () {
                             let state = this.statesMachineNew.value
                             state = this.statesMachineNew.transition(state, 'next')
-                        }.bind(binding), "start")
+                        }.bind(binding), "Start")
                         console.log('intro: onEnter')
                     },
                     onExit() {

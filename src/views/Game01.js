@@ -1,9 +1,9 @@
 // import 'p5/lib/addons/p5.sound'
-import Note from './utils/Note'
+import Note from './viewUtils/Note'
 import View from './View'
-import Tofi from './utils/tofiVisualiser'
-import TextBox from './utils/TextBox'
-import { createMachine } from './utils/StateMachine.js'
+import Tofi from './viewUtils/tofiVisualiser'
+import TextBox from './viewUtils/TextBox'
+import { createMachine } from './viewUtils/StateMachine.js'
 import * as EntryPoint from "../index";
 
 // a simple version of the "Simon" audio game using the Tofi Trainer
@@ -24,7 +24,7 @@ class Game01 extends View {
         this.sequenceCorrectSofar = true
         // states
         this.statesMachineNew = this.stateMachine();
-        this.p.colorMode(this.p.HSB)
+       // this.p.colorMode(this.p.HSB)
         this.textBox = new TextBox(this.p,'Please put your TOFI-TRAINER on',0,0,p.width/2,p.height/2)
         this.tofiTrainer = new Tofi(p,.5, .60, p.width*0.8, p.height*0.8, this.params, this.Tone)
         this.tofiTrainer.hideSensors()
@@ -34,7 +34,8 @@ class Game01 extends View {
         this.addBtn(function(){
             let state = this.statesMachineNew.value
             state = this.statesMachineNew.transition(state, 'next')
-        }.bind(this),"Play Simon")
+            params.enableLogingSave()
+        }.bind(this),"Start")
         this.threshold  = 0.90 // important, this is the mimum power required to set off note 
     }
 

@@ -1,8 +1,8 @@
 import P5 from 'p5'
 import View from './View'
-import TiltBoard from "./utils/TiltBoard.js";
-import TextBox from "./utils/TextBox";
-import { addBtn } from "./utils/DomButton.js";
+import TiltBoard from "./viewUtils/TiltBoard.js";
+import TextBox from "./viewUtils/TextBox";
+import { addBtn } from "./viewUtils/DomButton.js";
 import { Player } from 'tone';
 import { pushPage } from '..';
 
@@ -19,13 +19,12 @@ class Game05 extends View {
         let font = this.p.loadFont('./css/fonts/inconsolata.otf');
         this.p.textFont(font);
         this.timer = this.p.millis() + 7000
-        /*
+      
         addBtn(function(){
             this.timer = this.p.millis() + 7000
             this.textBox.setText(this.messages[this.messageNo])
-
-        }.bind(this),"I am ready!")
-        */
+            params.enableLogingSave()
+        }.bind(this),"Start")
         this.winningtimer = 0;
     }
 

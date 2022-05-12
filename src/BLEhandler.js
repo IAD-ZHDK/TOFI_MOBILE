@@ -1,7 +1,7 @@
 import P5 from 'p5'
 import P5ble from 'p5ble'
 import { pushPage } from './index.js' 
-import {map, constrain, moveingWeightedAverageArray} from './views/utils/MathUtils'
+import {map, constrain, moveingWeightedAverageArray} from './views/viewUtils/MathUtils'
 let that
 class BLEhandler {
   constructor (params) {

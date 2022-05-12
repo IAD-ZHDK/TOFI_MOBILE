@@ -1,6 +1,6 @@
 import P5 from 'p5'
 import View from './View'
-import tofi from './utils/tofiVisualiser'
+import tofi from './viewUtils/tofiVisualiser'
 
 // sandbox 
 

@@ -35,15 +35,15 @@ var firebaseui = require('firebaseui');
 var ui = new firebaseui.auth.AuthUI(auth);
 
 
-export function writeToFB(deviceData) {
+export async function writeToFB(deviceData) {
     // overwrites existing data
     const db = getDatabase();
     const writeRef = ref(db, 'users/' + uid+ '/data');
-    set(writeRef, {
+    return set(writeRef, {
         deviceData,
     });
 }
-export function appendStatisticsFB(data) {
+export async function appendStatisticsFB(data) {
     // adds existing data
     const db = getDatabase();
     /*
@@ -58,7 +58,7 @@ export function appendStatisticsFB(data) {
     updates[ 'users/' + uid + '/statistics/histogram/'+data.start] = data;
     updates[ 'users/' + uid + '/statistics/log/'+data.start] = log;
   
-    update(ref(db), updates);
+   return update(ref(db), updates);
 }
 
 export function createLoginFB() {
@@ -192,6 +192,7 @@ export async function getStatisticsLogs() {
 export async function getStatisticsHistogram(timeStamp) {
     const dbRef = ref(getDatabase());
     const response = get(child(dbRef, `users/${uid}/statistics/histogram/`+timeStamp))
+
     return response
 }
 

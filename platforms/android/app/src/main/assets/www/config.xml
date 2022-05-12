@@ -7,7 +7,7 @@
     <author email="dev@cordova.apache.org" href="http://cordova.io">
         Apache Cordova Team
     </author>
-    <content src="index.html" />
+    <content src="http://10.130.128.255:8080" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -24,6 +24,6 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <platform name="browser">
-        <hook type="after_build" src="hooks/after_build/010_copy_browser_to_docs.js" />
+        <hook src="hooks/after_build/010_copy_browser_to_docs.js" type="after_build" />
     </platform>
 </widget>

@@ -61,7 +61,6 @@ const CHART_COLORS = getColorPallet();
 class Stats {
     constructor(ctx, data) {
         let touchCount = 0;
-        // let data = params.loadLocal(index)
         const dsColor = 'rgb(255, 99, 132)'
 
         let maxPower = 0;
@@ -70,19 +69,6 @@ class Stats {
         let newSensorValues = [];
         let chanelNumbers = [];
         let timeStamps = [];
-
-        let index = 0;
-        // construct new timeline 
-        /*
-        for (const [key, subArray] of Object.entries(sensorValues)) {
-            chanelNumbers[index] = key
-            newSensorValues[index] = new Array()// create blank 2d array
-            for (const [key,] of Object.entries(subArray)) {
-                timeStamps.push(parseInt(key));
-            }
-            index++;
-        }
-        */
         let i = 0;
         for (const [key, subArray] of Object.entries(sensorValues)) {
             if (typeof key !== 'undefined') {
@@ -109,14 +95,7 @@ class Stats {
                 }
                 i++;
             }
-            //  index++;
         }
-        let timeIncrements = 100;
-        //  let totalSteps = data.duration / timeIncrements;
-
-        //for (let i = 0; i < totalSteps; i++) {
-        //    timeStamps.push(i * timeIncrements);
-        // }
         timeStamps = [...new Set(timeStamps)];
         timeStamps.sort(function (a, b) {
             return a - b;
@@ -124,36 +103,8 @@ class Stats {
         for (let i = 0; i < timeStamps.length; i++) {
             timeStamps[i] = msToM_S_MS(timeStamps[i]);
         }
-        // reconstruct array. 
 
-        /*
-        for (let i = 0; i < timeStamps.length; i++) {
-            let index = 0;
-            let lastValue = 0;
-            for (const [, subArray] of Object.entries(sensorValues)) {
-                let newValue = 0;
-                for (const [key, value] of Object.entries(subArray)) {
-                    if (parseInt(key) == timeStamps[i]) {
-                        newValue = value;
-                    }
-                }
-                newSensorValues[index].push(newValue);
-                // track max power 
-                if (newValue > maxPower) {
-                    maxPower = newValue
-                }
-                // count peaks
-                if (newValue <= 10 && lastValue > 0) {
-                    touchCount++;
-                    lastValue = 0
-                }
-                if (newValue >= 30) {
-                    lastValue = newValue;
-                }
-                index++;
-            }
-        }
-*/
+
         let noSensors = newSensorValues.length
 
         let sensorDatasets = []
@@ -168,9 +119,6 @@ class Stats {
             }
         }
 
-        //const totalDuration = 2000;
-        //const delayBetweenPoints = totalDuration / sensorValues[0].length;
-        //const previousY = (ctx) => ctx.index === 0 ? ctx.chart.scales.y.getPixelForValue(100) : ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;
         let myChart = new Chart(ctx, {
             type: 'line',
             data: {

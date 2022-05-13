@@ -71,7 +71,7 @@ class Parameters {
       this.save();
     }
     this.deltaPercentChange = {}
-    this.deltaPercentChange.lastValues = this.getPercentActiveValues(); // for comparing changes in inputs
+    this.deltaPercentChange.lastValues = [0, 0, 0, 0, 0, 0]; // for comparing changes in inputs
     this.deltaPercentChange.loged = [false, false, false, false, false, false, false];
     this.deltaPercentChange.prevousMillis = 0;
   }
@@ -187,7 +187,7 @@ class Parameters {
       for (const [key, subArray] of Object.entries(this.thisSession.log)) {
         totalLogEvents += Object.keys(subArray).length
       }
-    } q
+    } 
     if (this.thisSession != null && this.thisSession.loging == true && totalLogEvents >= 5) {
       console.log(this.thisSession)
       let millis = this.timeElapsed - this.thisSession.start

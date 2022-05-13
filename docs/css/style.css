@@ -6,20 +6,24 @@
 }
 
 
-/* basic set up for p5js full screen */
-canvas {
-  display: block;
+
+:root {
+    --c0: #71C7AA;
+    --c1: #CFBF5F;
+    --c2: #42B2DF;
+    --c3: #7B61FF;
+    --c4: #B83992;
+    --c5: #0F0D31;
+    --c6: #10C5C1;
+    --c7: #2D2D64;
 }
 
-body {
-   /* background: linear-gradient(180deg, #33a9a7 0%, #503478 100%); */
-   background: black;
-   width: 100%;
-   height: 100%;
-   margin: 0;
-   padding: 0;
 
- }
+/* basic set up for p5js full screen */
+canvas {
+    display: block;
+}
+
 
 .dg.ac {
     z-index: 1000 !important;
@@ -31,12 +35,13 @@ backButton {
     top: 5px;
     left: 5px;
     width: auto;
-    height:auto;
+    height: auto;
     color: white;
     font-size: 10pt;
     line-height: 5pt;
     padding: 6px 6px 6px 6px;
-    background: #10C5C1;;
+    background: #10C5C1;
+    ;
     opacity: 1;
     z-index: 10000;
 }
@@ -47,13 +52,25 @@ backButton:hover {
 
 #splashscreen {
     z-index: 10000 !important;
-    position: absolute;
+    position: relative;
+    width: 100%;
+    height: 100%;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
     overflow: hidden;
-    background: linear-gradient(180deg, #00205b 0%, #FF3F6D 100%);
+    background-color: #0F0D31;
+}
+
+#logo {
+    background-image: url("../img/logo.png");
+    width: 30%;
+    height: 30%;
+    margin: auto;
+    visibility: hidden;
+    background-position: center;
+    background-repeat: no-repeat, no-repeat;
 }
 
 #p5-container {
@@ -63,8 +80,9 @@ backButton:hover {
 .chart-container {
     position: relative;
     margin: auto;
-    height: 80vh;
-    width: 80vw;
+    margin-top: 10vh;
+    height: 50vh;
+    width: 100%;
 }
 
 .page__background {
@@ -85,10 +103,11 @@ backButton:hover {
     line-height: 0%;
     font-size: 14px;
 }
+
 .tabbar__label {
     color: #ffffff;
     height: 100%;
-    font-size:14px;
+    font-size: 14px;
     line-height: 60%;
     margin-top: 2%;
     margin-bottom: 3%;
@@ -101,7 +120,7 @@ backButton:hover {
     /*background-color: #0F0D31*/
 }
 
-.responsiveMenu{
+.responsiveMenu {
     padding: 10px;
 }
 
@@ -132,7 +151,8 @@ backButton:hover {
     z-index: 100;
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, #2D2D64 0%, #000000 100%);
+    background-color: #0F0D31;
+    /*background: linear-gradient(180deg, #2D2D64 0%, #000000 100%); */
     /*background-image: url("../img/MnyxU.gif");*/
     background-repeat: no-repeat;
     background-position: center;
@@ -140,6 +160,175 @@ backButton:hover {
 
 
 @media only screen and (min-width: 768px) {
-    .responsiveMenu { padding: 10px; padding-top: 15px;  width: 50%; margin: auto;}
+    .responsiveMenu {
+        padding: 10px;
+        padding-top: 15px;
+        width: 50%;
+        margin: auto;
+    }
 }
 
+
+
+* {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+}
+
+body {
+    -webkit-touch-callout: none;
+    /* prevent callout to copy image, etc when tap to hold */
+    -webkit-text-size-adjust: none;
+    /* prevent webkit from resizing text to fit */
+    -webkit-user-select: none;
+    /* prevent copy paste, to allow, change 'none' to 'text' */
+    background-color: #E4E4E4;
+    font-family: system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 20px;
+    /* Padding to avoid the "unsafe" areas behind notches in the screen */
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+    width: 100%;
+    /* background: linear-gradient(180deg, #33a9a7 0%, #503478 100%); */
+    background: black;
+    height: 100%;
+    margin: 0;
+}
+
+/* Portrait layout (default) */
+.app {
+    background: url(../img/logo.png) no-repeat center top;
+    /* 170px x 200px */
+    position: absolute;
+    /* position in the center of the screen */
+    left: 50%;
+    top: 50%;
+    height: 50px;
+    /* text area height */
+    width: 225px;
+    /* text area width */
+    text-align: center;
+    padding: 180px 0px 0px 0px;
+    /* image height is 200px (bottom 20px are overlapped with text) */
+    margin: -115px 0px 0px -112px;
+    /* offset vertical: half of image height and text area height */
+    /* offset horizontal: half of text area width */
+}
+
+/* Landscape layout (with min-width) */
+@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
+    .app {
+        background-position: left center;
+        padding: 75px 0px 75px 170px;
+        /* padding-top + padding-bottom + text area = image height */
+        margin: -90px 0px 0px -198px;
+        /* offset vertical: half of image height */
+        /* offset horizontal: half of image width and text area width */
+    }
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: normal;
+    margin: 0px;
+    overflow: visible;
+    padding: 0px;
+    text-align: center;
+}
+
+.event {
+    border-radius: 4px;
+    color: #FFFFFF;
+    font-size: 12px;
+    margin: 0px 30px;
+    padding: 2px 0px;
+}
+
+.event.listening {
+    background-color: #333333;
+    display: block;
+}
+
+.event.received {
+    background-color: #4B946A;
+    display: none;
+}
+
+
+#deviceready.ready .event.listening {
+    display: none;
+}
+
+#deviceready.ready .event.received {
+    display: block;
+}
+
+@keyframes fade {
+    from {
+        opacity: 1.0;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+    to {
+        opacity: 1.0;
+    }
+}
+
+.blink {
+    animation: fade 3000ms infinite;
+    -webkit-animation: fade 3000ms infinite;
+}
+
+.blink {
+    animation: fade 3000ms infinite;
+    -webkit-animation: fade 3000ms infinite;
+}
+/*
+h3 {
+    color: #fff;
+    margin-left: -10vh;
+}
+
+h3:before {
+    font-family: FontAwesome;
+    color: #fff;
+    font-size: 20px;
+    content: "\f111";
+}
+*/
+.dateBlock {
+    padding-left: 4ch;
+    position:relative
+    /* lines */
+    /* adjust manually */
+}
+
+.dateBlock:after {
+    /* bullets */
+    background-color:white;
+    border-radius: 50%;
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0ch;
+    width: 2ch;
+    height: 2ch;
+}
+
+.dateBlock:before {
+    /* lines */
+    content:"";
+    position: absolute;
+    left: 0.9ch; /* adjust manually */
+    border-left: .2ch solid white;
+    height: 100%;
+    width: .1ch;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+    body {
+        background-color: #0F0D31;
+    }
+}

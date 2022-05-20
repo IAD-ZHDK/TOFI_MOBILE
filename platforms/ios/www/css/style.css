@@ -15,7 +15,7 @@
     --c4: #B83992;
     --c5: #0F0D31;
     --c6: #10C5C1;
-    --c7: #2D2D64;
+    --c7: #2E297C;
 }
 
 
@@ -40,7 +40,7 @@ backButton {
     font-size: 10pt;
     line-height: 5pt;
     padding: 6px 6px 6px 6px;
-    background: #10C5C1;
+    background: var(--c6);
     ;
     opacity: 1;
     z-index: 10000;
@@ -51,6 +51,7 @@ backButton:hover {
 }
 
 #splashscreen {
+    text-align: center;
     z-index: 10000 !important;
     position: relative;
     width: 100%;
@@ -60,15 +61,16 @@ backButton:hover {
     bottom: 0;
     right: 0;
     overflow: hidden;
-    background-color: #0F0D31;
+    background-color: var(--c5);
+    padding-top: 10%;
 }
 
 #logo {
-    background-image: url("../img/logo.png");
-    width: 30%;
-    height: 30%;
+    background-image: url("../img/tofi.svg");
+    background-size: 100%;
+    width: 10vh;
+    height: 10vh;
     margin: auto;
-    visibility: hidden;
     background-position: center;
     background-repeat: no-repeat, no-repeat;
 }
@@ -86,12 +88,12 @@ backButton:hover {
 }
 
 .page__background {
-    background-color: #0F0D31;
+    background-color:var(--c5);
     /*background: linear-gradient(180deg, #2D2D64 0%, #000000 100%); !important;*/
 }
 
 .tabbar {
-    background-color: #0F0D31;
+    background-color: var(--c5);
     height: auto;
 }
 
@@ -115,9 +117,15 @@ backButton:hover {
 
 
 .button {
-    background-color: #2E297C;
+    background-color: var(--c6);;
     cursor: pointer;
-    /*background-color: #0F0D31*/
+    /*background-color:var(--c5)*/
+}
+
+.button[modifier="large"] {
+    background-color: var(--c7);
+    cursor: pointer;
+    /*background-color:var(--c5)*/
 }
 
 .responsiveMenu {
@@ -125,7 +133,7 @@ backButton:hover {
 }
 
 .circle-icon {
-    background: #2E297C;
+    background: var(--c7);
     border-radius: 50%;
     text-align: center;
     line-height: 60px;
@@ -135,8 +143,8 @@ backButton:hover {
 }
 
 .card {
-    background-color: #2E297C;
-    /*background-color: #0F0D31*/
+    background-color: var(--c7);
+    /*background-color: var(--c5)*/
 }
 
 
@@ -151,7 +159,7 @@ backButton:hover {
     z-index: 100;
     width: 100%;
     height: 100%;
-    background-color: #0F0D31;
+    background-color: var(--c5);
     /*background: linear-gradient(180deg, #2D2D64 0%, #000000 100%); */
     /*background-image: url("../img/MnyxU.gif");*/
     background-repeat: no-repeat;
@@ -299,7 +307,7 @@ h3:before {
 }
 */
 .dateBlock {
-    padding-left: 4ch;
+    padding-left: 4vw;
     position:relative
     /* lines */
     /* adjust manually */
@@ -312,19 +320,19 @@ h3:before {
     content: " ";
     position: absolute;
     top: 0;
-    left: 0ch;
-    width: 2ch;
-    height: 2ch;
+    left: 0vw;
+    width: 20px;
+    height: 20px;
 }
 
 .dateBlock:before {
     /* lines */
     content:"";
     position: absolute;
-    left: 0.9ch; /* adjust manually */
-    border-left: .2ch solid white;
+    left: 9px; /* adjust manually */
+    border-left: 2px solid white;
     height: 100%;
-    width: .1ch;
+    width: 2px;
 }
 
 @media screen and (prefers-color-scheme: dark) {

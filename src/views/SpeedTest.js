@@ -1,11 +1,9 @@
 import P5 from 'p5'
-require('../index.js')
 import View from './View'
 import TextBox from './viewUtils/TextBox'
 import tofi from './viewUtils/tofiVisualiser'
-import * as EntryPoint from "../index"
 import { createMachine } from './viewUtils/StateMachine.js'
-
+import { addBtn } from "./viewUtils/DomButton.js";
 
 class SpeedTest extends View {
 
@@ -15,18 +13,18 @@ class SpeedTest extends View {
         this.statesMachineNew = this.stateMachine();
         this.totalSensors = this.params.getNoActive()
         this.currentSensor = 0
-        this.textBox = new TextBox(this.p,'Please put your TOFI-TRAINER on',this.p.width/2, this.p.height*.1,p.width*0.4,p.height*0.5)
+        this.textBox = new TextBox(this.p,'Press start when you are ready',this.p.width/2, this.p.height*.1,p.width*0.4,p.height*0.5)
         this.counter = 0
         // speed
         this.speedTotal  = 0;
-        this.totalTouches  = 10;
+        this.totalTouches  = 20;
         this.remaningTouches  = this.totalTouches ;
         this.tofiTrainer = new tofi(p,0.5, 0.5, p.width,p.height*0.6, this.params, this.Tone)
-        this.addBtn(function(){
+        addBtn(function(){
             //this.statesMachine.dispatch('next')
             let state = this.statesMachineNew.value
             state = this.statesMachineNew.transition(state, 'next')
-        }.bind(this),"Speed Test")
+        }.bind(this),"Start")
     }
 
     draw () {
@@ -35,8 +33,6 @@ class SpeedTest extends View {
             this.intro()
         } else if (this.statesMachineNew.value === 'speed') {
             this.speed()
-        } else if (this.statesMachineNew.value === 'sandBox') {
-            this.sandBox()
         } else {
             this.feedBack()
         }
@@ -47,13 +43,8 @@ class SpeedTest extends View {
         this.tofiTrainer.resize(0.5, 0.5, this.p.width, this.p.height * 0.6)
     }
 
-
-    sandBox() {
-        this.textBox.display()
-        this.tofiTrainer.display()
-    }
     intro() {
-        this.p.fill(255);
+    
         this.textBox.display()
         this.tofiTrainer.display()
     }
@@ -66,7 +57,7 @@ class SpeedTest extends View {
             let state = this.statesMachineNew.value
             state = this.statesMachineNew.transition(state, 'next')
         } else {
-            let threshold = 0.8
+            let threshold = 0.85
             let currentSensorValue = this.params.getNormalisedActive(this.currentSensor)
             if (currentSensorValue > threshold) {
                 if (this.remaningTouches === this.totalTouches) {
@@ -102,50 +93,19 @@ class SpeedTest extends View {
         this.tofiTrainer.display(this.currentSensor)
     }
 
-    addBtn(callback, label) {
-        const containerElement = document.getElementById('p5-container')
-        let div = document.createElement("div");
-        div.style.cssText = 'position:absolute; top:90%; left:50%; transform:translate(-50%, -50%);'
-        let btn = document.createElement("ons-button")
-        btn.innerHTML = label
-        btn.onclick = function () {
-            containerElement.removeChild(div)
-            callback()
-        }.bind(this);
-        div.appendChild(btn);
-        containerElement.appendChild(div)
-    }
-
 
     stateMachine() {
         let binding = this
         const FSM = createMachine({
-            initialState: 'sandBox',
-            sandBox: {
-                actions: {
-                    onEnter() {
-                        console.log('sandBox: onEnter')
-                    },
-                    onExit() {
-                        console.log('sandBox: onExit')
-                    },
-                },
-                transitions: {
-                    next: {
-                        target: 'intro',
-                        action() {
-                            console.log('transitionig to intro')
-                        },
-                    },
-                },
-            },
+            initialState: 'intro',
+        
             intro: {
                 actions: {
                     onEnter() {
                         binding.remaningTouches  = binding.totalTouches
                         binding.counter = binding.p.millis()
-                        binding.textBox.setText('Move your tongue to the target indicated as fast as possible.')
-                        binding.addBtn(function () {
+                        binding.textBox.setText('Press start when you are ready')
+                        addBtn(function () {
                             let state = this.statesMachineNew.value
                             state = this.statesMachineNew.transition(state, 'next')
                         }.bind(binding), "Start")
@@ -178,7 +138,7 @@ class SpeedTest extends View {
                     next: {
                         target: 'feedback',
                         action() {
-                            console.log('transition to sandBox')
+                            console.log('transition to feedback')
                         },
                     },
                 },
@@ -186,14 +146,14 @@ class SpeedTest extends View {
             feedback: {
                 actions: {
                     onEnter() {
-                
                         binding.tofiTrainer.display(0,1,2,3,4,5)
                         let average = binding.speedTotal / binding.totalTouches  // millis
                         average = average/1000 // seconds
                         let rounded = Math.round((average + Number.EPSILON) * 100) / 100;
                         binding.params.logSpeedResult(rounded);
+                        binding.params.enableLogingSave();
                         binding.textBox.setText('your average speed was: '+rounded+' seconds')
-                        binding.addBtn(function () {
+                        addBtn(function () {
                             let state = this.statesMachineNew.value
                             state = this.statesMachineNew.transition(state, 'next')
                         }.bind(binding), "repeat speed test")
@@ -216,7 +176,7 @@ class SpeedTest extends View {
                 actions: {
                     onEnter() {
                         binding.textBox.setText('Move your tongue to the areas indicated')
-                        binding.addBtn(function () {
+                        addBtn(function () {
                             let state = this.statesMachineNew.value
                             state = this.statesMachineNew.transition(state, 'next')
                         }.bind(binding), "next")

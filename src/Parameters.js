@@ -127,29 +127,6 @@ class Parameters {
   enableLogingSave() {
     this.thisSession.loging = true;
   }
-  /*
-    saveSessionKeys(newKeys) {
-      console.log("saveSessionKeys")
-      let key = this.cookieID
-      let Storage = window.localStorage
-      if (typeof newKeys === "undefined") {
-        console.log("add to old keys:" + this.thisSession.start)
-        console.log("sessionKeys:" + this.sessionKeys)
-        // create a list of all previous sessions
-        if (this.sessionKeys !== null && this.sessionKeys !== '' && this.sessionKeys !== 'undefined') {
-          this.sessionKeys.push(this.thisSession.start)
-        } else {
-          this.sessionKeys = [1]
-          this.sessionKeys[0] = this.thisSession.start
-        }
-        // add new sessionkey
-        Storage.setItem(key, JSON.stringify(this.sessionKeys))
-      } else {
-        console.log("replace keys")
-        Storage.setItem(key, JSON.stringify(newKeys))
-      }
-    }
-  */
   logdata(sensorValues) {
     if (this.thisSession.start != null) {
       let millis = this.timeElapsed - this.thisSession.start

@@ -122,7 +122,7 @@ class TiltBoard {
     this.p = p;
     this.width = width;
     this.height = height;
-    this.gameState = "intro";
+    this.gameState = "setup";
     this.objectSetup();
     this.soundSetup(Tone);
     this.inputThreshold = 0.2;
@@ -518,7 +518,13 @@ class TiltBoard {
   generateWinningArea() {
     // check collisions 
     let coliding = false
+    let tryCount = 0;
     do {
+      tryCount++;
+      if (tryCount>40) {
+        this.initializeGame();
+        break;
+      }
       console.log("try new winning area")
       coliding = false;
       // make sure winning area is never too close to midle 

@@ -99,10 +99,15 @@ class Meta {
     }
     let averagePos = this.p.createVector(0, 0);
     for (let i = 0; i < this.balls.length; i++) {
-      this.balls[i].addXamp((modifier[3] + modifier[4]) * (this.width))
-      this.balls[i].addYamp((modifier[2] + modifier[4]) * (this.height))
-      this.balls[i].addRadius(modifier[1])
-      this.balls[i].addSpeed(modifier[0] * 0.5)
+      //    2
+      //    3
+      //    
+      //    1
+      // 0    4
+      this.balls[i].addXamp((modifier[0] + modifier[4]) * (this.width)*0.6)
+      this.balls[i].addYamp((modifier[1] + modifier[3]) * (this.height)*0.6)
+      this.balls[i].addRadius(modifier[2]*(this.width+this.height)*20)
+      this.balls[i].addSpeed(modifier[2] * 0.03)
       this.balls[i].update()
       averagePos.add(this.balls[i].x, this.balls[i].y)
     }
@@ -112,15 +117,12 @@ class Meta {
     for (const ball of this.balls) {
       ballsUniformArray.push((ball.x + centerW))
       ballsUniformArray.push((ball.y + centerH))
-      ballsUniformArray.push(ball.r * 100)
+      ballsUniformArray.push(ball.r)
     }
     this.metaballsShader.setUniform("dim", [this.width, this.height]);
     this.metaballsShader.setUniform(`balls`, ballsUniformArray)
     this.render()
-    this.p.image(this.pg, 0, 0)
-
-
-
+ 
     //// Sound Control Parameters
     for (let n = 0; n < this.smoothedInputs.length; n++) {
       this.smoothInputs(modifier[n], n);
@@ -138,11 +140,11 @@ class Meta {
     this.pingpongDelay3.feedback.value = 0.3 + this.p.constrain(this.smoothedInputs[1], 0, 0.3);
 
     Tone.Transport.bpm.value = 50 + this.smoothedInputs[0] * 100;
-
+    return this.pg
   }
 
   smoothInputs(inputValue, inputNumber) {
-    this.smoothedInputs[inputNumber] = this.smoothedInputs[inputNumber] * this.balls[0].ballInertia + inputValue * (1 - this.balls[0].ballInertia);
+    this.smoothedInputs[inputNumber] = this.smoothedInputs[inputNumber] * this.balls[0].smoothingFactor + inputValue * (1 - this.balls[0].smoothingFactor);
     this.p.constrain(this.smoothedInputs[inputNumber], 0, 1);
   }
 
@@ -272,7 +274,7 @@ class Meta {
     this.params.toneObjects.push(this.volArp);
     this.params.toneObjects.push(this.volFX);
 
-   
+
     //
 
 

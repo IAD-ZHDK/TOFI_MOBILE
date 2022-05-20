@@ -7,7 +7,7 @@ import CalibrationGUI from './CalibrationGUI'
 import Stats from './Stats.js'
 import statisticsMenu from './StatsMenu.js'
 
-import {signOutFB, appendStatisticsFB, writeToFB, createLoginFB, getStatisticsLogs, getStatisticsHistogram} from "./CloudStorage.js";
+import { signOutFB, appendStatisticsFB, writeToFB, createLoginFB, getStatisticsLogs, getStatisticsHistogram } from "./CloudStorage.js";
 
 import * as Tone from 'tone'
 let ons = require('onsenui')
@@ -40,12 +40,12 @@ function onDeviceReady() {
     params = Parameters // myBLE.id // handles storage for paremeters for interpreting sensor values
     blehandler = new BleSimulator(params)
     document.addEventListener("click", HIDsetup, false);
- 
-    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+      // this line can be uncommented to junp to a view during development 
+    //EntryPoint.pushPage({'id':'canvas.html', 'view':9, 'title':'tilt', 'WEBGL':true})
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         // true for mobile device
         mobileDevice = true;
-      }
-        // fal
+    }
 }
 
 // splash and loading screen
@@ -79,7 +79,10 @@ document.addEventListener('keydown', function (event) {
             blehandler.setSensorFake(6)
         } else if (event.key == 8) {
             blehandler.setSensorFake(7)
-        }
+        } 
+    }
+    if (event.key == "F") {
+        EntryPoint.pushPage({'id':'canvas.html', 'view':10, 'title':'meditation' })
     }
 });
 
@@ -104,22 +107,23 @@ document.addEventListener("init", DOMContentLoadedEvent, false)
 
 function DOMContentLoadedEvent() {
     // run function after every dom content load
-    // check for  p5-containerafter onsen UI dom change
- 
+
     let chart = document.getElementById('myChart')
     if (chart) {
         // handling graph creation
         const promise = getStatisticsHistogram(currentPage.index);
         promise.then((snapshot) => {
-           if (snapshot.exists()) {
-               let data = snapshot.val()
-               console.log(data);
-               const userStats = new Stats(chart, data)
-               // expected output: "Success!"
-             } else {
-               console.log("No data available");
-           }});
+            if (snapshot.exists()) {
+                let data = snapshot.val()
+                console.log(data);
+                const userStats = new Stats(chart, data)
+                // expected output: "Success!"
+            } else {
+                console.log("No data available");
+            }
+        });
     } else {
+            // check for  p5-containerafter onsen UI dom change
         const containerElement = document.getElementById('p5-container')
         if (containerElement) {
             PFIVE = new P5(defineSketch({ "viewNumber": currentPage.view, "blehandler": blehandler, "params": params, "tone": Tone, "WEGL3D": WEBGL }), containerElement)
@@ -143,12 +147,10 @@ function HIDsetup() {
             requestFullScreen.call(docEl);
         }
     }
-
-
     // setupSound
     console.log("sound state " + Tone.context.state)
     // if (Tone.disposed == true) {
-    //Tone = new Tone()
+        //Tone = new Tone()
     // }
 
     if (Tone.context.state === 'closed') {
@@ -200,20 +202,21 @@ export function connectBLE() {
 }
 export function populateStats() {
     // save cloud data to local
-   // setVisible('#statsMenu', false);
- //  updateLocalData();
- const promise = getStatisticsLogs();
- promise.then((snapshot) => {
-    if (snapshot.exists()) {
-        let data = snapshot.val()
-        statisticsMenu(data);
-        // expected output: "Success!"
-      } else {
-        console.log("No data available");
-    }});
+    // setVisible('#statsMenu', false);
+    //  updateLocalData();
+    const promise = getStatisticsLogs();
+    promise.then((snapshot) => {
+        if (snapshot.exists()) {
+            let data = snapshot.val()
+            statisticsMenu(data);
+            // expected output: "Success!"
+        } else {
+            console.log("No data available");
+        }
+    });
 }
 export function openSensorHistogram() {
-    this.pushPage({'id':'canvas.html', 'view':0, 'title':'Sensor Histogram'})
+    this.pushPage({ 'id': 'canvas.html', 'view': 0, 'title': 'Sensor Histogram' })
     calibrationGUI = new CalibrationGUI(params)
 }
 
@@ -237,7 +240,7 @@ export function backButton() {
 
     // document.querySelector('#myNavigator').pushPage({'id':'canvas.html', 'view':0, 'title':'Sensor Histogram'})
 
-  
+
     let key = 0;
     let lastEntry = params.getSessionData();
     if (lastEntry != null) {
@@ -249,17 +252,17 @@ export function backButton() {
         }).then(() => {
             console.log("saved to db")
             params.resetLogs()
-            currentPage = {'id':'graph.html', 'title':'graph', 'index':key, 'view':key}
+            currentPage = { 'id': 'graph.html', 'title': 'graph', 'index': key, 'view': key }
             document.querySelector('#myNavigator').replacePage('graph.html')
             //document.querySelector('#myNavigator').popPage()
         })
         //document.querySelector('#myNavigator').replacePage('graph.html')
-       // document.querySelector('#myNavigator').popPage()
+        // document.querySelector('#myNavigator').popPage()
     } else {
         console.log("no database save!")
         if (typeof calibrationGUI != "undefined") {
-             calibrationGUI.removeGui()
-         }
+            calibrationGUI.removeGui()
+        }
         document.querySelector('#myNavigator').popPage()
     }
     defineSketch({ "remove": true })

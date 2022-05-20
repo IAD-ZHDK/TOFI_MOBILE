@@ -1,8 +1,8 @@
 import P5 from 'p5'
 import View from './View'
-import Meta from './utils/Meta4.js'
-import TextBox from "./utils/TextBox";
-import { addBtn } from "./utils/DomButton.js";
+import Meta from './viewUtils/Meta2.js'
+import TextBox from "./viewUtils/TextBox";
+import { addBtn } from "./viewUtils/DomButton.js";
 
 class Game06 extends View {
     constructor (p, Tone, Timer, params) {

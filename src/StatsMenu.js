@@ -20,6 +20,7 @@ function statisticsMenu(data) {
 
                 const dateObject = new Date(entry.start)
                 let newDate = dateObject.toLocaleDateString("en-GB", dateOptions)
+          
                 let viewNumber = entry.metric
                 let title = `${viewNames[entry.viewNumber]}`
                 let metricName = viewNumber
@@ -33,10 +34,11 @@ function statisticsMenu(data) {
                 totalTrianings++;
        
                 if (newDate === date) {
-
+              
                 } else {
+                    // new date 
+                    console.log(newDate);
                     menu.appendChild(dateBlock)
-        
                     dateBlock = document.createElement("div");
                     dateBlock.setAttribute("class", "dateBlock");
                     const menuItem = ons.createElement(`<h3 style="text-align: left;"">   ${newDate}</h3>`)
@@ -44,13 +46,15 @@ function statisticsMenu(data) {
                     date = newDate
                 }
                 if (metricName == "speedTest") {
-                    const menuItem = ons.createElement(`<p style="text-align: center;""> SPEED TEST: ${metricValue} </p>`)
+                    const menuItem = ons.createElement(`<p style="text-align: center;""> SPEED TEST AVERAGE: ${metricValue} </p>`)
                     dateBlock.appendChild(menuItem)
                 } else {
                     const menuItem = ons.createElement(`<ons-button modifier="large" style="margin-bottom: 10px;" onclick="EntryPoint.pushPage({'id':'graph.html', 'title':'graph', 'index':'${key}'})"> ${title}, duration: ${timeFormated}</ons-button>`)
                     dateBlock.appendChild(menuItem)
                 }
             }
+            // add last dateblock
+            menu.appendChild(dateBlock)
             //const menuItem = ons.createElement(`<input type="button" id="dwn-btn" value="Download Statistics"/>`)
             //menu.appendChild(menuItem)
             //todo: scroll bar bug quick fix should be cleaned up here
@@ -74,6 +78,7 @@ function statisticsMenu(data) {
             let secondsAverage = Math.floor(averageDuration%60);
             
             const statsOverview = document.querySelector('#overview')
+            statsOverview.innerHTML = "";  // clear all existing stats
              let overview = ons.createElement(`<p style="text-align: left;"">Training sessions completed:<br><b>`+totalTrianings+`</b></p>`)
              statsOverview.appendChild(overview);
              overview = ons.createElement(`<p style="text-align: left;"">Total time trained: <br>  <b>`+minutes+` Minutes `+seconds+` Seconds</b></p>`)
@@ -90,7 +95,7 @@ function statisticsMenu(data) {
 }
 
 
-
+/*
 function download(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -100,5 +105,5 @@ function download(filename, text) {
     element.click();
     document.body.removeChild(element);
   }
-
+*/
 export default statisticsMenu

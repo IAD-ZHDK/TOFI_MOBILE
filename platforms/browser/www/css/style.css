@@ -79,6 +79,13 @@ backButton:hover {
     background: linear-gradient(180deg, #2D2D64 0%, #000000 100%);
 }
 
+#p5-container2 {
+    position: absolute;
+    z-index: 1000;
+    top: 0px;
+    left: 0px;
+}
+
 .chart-container {
     position: relative;
     margin: auto;
@@ -88,13 +95,21 @@ backButton:hover {
 }
 
 .page__background {
-    background-color:var(--c5);
+    background-color: var(--c5);
     /*background: linear-gradient(180deg, #2D2D64 0%, #000000 100%); !important;*/
 }
 
 .tabbar {
     background-color: var(--c5);
     height: auto;
+}
+
+:checked+.tabbar__button .circle-icon {
+    background: var(--c6);
+}
+
+:checked+.tabbar__button ons-icon {
+    color: #ffffff;
 }
 
 
@@ -115,9 +130,20 @@ backButton:hover {
     margin-bottom: 3%;
 }
 
+.circle-icon {
+    background: var(--c7);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 60px;
+    font-stretch: 100%;
+    vertical-align: middle;
+    padding: 15px;
+}
+
 
 .button {
-    background-color: var(--c6);;
+    background-color: var(--c6);
+    ;
     cursor: pointer;
     /*background-color:var(--c5)*/
 }
@@ -132,15 +158,7 @@ backButton:hover {
     padding: 10px;
 }
 
-.circle-icon {
-    background: var(--c7);
-    border-radius: 50%;
-    text-align: center;
-    line-height: 60px;
-    font-stretch: 100%;
-    vertical-align: middle;
-    padding: 15px;
-}
+
 
 .card {
     background-color: var(--c7);
@@ -293,6 +311,7 @@ h1 {
     animation: fade 3000ms infinite;
     -webkit-animation: fade 3000ms infinite;
 }
+
 /*
 h3 {
     color: #fff;
@@ -308,14 +327,14 @@ h3:before {
 */
 .dateBlock {
     padding-left: 4vw;
-    position:relative
-    /* lines */
-    /* adjust manually */
+    position: relative
+        /* lines */
+        /* adjust manually */
 }
 
 .dateBlock:after {
     /* bullets */
-    background-color:white;
+    background-color: white;
     border-radius: 50%;
     content: " ";
     position: absolute;
@@ -327,9 +346,10 @@ h3:before {
 
 .dateBlock:before {
     /* lines */
-    content:"";
+    content: "";
     position: absolute;
-    left: 9px; /* adjust manually */
+    left: 9px;
+    /* adjust manually */
     border-left: 2px solid white;
     height: 100%;
     width: 2px;

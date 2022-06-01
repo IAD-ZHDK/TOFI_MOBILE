@@ -64,27 +64,50 @@ const setVisible = (elementOrSelector, visible) =>
 document.addEventListener('keydown', function (event) {
     if (blehandler instanceof BleSimulator) {
         if (event.key == 1) {
-            blehandler.setSensorFake(0)
+            blehandler.pressSensorFake(0)
         } else if (event.key == 2) {
-            blehandler.setSensorFake(1)
+            blehandler.pressSensorFake(1)
         } else if (event.key == 3) {
-            blehandler.setSensorFake(2)
+            blehandler.pressSensorFake(2)
         } else if (event.key == 4) {
-            blehandler.setSensorFake(3)
+            blehandler.pressSensorFake(3)
         } else if (event.key == 5) {
-            blehandler.setSensorFake(4)
+            blehandler.pressSensorFake(4)
         } else if (event.key == 6) {
-            blehandler.setSensorFake(5)
+            blehandler.pressSensorFake(5)
         } else if (event.key == 7) {
-            blehandler.setSensorFake(6)
+            blehandler.pressSensorFake(6)
         } else if (event.key == 8) {
-            blehandler.setSensorFake(7)
+            blehandler.pressSensorFake(7)
         } 
     }
-    if (event.key == "F") {
-        EntryPoint.pushPage({'id':'canvas.html', 'view':10, 'title':'meditation' })
+   // if (event.key == "F") {
+   //     EntryPoint.pushPage({'id':'canvas.html', 'view':10, 'title':'meditation' })
+  //  }
+});
+
+document.addEventListener('keyup', function (event) {
+    if (blehandler instanceof BleSimulator) {
+        if (event.key == 1) {
+            blehandler.releaseSensorFake(0)
+        } else if (event.key == 2) {
+            blehandler.releaseSensorFake(1)
+        } else if (event.key == 3) {
+            blehandler.releaseSensorFake(2)
+        } else if (event.key == 4) {
+            blehandler.releaseSensorFake(3)
+        } else if (event.key == 5) {
+            blehandler.releaseSensorFake(4)
+        } else if (event.key == 6) {
+            blehandler.releaseSensorFake(5)
+        } else if (event.key == 7) {
+            blehandler.releaseSensorFake(6)
+        } else if (event.key == 8) {
+            blehandler.releaseSensorFake(7)
+        } 
     }
 });
+
 
 
 

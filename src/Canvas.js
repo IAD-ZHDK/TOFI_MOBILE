@@ -22,13 +22,11 @@ const Canvas = (p) => {
     let myFont
     let sensorValues = []
     p.disableFriendlyErrors = true; // disables FES
-
     p.preload = function () {
         //todo: fix font load
         myFont = p.loadFont('./css/fonts/barlow_condensed.otf')
         Tone.Master.mute = false
     }
-
     p.setup = function () {
         if (!WEGL3D) {
             p.createCanvas(document.documentElement.clientWidth, document.documentElement.clientHeight)
@@ -67,6 +65,7 @@ const Canvas = (p) => {
         p.updateSensorValues()
         View.draw()
         if (removeSketch) {
+            View.close();
             p.remove() // distroy sketch
         }
     }

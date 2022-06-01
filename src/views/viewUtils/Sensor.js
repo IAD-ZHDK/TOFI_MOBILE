@@ -1,5 +1,7 @@
 //import P5 from 'p5'
 //import TextBox from './TextBox'
+import {getColorPallet} from "../../utils/colorPalette.js";
+
 
 class Sensor {
     constructor (p, radius, Tone) {
@@ -8,21 +10,26 @@ class Sensor {
         this.osc = null
         this.Tone = Tone
         this.hiden = false
+        this.calibrating = false
         this.color = this.p.color(180, 255, 120);
+        this.colorPallet = getColorPallet();
         //this.textBox = new TextBox(this.p,'0.00%',0,0,p.width/2,p.height/2)
         }
     display(x,y, normalisedValue, threshold) {
-        if (this.hiden) {
+        if (this.calibrating) {
+            this.p.fill(this.colorPallet[4])
+        } else if (this.hiden) {
             this.p.fill(255,255,255,100)
             this.p.noStroke()
             this.p.ellipse(x,y,this.radius+1,this.radius+1)
             this.p.fill(255,255,255)
         } else {
-            this.p.fill(254,62,108,140)
-            this.p.noStroke()
+            this.p.stroke(this.colorPallet[7])
             this.p.strokeWeight(3)
+            this.p.noFill()
             this.p.ellipse(x,y,this.radius+1,this.radius+1)
-            this.p.fill(97, 231, 134)
+            this.p.noStroke()
+            this.p.fill(this.colorPallet[4])
         }
         this.p.noStroke()
 

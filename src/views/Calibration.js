@@ -5,6 +5,7 @@ import TextBox from './viewUtils/TextBox'
 import tofi from './viewUtils/tofiVisualiser'
 import * as EntryPoint from "../index"
 import { createMachine } from './viewUtils/StateMachine.js'
+import { addBtn } from "./viewUtils/DomButton.js";
 //import Game02 from "./Game02";
 import {map, constrain, moveingWeightedAverageFloat} from './viewUtils/MathUtils'
 
@@ -30,7 +31,7 @@ class Calibration extends View {
         this.counterTextBox.settextSize(40)
         this.counter = 10
         this.tofiTrainer = new tofi(p, 0.5, 0.6, p.width * 0.8, p.height * 0.8, this.params, this.Tone)
-        this.addBtn(function () {
+        addBtn(function () {
             //this.statesMachine.dispatch('next')
             let state = this.machine.value
             state = this.machine.transition(state, 'next')
@@ -89,7 +90,7 @@ class Calibration extends View {
             if (buffer>50) {
             let sensorValue = this.params.getActive(i)
             let min = this.minValues[i] + (buffer * 0.10)
-            let max = this.maxValues[i] + (buffer * 0.15)
+            let max = this.maxValues[i] - (buffer * 0.10)
             let normalised = constrain(sensorValue, min, max)
             normalised = map(normalised, min, max, 0.0, 1.0)
             this.mockNormalised[i] = moveingWeightedAverageFloat(normalised,  this.mockNormalised[i], 0.7)
@@ -109,27 +110,13 @@ class Calibration extends View {
         this.tofiTrainer.display()
     }
 
-    addBtn(callback, label) {
-        const containerElement = document.getElementById('p5-container')
-        let div = document.createElement("div");
-        div.style.cssText = 'position:absolute; top:85%; left:50%; transform:translate(-50%, -50%);'
-        let btn = document.createElement("ons-button")
-        btn.innerHTML = label
-        btn.onclick = function () {
-            containerElement.removeChild(div)
-            callback()
-        }.bind(this);
-        div.appendChild(btn);
-        containerElement.appendChild(div)
-    }
-
     calibrateValues() {
         for (let i = 0; i < this.totalSensors; i++) {
             let buffer = Math.abs(this.maxValues[i] - this.minValues[i])
             // sub 10% to min values
             this.minValues[i] += (buffer * 0.10)
             // add 15% to max
-            this.maxValues[i] -= (buffer * 0.15)
+            this.maxValues[i] -= (buffer * 0.10)
             if (this.minValues[i] < this.maxValues[i]) {
                 this.params.setMin(i, this.minValues[i])
                 this.params.setMax(i, this.maxValues[i])
@@ -148,7 +135,6 @@ class Calibration extends View {
             intro: {
                 actions: {
                     onEnter() {
-                        binding.tofiTrainer.hideSensors()
                         console.log('intro: onEnter')
                     },
                     onExit() {
@@ -169,7 +155,7 @@ class Calibration extends View {
                     onEnter() {
                         binding.tofiTrainer.showSensors()
                         binding.textBox.setText('Press as hard as you can!')
-                        binding.addBtn(function () {
+                        addBtn(function () {
                             let state = this.machine.value
                             state = this.machine.transition(state, 'next')
                         }.bind(binding), "Finished")
@@ -196,7 +182,7 @@ class Calibration extends View {
                         console.log(state)
                         binding.textBox.setText('Callibration complete!')
                         binding.calibrateValues()
-                        binding.addBtn(function () {
+                        addBtn(function () {
                             this.p.remove()
                             EntryPoint.backButton()
                         }.bind(binding), "Return to menu")

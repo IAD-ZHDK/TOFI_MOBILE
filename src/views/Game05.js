@@ -11,6 +11,7 @@ import tofi from './viewUtils/tofiVisualiser'
 class Game05 extends View {
     constructor(p, Tone, Timer, params) {
         super(p, Tone, Timer, params);
+        this.initialSetup = true;
         this.tiltboard = new TiltBoard(p, p.width, p.height, params, Tone, this.Timer.envelopes, this.colorPallet);
         this.messageNo = 0;
         this.messages = ['Press the sensors to tilt the board and move the ball',
@@ -19,42 +20,13 @@ class Game05 extends View {
         this.messageNo++
         let font = this.p.loadFont('./css/fonts/inconsolata.otf');
         this.p.textFont(font);
-        this.timer = this.p.millis() + 7000
-        this.boardStartPos = this.p.createVector(0, 0, -700);
+        this.timer = this.p.millis() + 5000
+        this.boardStartPos = this.p.createVector(-(p.width*0.25), 100, -300);
         this.boardPlayPosition = this.p.createVector(0, 0, -100);
         this.boardPos = this.boardStartPos.copy();
-
-        addBtn(function () {
-            this.timer = this.p.millis() + 7000
-            this.textBox.setText(this.messages[this.messageNo])
-            params.enableLogingSave()
-            this.tiltboard.gameState = "maze";
-        }.bind(this), "Start")
+        this.tofiPos = this.p.createVector(.75, .55);
         this.winningtimer = 0;
-
-/*
-        const containerElement = document.getElementById('p5-container2')
-        
-       
-        this.pg = new P5(function( sketch ) {
-            sketch.setup = function() {
-              sketch.createCanvas(600, 600);
-              sketch.tofiTrainer = new tofi(sketch, 0.5, 0.5, sketch.width * 0.5, sketch.height * 0.5, params, Tone)
-            }
-            sketch.draw = function() {
-            sketch.clear();
-            sketch.tofiTrainer.hideSensors()
-            sketch.tofiTrainer.display()
-              //for canvas 1
-            //  sketch.rotate(sketch.frameCount * 0.01);
-            sketch.rotate(sketch.frameCount * 0.01);
-            sketch.rect(-26, -26, 52, 52);
-            }
-          }, containerElement);
-
-        // this.tofiTrainer = new tofi(this.pg, 0.8, 0.5,  this.pg.width * 0.5,  this.pg.height * 0.5, params, Tone)
-        // this.tofiTrainer.display()
-        */
+        this.sensors = params.getSensors()
     }
 
 
@@ -63,26 +35,28 @@ class Game05 extends View {
         // this.Tone.start();
         this.textBox.display(0, -this.p.height*0.4) 
         this.p.translate(this.boardPos.x, this.boardPos.y, this.boardPos.z)
-        if (this.timer < this.p.millis()) {
-            if (this.messageNo < this.messages.length) {
-                this.timer = this.p.millis() + 7000
-                this.textBox.setText(this.messages[this.messageNo])
-                this.messageNo++;
-            } else {
-                this.textBox.setText("")
-            }
-        }
         this.p.directionalLight(255, 0, 0, 0.25, 0.25, 0);
         if (this.tiltboard.gameState == "setup") {
-            this.tiltboard.initializeGame();
-            this.tiltboard.gameState = "intro";
+            this.setup();
         } else if (this.tiltboard.gameState == "intro") {
-            this.tiltboard.draw();
-        } else if (this.tiltboard.gameState == "maze") {
+           this.intro();
+        } else if (this.tiltboard.gameState == "mazeAnim") {
+            // animation 
             this.boardPos.mult(0.95)
             let step = this.boardPlayPosition.copy();
             step.mult(0.05)
+            this.tofiPos.x += .02;
+            this.pg.move(this.tofiPos.x,this.tofiPos.y)
             this.boardPos.add(step)
+            // 
+            this.tiltboard.draw();
+            let difference = this.p.abs(this.boardPos.x-this.boardPlayPosition.x)
+            if(difference <=0.01) {
+                console.log("animation Over");
+                this.close();
+                this.tiltboard.gameState = "maze"
+            }
+        }else if (this.tiltboard.gameState == "maze") {
             this.tiltboard.draw();
         } else if (this.tiltboard.gameState == "won") {
             this.tiltboard.draw();
@@ -102,6 +76,58 @@ class Game05 extends View {
         }
     }
 
+    setup() {
+        this.tiltboard.initializeGame();
+        const containerElement = document.getElementById('p5-container2')
+        this.pg = new P5(function( sketch ) {
+            sketch.setup = function() {
+              sketch.createCanvas(this.p.width, this.p.height);
+           // this.boardStartPos
+              sketch.tofiTrainer = new tofi(sketch, this.tofiPos.x, this.tofiPos.y, sketch.width * 0.5, sketch.height * 0.5, this.params, this.Tone)
+            }.bind(this)
+            sketch.draw = function() {
+            sketch.clear();
+            if (this.sensors.back.active == false) {
+            sketch.tofiTrainer.display()
+            } else {
+            sketch.tofiTrainer.display(0,1,3,4) 
+            }
+            }.bind(this)
+            sketch.move = function(x,y){
+                sketch.tofiTrainer.move(x,y)
+            }
+          }.bind(this), containerElement);
+        this.tiltboard.gameState = "intro";
+    }
 
+    intro() {
+        if (this.timer < this.p.millis()) {
+            if (this.messageNo < this.messages.length) {
+                this.timer = this.p.millis() + 5000
+                this.textBox.setText(this.messages[this.messageNo])
+                this.messageNo++;
+            } else if (this.initialSetup == true){
+                this.initialSetup = false;
+                this.textBox.setText("Press start when you are ready")
+                addBtn(function () {
+                    this.timer = this.p.millis() + 5000
+                    this.textBox.setText(this.messages[this.messageNo])
+                    this.params.enableLogingSave()
+                    this.tiltboard.gameState = "mazeAnim";
+                }.bind(this), "Start")
+            }
+        }
+        this.tiltboard.draw();
+    }
+
+    close () {
+        try {
+          this.pg.remove()
+        } catch (error) {
+          console.log(error);
+          // expected output: ReferenceError: nonExistentFunction is not defined
+          // Note - error messages will vary depending on browser
+        }
+      }
 }
 export { Game05 }

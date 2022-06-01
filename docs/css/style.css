@@ -15,7 +15,7 @@
     --c4: #B83992;
     --c5: #0F0D31;
     --c6: #10C5C1;
-    --c7: #2D2D64;
+    --c7: #2E297C;
 }
 
 
@@ -40,7 +40,7 @@ backButton {
     font-size: 10pt;
     line-height: 5pt;
     padding: 6px 6px 6px 6px;
-    background: #10C5C1;
+    background: var(--c6);
     ;
     opacity: 1;
     z-index: 10000;
@@ -77,6 +77,14 @@ backButton:hover {
 
 #p5-container {
     background: linear-gradient(180deg, #2D2D64 0%, #000000 100%);
+    z-index: 100;
+}
+
+#p5-container2 {
+    position: absolute;
+    z-index: 50;
+    top: 0px;
+    left: 0px;
 }
 
 .chart-container {
@@ -88,13 +96,21 @@ backButton:hover {
 }
 
 .page__background {
-    background-color:var(--c5);
+    background-color: var(--c5);
     /*background: linear-gradient(180deg, #2D2D64 0%, #000000 100%); !important;*/
 }
 
 .tabbar {
     background-color: var(--c5);
     height: auto;
+}
+
+:checked+.tabbar__button .circle-icon {
+    background: var(--c6);
+}
+
+:checked+.tabbar__button ons-icon {
+    color: #ffffff;
 }
 
 
@@ -115,19 +131,8 @@ backButton:hover {
     margin-bottom: 3%;
 }
 
-
-.button {
-    background-color: #2E297C;
-    cursor: pointer;
-    /*background-color:var(--c5)*/
-}
-
-.responsiveMenu {
-    padding: 10px;
-}
-
 .circle-icon {
-    background: #2E297C;
+    background: var(--c7);
     border-radius: 50%;
     text-align: center;
     line-height: 60px;
@@ -136,8 +141,28 @@ backButton:hover {
     padding: 15px;
 }
 
+
+.button {
+    background-color: var(--c6);
+    ;
+    cursor: pointer;
+    /*background-color:var(--c5)*/
+}
+
+.button[modifier="large"] {
+    background-color: var(--c7);
+    cursor: pointer;
+    /*background-color:var(--c5)*/
+}
+
+.responsiveMenu {
+    padding: 10px;
+}
+
+
+
 .card {
-    background-color: #2E297C;
+    background-color: var(--c7);
     /*background-color: var(--c5)*/
 }
 
@@ -287,6 +312,7 @@ h1 {
     animation: fade 3000ms infinite;
     -webkit-animation: fade 3000ms infinite;
 }
+
 /*
 h3 {
     color: #fff;
@@ -302,14 +328,14 @@ h3:before {
 */
 .dateBlock {
     padding-left: 4vw;
-    position:relative
-    /* lines */
-    /* adjust manually */
+    position: relative
+        /* lines */
+        /* adjust manually */
 }
 
 .dateBlock:after {
     /* bullets */
-    background-color:white;
+    background-color: white;
     border-radius: 50%;
     content: " ";
     position: absolute;
@@ -321,9 +347,10 @@ h3:before {
 
 .dateBlock:before {
     /* lines */
-    content:"";
+    content: "";
     position: absolute;
-    left: 9px; /* adjust manually */
+    left: 9px;
+    /* adjust manually */
     border-left: 2px solid white;
     height: 100%;
     width: 2px;

@@ -38,7 +38,7 @@ var ui = new firebaseui.auth.AuthUI(auth);
 export async function writeToFB(deviceData) {
     // overwrites existing data
     const db = getDatabase();
-    const writeRef = ref(db, 'users/' + uid+ '/data');
+    const writeRef = ref(db, 'users/' + uid + '/data');
     return set(writeRef, {
         deviceData,
     });
@@ -53,12 +53,12 @@ export async function appendStatisticsFB(data) {
         data
     });
 */
-    const log = { 'start': data.start, 'duration': data.duration, 'totalMovements': data.totalMovements, 'viewNumber': data.viewNumber, 'metric': data.metric, 'metricValue': data.metricValue}
+    const log = { 'start': data.start, 'duration': data.duration, 'totalMovements': data.totalMovements, 'viewNumber': data.viewNumber, 'metric': data.metric, 'metricValue': data.metricValue }
     const updates = {};
-    updates[ 'users/' + uid + '/statistics/histogram/'+data.start] = data;
-    updates[ 'users/' + uid + '/statistics/log/'+data.start] = log;
-  
-   return update(ref(db), updates);
+    updates['users/' + uid + '/statistics/histogram/' + data.start] = data;
+    updates['users/' + uid + '/statistics/log/' + data.start] = log;
+
+    return update(ref(db), updates);
 }
 
 export function createLoginFB() {
@@ -98,13 +98,17 @@ export function createLoginFB() {
             // User is signed in, see docs for a list of available properties
             // https://firebase.google.com/docs/reference/js/firebase.User
             uid = user.uid;
+        
             params.deviceProfile.uid = uid
             console.log("uid " + uid)
             console.log("display name " + user.displayName)
             document.getElementById('splashscreen').style.display = 'none';
-            updateUserName();
+            params.deviceProfile.USER_ID = user.displayName;
+            params.deviceProfile.USER_EMAIL = user.email;
+            params.save();
+           // updateUserName();
             updateChanels();
-           // updateLocalData();
+            // updateLocalData();
             createBLEDialog();
             // ...
         } else {
@@ -123,10 +127,8 @@ export function updateUserName() {
         console.log("USER_ID: " + snapshot.val());
         if (snapshot.exists()) {
             console.log("USER_ID: " + snapshot.val());
-            if (params.deviceProfile.USER_ID === "not defined") {
-                params.deviceProfile.USER_ID = snapshot.val();
-                params.save();
-            }
+            params.deviceProfile.USER_ID = snapshot.val();
+            params.save();
         } else {
             console.log("No data available");
         }
@@ -146,7 +148,7 @@ export function updateChanels() {
                 //console.log(key)
                 //console.log(value)
                 let index = params.chanelNames.indexOf(key);
-               //console.log(index); 
+                //console.log(index); 
                 if (index !== -1) {
                     // array contains string match
                     params.deviceProfile[Object.keys(params.deviceProfile)[index]].active = value.active
@@ -191,7 +193,7 @@ export async function getStatisticsLogs() {
 }
 export async function getStatisticsHistogram(timeStamp) {
     const dbRef = ref(getDatabase());
-    const response = get(child(dbRef, `users/${uid}/statistics/histogram/`+timeStamp))
+    const response = get(child(dbRef, `users/${uid}/statistics/histogram/` + timeStamp))
 
     return response
 }

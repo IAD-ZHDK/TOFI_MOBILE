@@ -629,42 +629,40 @@ class TiltBoard {
   }
 
   updateInputs() {
-    let sensorValues = this.params.getNormalisedActiveValues()
-    // todo: this is a very messy fix for cases with less than 5 sensors
-    let modifier = [];
-    modifier[0] = sensorValues[0]
-    modifier[1] = sensorValues[0]
-    modifier[2] = sensorValues[0]
-    modifier[3] = sensorValues[0]
-    modifier[4] = sensorValues[0]
-    for (let i = 0; i < sensorValues.length; i++) {
-      modifier[i] = sensorValues[i]
+    //let sensorValues = this.params.getNormalisedActiveValues()
+    let sensors = this.params.getSensorsUpdates();
+    let tiltforward = sensors.forward
+    let tiltBack = sensors.back
+    if (sensors.back.active == false) {
+      // for the case the rear sensor is disabled 
+      tiltforward = sensors.exterior
+      tiltBack = sensors.forward
     }
     //tilt of two axis only in one direction per axis
-    if (modifier[1] >= this.inputThreshold) {
+    if (tiltBack.value >= this.inputThreshold) {
       board.angleX = board.angleX * 0.9;
-      board.angleX += (modifier[1] * world.playerSensitivity) * 0.1;
+      board.angleX += (tiltBack.value * world.playerSensitivity) * 0.1;
       this.synth2.triggerAttack("D3");
     }
-    else if (modifier[3] >= this.inputThreshold) {
+    else if (tiltforward.value  >= this.inputThreshold) {
       board.angleX = board.angleX * 0.9;
-      board.angleX += 0 - (modifier[3] * world.playerSensitivity) * 0.1;
+      board.angleX += 0 - (tiltforward.value * world.playerSensitivity) * 0.1;
       this.synth1.triggerAttack("A3");
-    } 
-    else {
+    } else {
       this.synth2.triggerRelease();
       this.synth1.triggerRelease();
       board.angleX = board.angleX * 0.9;
     }
 
-    if (modifier[0] >= this.inputThreshold) {
+    if (sensors.left.value  >= this.inputThreshold) {
       board.angleY = board.angleY * 0.9;
-      board.angleY += 0 - (modifier[0] * world.playerSensitivity) * 0.1;
+      board.angleY += 0 - (sensors.left.value * world.playerSensitivity) * 0.1;
       this.synth4.triggerAttack("F3");
     }
-    else if (modifier[4] >= this.inputThreshold) {
+
+    else if (sensors.right.value  >= this.inputThreshold) {
       board.angleY = board.angleY * 0.9;
-      board.angleY += (modifier[4] * world.playerSensitivity) * 0.1;
+      board.angleY += (sensors.right.value * world.playerSensitivity) * 0.1;
       this.synth3.triggerAttack("G3");
     } 
     else {

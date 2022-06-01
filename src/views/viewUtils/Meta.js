@@ -88,6 +88,10 @@ class Meta {
     let centerH = this.height / 2
     // p.translate(centerW, centerH)
     // todo: this is a very messy fix for cases with less than 5 sensors
+    let sensors = this.params.getSensorsUpdates();
+
+  
+
     let modifier = [];
     modifier[0] = sensorValues[0]
     modifier[1] = sensorValues[0]
@@ -104,10 +108,10 @@ class Meta {
       //    
       //    1
       // 0    4
-      this.balls[i].addXamp((modifier[0] + modifier[4]) * (this.width)*0.6)
-      this.balls[i].addYamp((modifier[1] + modifier[3]) * (this.height)*0.6)
-      this.balls[i].addRadius(modifier[2]*(this.width+this.height)*20)
-      this.balls[i].addSpeed(modifier[2] * 0.03)
+      this.balls[i].addXamp((sensors.left.value  + sensors.right.value) * (this.width)*0.6)
+      this.balls[i].addYamp((sensors.forward.value  + sensors.back.value) * (this.height)*0.6)
+      this.balls[i].addRadius(sensors.exterior.value *(this.width+this.height)*20)
+      this.balls[i].addSpeed(sensors.exterior.value * 0.03)
       this.balls[i].update()
       averagePos.add(this.balls[i].x, this.balls[i].y)
     }

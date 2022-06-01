@@ -28,7 +28,7 @@ class Game03 extends View {
         this.p.clear()
         if (this.statesMachineNew.value === 'intro') {
             this.p.image(this.meta.update(this.tone),this.Pos.x,this.Pos.y);
-            this.tofiTrainer.hideSensors()
+            //this.tofiTrainer.hideSensors()
             this.tofiTrainer.display()
             if (this.timer < this.p.millis()) {
                 if (this.messageNo < this.messages.length) {
@@ -52,10 +52,7 @@ class Game03 extends View {
             this.Pos.add(step)
             this.p.image(this.meta.update(this.tone),this.Pos.x,this.Pos.y);
         }
-
         this.textBox.display(this.p.width/2, this.p.height*.1)
-
-  
     }
 
     stateMachine() {

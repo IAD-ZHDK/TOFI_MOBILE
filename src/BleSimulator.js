@@ -9,16 +9,23 @@ class BleSimulator {
     this.filters = []
     for (let i = 0; i < this.noChannels; i++) {
       this.sensorValues[i] = 0
-      this.keyControl[i] = this.params.getMin(i);
+      this.keyControl[i] = false;
       this.filters[i] = 0
     }
   }
 
-  setSensorFake(i) {
-    if (this.keyControl[i] <= this.params.getMax(i)) {
-      this.keyControl[i] = this.params.getMax(i)
-    }
+  pressSensorFake(i) {
+   // if (this.keyControl[i] <= this.params.getMax(i)) {
+      this.keyControl[i] = true
+    //}
   }
+
+  releaseSensorFake(i) {
+    // if (this.keyControl[i] <= this.params.getMax(i)) {
+      this.keyControl[i] = false
+  
+     //}
+   }
 
   getSensorValues() {
     this.handleSensor ()
@@ -26,25 +33,40 @@ class BleSimulator {
   }
 
   handleSensor () {
+  
+    // apply filtering
+    //let filters = this.params.getFilters();
+    for (let i = 0; i < this.noChannels; i++) {
+      let filter = 0.91
+     // let noise  =  Math.floor(Math.random() * 10)
+      //if (filter > 0) {
+        this.sensorValues[i] = this.sensorValues[i] * filter
+        if (this.keyControl[i] == true) {
+          this.sensorValues[i] += this.params.getMax(i) * (1.0 - filter)
+          this.sensorValues[i] = Math.floor(this.sensorValues[i])
+          if(Math.abs(this.sensorValues[i]-this.params.getMax(i))<20) {
+            this.sensorValues[i] = this.params.getMax(i)
+          }
+        } else {
+          this.sensorValues[i] += this.params.getMin(i) * (1.0 - filter)
+          this.sensorValues[i] = Math.floor(this.sensorValues[i])
+        }
+   //   } else {
+       // this.sensorValues[i] = Math.floor(this.keyControl[i])
+    //  }
+
+     //this.keyControl[i] = this.params.getMin(i)
+    }
+    /*
     for (let i = 0; i < this.noChannels; i++) {
       let step = this.params.getMax(i)-this.params.getMin(i)
-      step = step*0.01
+      step = step * 0.03
       if (this.keyControl[i] > this.params.getMin(i)) {
         this.keyControl[i] -= step
       }
     }
-    // apply filtering
-    let filters = this.params.getFilters();
-    for (let i = 0; i < this.noChannels; i++) {
-      let filter = filters[i]
-     // let noise  =  Math.floor(Math.random() * 10)
-      if (filter > 0) {
-        this.sensorValues[i] = Math.floor(this.sensorValues[i] * filter)
-        this.sensorValues[i] += Math.floor((this.keyControl[i]) * (1.0 - filter))
-      } else {
-        this.sensorValues[i] = Math.floor(this.keyControl[i])
-      }
-    }
+   */
   }
+   
 }
 export default BleSimulator

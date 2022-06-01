@@ -10,7 +10,8 @@ export function getColorPallet() {
         const color4 = css.getPropertyValue('--c4');
         const color5 = css.getPropertyValue('--c5');
         const color6 = css.getPropertyValue('--c6');
-        colorPallete = [color0, color1, color2, color3, color4, color5, color6]
+        const color7 = css.getPropertyValue('--c7');
+        colorPallete = [color0, color1, color2, color3, color4, color5, color6,color7]
     }
     return colorPallete;
 }

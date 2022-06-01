@@ -9,11 +9,11 @@ class SpeedTest extends View {
 
     constructor (p, Tone, Timer, params) {
         super(p, Tone, Timer, params)
+        this.textBox = new TextBox(this.p,'Press start when you are ready',this.p.width/2, this.p.height*.1,p.width*0.4,p.height*0.5)
         //this.statesMachine = Object.create(machine);
         this.statesMachineNew = this.stateMachine();
         this.totalSensors = this.params.getNoActive()
         this.currentSensor = 0
-        this.textBox = new TextBox(this.p,'Press start when you are ready',this.p.width/2, this.p.height*.1,p.width*0.4,p.height*0.5)
         this.counter = 0
         // speed
         this.speedTotal  = 0;

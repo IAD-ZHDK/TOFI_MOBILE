@@ -2560,15 +2560,12 @@ solid
 .tabbar__label:first-child {
   font-size: 16px;
   line-height: 49px;
-  line-height: 49px;
   margin: 0;
   padding: 0;
 }
 :checked + .tabbar__button {
   color: #10C5C1;
-  color: #10C5C1;
   background-color: transparent;
-  box-shadow: none;
   box-shadow: none;
   border-top: none;
   border-top: none;

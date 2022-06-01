@@ -1,13 +1,16 @@
+import { signOutFB, appendStatisticsFB, writeToFB, createLoginFB, getStatisticsLogs, getStatisticsHistogram } from "./CloudStorage.js";
+
 class CalibrationGUI {
-  constructor(Cookie) {
-    this.Cookie = Cookie
+  constructor(params) {
+    this.params = params
     this.display = true
-    this.buildGUI(this.Cookie.deviceProfile)
-    console.log("cookies " + this.Cookie.deviceProfile);
+    this.buildGUI(this.params.deviceProfile)
+    //console.log("cookies " + this.Cookie.deviceProfile);
   }
 
   writeCookie() {
-    this.Cookie.save()
+    this.params.save()
+    writeToFB(this.params.getDeviceProfileJson())
   }
   // automaticly building dat gui taken from:  https://gist.github.com/heaversm/b159b51f4e68603b05dc417dfadb43c5
   buildGUI(config) {

@@ -21,6 +21,8 @@ export function createMachine(stateMachineDefinition) {
             return FSM.value
         },
     }
+    let state = FSM.value
+    stateMachineDefinition[state].actions.onEnter()
     return FSM
 }
 // export default Note

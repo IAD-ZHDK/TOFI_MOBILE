@@ -8,10 +8,14 @@ class View {
     this.Timer = Timer // timeout object for game timing
     this.randomID = p.random()
     this.colorPallet = getColorPallet();
+    this.pg;
   }
   draw () {
   }
   windowResized(){
   }
+  close () {
+  }
+
 }
 export default View

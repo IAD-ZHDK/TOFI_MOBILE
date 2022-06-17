@@ -46,6 +46,7 @@ const Canvas = (p) => {
         params.newLogSession(viewNumber)
         // prevent screen from sleeping when canvas is on
         requestWakeLock();     
+      
     }
     
     const requestWakeLock = async () => {
@@ -63,6 +64,7 @@ const Canvas = (p) => {
 
     p.draw = function () {
         p.updateSensorValues()
+      //  blehandler.writeLED(p.x)
         View.draw()
         if (removeSketch) {
             View.close();

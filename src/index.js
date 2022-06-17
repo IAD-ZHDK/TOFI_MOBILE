@@ -219,6 +219,11 @@ export function hideAlertDialog() {
         .getElementById('my-alert-dialog')
         .hide()
 }
+export function showAlertDialog() {
+    document
+        .getElementById('my-alert-dialog')
+        .show()
+}
 export function connectBLE() {
     setupBLE()
     hideAlertDialog()

@@ -131,6 +131,47 @@ backButton:hover {
     margin-bottom: 3%;
 }
 
+
+.toolbar {
+    background: none;
+    font-size:  13px;
+}
+
+.toolbar__right {
+    padding-right: 1%;
+}
+#batteryIcon {
+    display: none;
+    margin-top: 5px;
+    font-size: 9px;
+    width: 20px;
+    line-height: 32px;
+    height: 6px;
+    margin-left: auto;
+    margin-right: 5px;
+    border: 2px solid white;
+}
+#batteryIcon::after {
+    content: "";
+    position: absolute;
+    width: 0px;
+    height: 2px;
+    margin-left: 20px;
+    display: -webkit-inline-box;
+    border: 2px solid white;
+}
+#batteryBar {
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 6px;
+    margin-left: 0px;
+    display: -webkit-inline-box;
+    background: white;
+}
+.pointer-events-none {
+    pointer-events: none;
+    }
 .circle-icon {
     background: var(--c7);
     border-radius: 50%;

@@ -1,135 +1,226 @@
-import P5 from 'p5'
-import P5ble from 'p5ble'
-import { pushPage } from './index.js' 
-import {map, constrain, moveingWeightedAverageArray} from './views/viewUtils/MathUtils'
-let that
+//import P5 from 'p5'
+//import P5ble from 'p5ble'
+import { pushPage, showAlertDialog } from './index.js'
+import { map, constrain, moveingWeightedAverageArray } from './views/viewUtils/MathUtils'
 class BLEhandler {
-  constructor (params) {
+  constructor(params) {
     this.params = params
-    /*
-    let isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime)
-    if (!isChrome) {
+
+    var isChromium = window.chrome;
+    var winNav = window.navigator;
+    var vendorName = winNav.vendor;
+    var isOpera = typeof window.opr !== "undefined";
+    var isIEedge = winNav.userAgent.indexOf("Edg") > -1;
+    var isIOSChrome = winNav.userAgent.match("CriOS");
+
+    if (isIOSChrome) {
+      // is Google Chrome on IOS
+    } else if (
+      isChromium !== null &&
+      typeof isChromium !== "undefined" &&
+      vendorName === "Google Inc." &&
+      isOpera === false &&
+      isIEedge === false
+    ) {
+      // is Google Chrome
+    } else {
+      // not Google Chrome 
       window.alert('BLE may not work in your browser. Use Chrome or check for a list of compatible browsers here: https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API')
     }
-    */
+
+
+    var isChromium = window.chrome;
+    var winNav = window.navigator;
+    var vendorName = winNav.vendor;
+    var isOpera = typeof window.opr !== "undefined";
+    var isIEedge = winNav.userAgent.indexOf("Edg") > -1;
+    var isIOSChrome = winNav.userAgent.match("CriOS");
+
+    if (isIOSChrome) {
+      // is Google Chrome on IOS
+    } else if (
+      isChromium !== null &&
+      typeof isChromium !== "undefined" &&
+      vendorName === "Google Inc." &&
+      isOpera === false &&
+      isIEedge === false
+    ) {
+      // is Google Chrome
+    } else {
+      // not Google Chrome 
+    }
+
     this.id = 'default'
-    this.serviceUuid = 'A22A0001-AD0B-4DF2-A4E2-1745CBB4dCEE' // The UUID for the main service on the TOFI trainer sensors
-    this.serviceUuid2 = 'a22a0001-ad0b-4df2-a4e2-1745cbb4dcee'
-    this.serviceUuidLED = 'A22B0001-AD0B-4DF2-A4E2-1745CBB4dCEE' // The UUID for the main service on the TOFI trainer
+    this.serviceUuid = 'a22a0001-ad0b-4df2-a4e2-1745cbb4dcee' // The UUID for the main service on the TOFI trainer sensors
+    this.sensorsUuid = 'a22a0002-ad0b-4df2-a4e2-1745cbb4dcee'
+    this.LEDServiceUuid = 'a22b0001-ad0b-4df2-a4e2-1745cbb4dcee' //
+    this.LEDUuid = 'a22b0002-ad0b-4df2-a4e2-1745cbb4dcee'
+    this.serviceUuidBAT = '0x180f'
+    this.LEDcharacteristic;
     // this.SensorServiceUuid = 'A22A0001-AD0B-4DF2-A4E2-1745CBB4dCEE'
-    console.log('looking for:' + this.serviceUuid)
-    this.myBLE = new P5ble()
+    console.log('looking for:' + this.serviceUuid.toLowerCase())
+    // this.myBLE = new P5ble()
     this.noChannels = 8
     this.isConnected = false
     this.sensorValues = []
     for (let i = 0; i < this.noChannels; i++) {
       this.sensorValues[i] = 0
     }
-    that = this
- // web ble api 
- /*
-    navigator.bluetooth.requestDevice({
-      filters: [{
-        services: [this.serviceUuid2]
-      }]
+
+    // this.myCharacteristic;
+    // web ble api 
+
+  }
+
+  connectAndStartNotify() {
+
+    let serviceUuid = this.serviceUuid.toLowerCase();
+    let characteristicUuid = this.serviceUuid.toLowerCase();
+
+    console.log('Requesting Bluetooth Device...');
+    let options = {
+      filters: [
+        { services: [serviceUuid] },
+        { services: [this.sensorsUuid] },
+        { services: [this.LEDServiceUuid] },
+        { services: [this.LEDUuid] },
+      ],
+      optionalServices: ['battery_service']
+    }
+
+    let device = navigator.bluetooth.requestDevice(options)
+      .then(device => {
+        console.log('Connecting to GATT Server...');
+        device.addEventListener('gattserverdisconnected', this.onDisconnected);
+        return device.gatt.connect();
+      })
+
+    device.then(server => {
+      console.log('Getting Battery Service...');
+      return server.getPrimaryService("battery_service");
     })
-    .then(device => device.gatt.connect())
-.then(server => {
-  // Getting Battery Service…
-  return server.getPrimaryService('battery_service');
-})
-.then(service => {
-  // Getting Battery Level Characteristic…
-  return service.getCharacteristic('battery_level');
-})
-.then(characteristic => {
-  // Reading Battery Level…
-  return characteristic.readValue();
-})
-.then(value => {
-  console.log(`Battery percentage is ${value.getUint8(0)}`);
-})
-.catch(error => { console.error(error); });
-*/
+      .then(service => {
+        console.log('Getting battery_level Characteristic...');
+        return service.getCharacteristic("battery_level");
+      })
+      .then(characteristic => {
+         characteristic.startNotifications().then(_ => {
+          console.log('> Notifications started');
+          this.batteryNotifications = this.batteryNotifications.bind(this);
+          characteristic.addEventListener('characteristicvaluechanged',
+            this.batteryNotifications);
+        })
+        return characteristic.readValue();;
+      }).then(value => {
+        let batteryLevel = value.getUint8(0);
+        this.drawBatIcon(batteryLevel);
+      })
+      .catch(error => {
+        console.log('Argh! ' + error);
+      });
+
+    device.then(server => {
+      console.log('Getting Sensor Service...');
+      return server.getPrimaryService(this.serviceUuid);
+    })
+      .then(service => {
+        console.log('Getting sensor Characteristic...');
+        return service.getCharacteristic(this.sensorsUuid);
+      })
+      .then(characteristic => {
+        return characteristic.startNotifications().then(_ => {
+          console.log('> Notifications started');
+          this.SensorNotifications = this.SensorNotifications.bind(this);
+          characteristic.addEventListener('characteristicvaluechanged',
+            this.SensorNotifications);
+        });
+      })
+      .catch(error => {
+        console.log('Argh! ' + error);
+      });
+
+    device.then(server => {
+      console.log('Getting LED Service...');
+      return server.getPrimaryService(this.LEDServiceUuid);
+    })
+      .then(service => {
+        console.log('Getting LED Characteristic...');
+
+        return service.getCharacteristic(this.LEDUuid);
+      })
+      .then(characteristic => {
+        this.LEDcharacteristic = characteristic
+        this.connectionStarted();
+      })
+      .catch(error => {
+        console.log('Argh! ' + error);
+      });
 
   }
 
-  connectAndStartNotify () {
-    // Connect to a device by passing the service UUID
-    this.myBLE.disconnect()
-    this.myBLE.connect(this.serviceUuid, this.gotCharacteristics)
-   // this.myBLE.connect(this.serviceUuidLED, this.gotCharacteristics)
-    let gotValue = "";
-   // this.myBLE.read(this.serviceUuidLED , 'string', gotValue)
-    //console.log("led_"+gotValue)
-   // this.myBLE.connect(this.serviceUuidLED, this.gotCharacteristicsLED)
-   
+  connectionStarted() {
+    this.writeLED(0xFF)
+    pushPage({ 'id': 'canvas.html', 'view': 1, 'title': 'calibration' })
   }
-  gotCharacteristics (error, characteristics) {
-    // A function that will be called after got characteristics
-    if (error) {
-      console.log('error: ', error)
+
+  batteryNotifications(event) {
+    let value = event.target.value;
+    let batteryLevel = value.getUint8(0);
+    this.drawBatIcon(batteryLevel)
+  }
+
+  drawBatIcon(batteryLevel) {
+    let batteryIcon = document.getElementById('batteryIcon')
+    batteryIcon.style.display= "inline-flex";
+    let batteryPercent = document.getElementById('batteryPercent')
+    batteryPercent.textContent = batteryLevel+'%';
+    let batteryIconBar = document.getElementById('batteryBar')
+    let batteryBarWidth = 20*(batteryLevel/100); 
+    batteryIconBar.style.width = batteryBarWidth+"px";
+    console.log('🔋 ' + batteryLevel + '%');
+  }
+
+  SensorNotifications(event) {
+    let data = event.target.value;
+    // apply filtering
+    let filters = this.params.getFilters();
+    let newValues = []
+    // extract 16 bit sensor values from hex
+    for (let i = 0; i < this.noChannels; i++) {
+      let byteCount = i * 2
+      newValues[i] = data.getUint16(byteCount, true)
+    }
+    let averageValues = this.sensorValues
+    moveingWeightedAverageArray(newValues, averageValues, filters)
+  }
+
+
+  writeLED(inputValue) {
+
+    if (!this.LEDcharacteristic || !this.LEDcharacteristic.uuid) {
+      console.error('The characteristic does not exist.');
     } else {
-      that.params.setDeviceId(that.myBLE.device.id);
-      // Check if myBLE is connected
-      that.isConnected = that.myBLE.isConnected()
-      console.log('BLE connected: '+that.isConnected )
-      that.id = that.myBLE.device.id
-      // Add a event handler when the device is disconnected
-      that.myBLE.onDisconnected(that.onDisconnected)
-      for (let i = 0; i < characteristics.length; i++) {
-        if (i === 0) {
-          const sensorCharacteristic = characteristics[i]
-          console.log(sensorCharacteristic);
-          // Set datatype to 'custom', p5.ble.js won't parse the data, will return data as it is.
-          that.myBLE.startNotifications(sensorCharacteristic, that.handleSensor, 'custom')
-          console.log('characteristics: 1')
-        } else if (i === 1) {
-          console.log('characteristics: 2')
-        } else if (i === 2) {
-          console.log('characteristics: 3')
-        } else {
-          console.log("characteristic doesn't match.")
-        }
-      }
-      pushPage({'id':'canvas.html', 'view':1, 'title':'calibration'})
+      let bufferToSend = Uint8Array.of(inputValue);
+      this.LEDcharacteristic.writeValue(bufferToSend)
+        .catch(() => {
+          console.log("DOMException: GATT operation already in progress.")
+          //return Promise.resolve()
+          //        .then(() => this.delayPromise(500))
+          //        .then(() => { characteristic.writeValue(value);});
+        });
     }
   }
 
-  gotCharacteristicsLED(error, characteristics) {
-    if (error) console.log('error: ', error);
-    console.log('characteristics: ', characteristics);
-    // Set the first characteristic as myCharacteristic
-    let myCharacteristic = characteristics[0];
-    writeToBle(myCharacteristic, "af")
-  }
-
-  onDisconnected () {
+  onDisconnected(event) {
+    let batteryIcon = document.getElementById('batteryIcon')
+    batteryIcon.style.display= "none";
     console.log('Device was disconnected.')
-    this.isCjonnected = false
+    showAlertDialog();
   }
 
   getSensorValues() {
     return this.sensorValues;
   }
- writeToBle(myCharacteristic, input) {
-  let inputValue = Math.floor(Math.random() * 0xff).toString(16);
-  // Write the value of the input to the myCharacteristic
-  console.log("write led Characteristic")
-  myBLE.write(myCharacteristic, inputValue);
-}
 
-  handleSensor (data) {
-    // apply filtering
-    let filters = that.params.getFilters();
-    let newValues = []
-    // extract 16 bit sensor values from hex
-    for (let i = 0; i < that.noChannels; i++) {
-      let byteCount = i * 2
-      newValues[i] = data.getUint16(byteCount, true)
-    }
-    let averageValues = that.sensorValues
-    moveingWeightedAverageArray(newValues, averageValues, filters)
-  }
 }
 export default BLEhandler

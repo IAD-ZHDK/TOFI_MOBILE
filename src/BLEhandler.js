@@ -14,6 +14,7 @@ class BLEhandler {
     */
     this.id = 'default'
     this.serviceUuid = 'A22A0001-AD0B-4DF2-A4E2-1745CBB4dCEE' // The UUID for the main service on the TOFI trainer sensors
+    this.serviceUuid2 = 'a22a0001-ad0b-4df2-a4e2-1745cbb4dcee'
     this.serviceUuidLED = 'A22B0001-AD0B-4DF2-A4E2-1745CBB4dCEE' // The UUID for the main service on the TOFI trainer
     // this.SensorServiceUuid = 'A22A0001-AD0B-4DF2-A4E2-1745CBB4dCEE'
     console.log('looking for:' + this.serviceUuid)
@@ -25,16 +26,44 @@ class BLEhandler {
       this.sensorValues[i] = 0
     }
     that = this
+ // web ble api 
+ /*
+    navigator.bluetooth.requestDevice({
+      filters: [{
+        services: [this.serviceUuid2]
+      }]
+    })
+    .then(device => device.gatt.connect())
+.then(server => {
+  // Getting Battery Service…
+  return server.getPrimaryService('battery_service');
+})
+.then(service => {
+  // Getting Battery Level Characteristic…
+  return service.getCharacteristic('battery_level');
+})
+.then(characteristic => {
+  // Reading Battery Level…
+  return characteristic.readValue();
+})
+.then(value => {
+  console.log(`Battery percentage is ${value.getUint8(0)}`);
+})
+.catch(error => { console.error(error); });
+*/
+
   }
 
   connectAndStartNotify () {
     // Connect to a device by passing the service UUID
     this.myBLE.disconnect()
     this.myBLE.connect(this.serviceUuid, this.gotCharacteristics)
+   // this.myBLE.connect(this.serviceUuidLED, this.gotCharacteristics)
     let gotValue = "";
    // this.myBLE.read(this.serviceUuidLED , 'string', gotValue)
     //console.log("led_"+gotValue)
    // this.myBLE.connect(this.serviceUuidLED, this.gotCharacteristicsLED)
+   
   }
   gotCharacteristics (error, characteristics) {
     // A function that will be called after got characteristics
@@ -42,7 +71,6 @@ class BLEhandler {
       console.log('error: ', error)
     } else {
       that.params.setDeviceId(that.myBLE.device.id);
-      console.log("BLE DEVICE ID"+that.myBLE.device.id)
       // Check if myBLE is connected
       that.isConnected = that.myBLE.isConnected()
       console.log('BLE connected: '+that.isConnected )

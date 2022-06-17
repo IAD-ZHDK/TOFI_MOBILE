@@ -20,11 +20,6 @@ class SpeedTest extends View {
         this.totalTouches  = 20;
         this.remaningTouches  = this.totalTouches ;
         this.tofiTrainer = new tofi(p,0.5, 0.5, p.width,p.height*0.6, this.params, this.Tone)
-        addBtn(function(){
-            //this.statesMachine.dispatch('next')
-            let state = this.statesMachineNew.value
-            state = this.statesMachineNew.transition(state, 'next')
-        }.bind(this),"Start")
     }
 
     draw () {

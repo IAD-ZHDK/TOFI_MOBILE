@@ -21,22 +21,30 @@ class Parameters {
   setupCookie(key) {
     this.cookieID = key
     this.noChannels = 8
-    this.exterior = {"label":'exterior', "x": 0.5, "y": 0.33,"active":true, "value":0.0};
-    this.forward = {"label":'forward', "x": 0.5, "y": 0.55 ,"active":true, "value":0.0}; // incisivePapilla
-    this.back = {"label":'back', "x": 0.5, "y": 0.75 ,"active":true, "value":0.0}; // palate middle
-    this.left = {"label":'left', "x": 0.3, "y": 0.8 ,"active":true, "value":0.0}; //palate left
-    this.right = {"label":'right', "x": 0.7, "y": 0.8,"active":true, "value":0.0}; //palate rught
-    this.sensorsV1 = {/*Ch 6*/"left": this.left,
+    this.exterior = { "label": 'exterior', "x": 0.5, "y": 0.33, "active": true, "value": 0.0 };
+    this.forward = { "label": 'forward', "x": 0.5, "y": 0.55, "active": true, "value": 0.0 }; // incisivePapilla
+    this.back = { "label": 'back', "x": 0.5, "y": 0.75, "active": true, "value": 0.0 }; // palate middle
+    this.left = { "label": 'left', "x": 0.3, "y": 0.8, "active": true, "value": 0.0 }; //palate left
+    this.right = { "label": 'right', "x": 0.7, "y": 0.8, "active": true, "value": 0.0 }; //palate rught
+    this.sensorsPosV1 = {/*Ch 6*/"left": this.left,
                             /*Ch 5*/"back": this.back,
                             /*Ch 4*/"exterior": this.exterior,
                             /*Ch 3*/"forward": this.forward,
-                            /*Ch 2*/"right": this.right}; // todo: make these configurable in front end
-    this.sensorsV2 = {/*Ch 1*/"left":this.left,
+                            /*Ch 2*/"right": this.right
+    }; // todo: make these configurable in front end
+    this.sensorsPosV2 = {/*Ch 1*/"left": this.left,
                             /*Ch 4*/"forward": this.forward,
                             /*Ch 3*/"exterior": this.exterior,
                             /*Ch 2*/"back": this.back,
-                            /*Ch 5*/"right": this.right}; // todo: make these configurable in front end
-    this.sensors = this.sensorsV1 // takes v1 by defualt
+                            /*Ch 5*/"right": this.right
+    }; // todo: make these configurable in front end
+    this.sensorsPosV3 = {/*Ch 6*/"left": this.left,
+                            /*Ch 5*/"forward": this.forward,
+                             /*Ch 4*/"exterior": this.exterior,
+                           /*Ch */"back": this.back,
+                            /*Ch 2*/"right": this.right
+    }; // todo: make these configurable in front end
+    this.sensors = this.sensorsPosV1 // takes v1 by defualt
     this.activeChanels = [] // array of indexes for retrieving active chanels only
     this.activeSensorLocations = [] //
     this.chanelNames = ['Battery', 'Reference', 'Ch 6', 'Ch 5', 'Ch 4', 'Ch 3', 'Ch 2', 'Ch 1']
@@ -164,7 +172,7 @@ class Parameters {
       for (const [key, subArray] of Object.entries(this.thisSession.log)) {
         totalLogEvents += Object.keys(subArray).length
       }
-    } 
+    }
     if (this.thisSession != null && this.thisSession.loging == true && totalLogEvents >= 5) {
       console.log(this.thisSession)
       let millis = this.timeElapsed - this.thisSession.start
@@ -387,14 +395,14 @@ class Parameters {
     if (this.getIsActive(2) && !this.getIsActive(7)) {
       this.sensorStartIndex = 2;
       this.sensorEndIndex = 6;
-      this.sensors = this.sensorsV1 // 1st generation
+      this.sensors = this.sensorsPosV1 // 1st generation
     } else if (!this.getIsActive(2) && this.getIsActive(7)) {
       this.sensorStartIndex = 3;
       this.sensorEndIndex = 7;
-      this.sensors = this.sensorsV2 // 2nd generation
+      this.sensors = this.sensorsPosV2 // 2nd generation
     } else {
-      this.sensors = this.sensorsV1
-     // this.sensors.push({ "x": 0.9, "y": 0.9 }) // add another sensor location for new chanel
+      this.sensors = this.sensorsPosV1
+      // this.sensors.push({ "x": 0.9, "y": 0.9 }) // add another sensor location for new chanel
       console.log("more sensors active then alowed!")
     }
     let sensorPositionsUpdated = []

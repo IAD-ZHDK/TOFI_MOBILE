@@ -1,6 +1,6 @@
 import P5 from 'p5'
 import View from './View'
-
+import tofi from './viewUtils/tofiVisualiser'
 
 class SensorHistogram extends View {
   constructor (p, Tone, Timer, params) {
@@ -12,12 +12,17 @@ class SensorHistogram extends View {
     }
     this.p.colorMode(this.p.RGB)
     this.p.textSize(15)
+    this.tofiTrainer = new tofi(p, 0.5, 0.5, p.width, p.height * 0.6, this.params, this.Tone)
   }
   draw () {
     this.p.clear()
     let normalisedValues = this.params.getNormalisedValues();
+    this.tofiTrainer.display()
+    this.drawHistogram(normalisedValues);
+  }
+  drawHistogram(normalisedValues) {
     let spacing = this.p.windowHeight / normalisedValues.length
-    this.p.translate((this.p.windowWidth / 2), (spacing / 2))
+    this.p.translate(300, (spacing / 2))
     for (let i = 0; i < normalisedValues.length; i++) {
       let active = this.params.getIsActive(i)
       this.p.push()
@@ -25,7 +30,7 @@ class SensorHistogram extends View {
           radius = this.p.constrain(radius, 10, spacing * 0.9)
           this.p.translate(0,spacing * i)
         if (active) {
-          this.drawHistogram (i, radius)
+          this.drawChannel (i, radius)
           if (this.params.atThreshold(i)) {
             this.p.fill(0)
           } else {
@@ -47,8 +52,9 @@ class SensorHistogram extends View {
           this.p.text(this.params.chanelNames[i], 0, 0)
         this.p.pop()
     }
+
   }
-  drawHistogram (i, radius) {
+  drawChannel (i, radius) {
     this.histogram[i].unshift(radius / 2)
     this.p.stroke(255)
     this.p.noFill()

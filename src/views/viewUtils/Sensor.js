@@ -17,19 +17,19 @@ class Sensor {
         }
     display(x,y, normalisedValue, threshold) {
         if (this.calibrating) {
-            this.p.fill(this.colorPallet[4])
+            this.p.fill(this.colorPallet[1])
         } else if (this.hiden) {
             this.p.fill(255,255,255,100)
             this.p.noStroke()
             this.p.ellipse(x,y,this.radius+1,this.radius+1)
             this.p.fill(255,255,255)
         } else {
-            this.p.stroke(this.colorPallet[7])
+            this.p.stroke(this.colorPallet[1])
             this.p.strokeWeight(3)
             this.p.noFill()
             this.p.ellipse(x,y,this.radius+1,this.radius+1)
             this.p.noStroke()
-            this.p.fill(this.colorPallet[4])
+            this.p.fill(this.colorPallet[1])
         }
         this.p.noStroke()
 

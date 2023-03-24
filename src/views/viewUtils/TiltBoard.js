@@ -125,13 +125,13 @@ class TiltBoard {
     this.gameState = "setup";
     this.objectSetup();
     this.soundSetup(Tone);
-    this.inputThreshold = 0.2;
+    this.inputThreshold = 0.4;
     this.sphereTexture = this.p.loadImage('./img/checkerboard_pattern.png');
     this.colorPallet = colorPallet;
     this.colorwinningArea = this.p.color(0, 0, 0);
     this.colorWalls = this.p.color(this.colorPallet[1]);
-    this.colorBoard = this.p.color(this.colorPallet[3]);
-    this.colorObstacle1 = this.p.color(this.colorPallet[2])
+    this.colorBoard = this.p.color(this.colorPallet[1]);
+    this.colorObstacle1 = this.p.color(this.colorPallet[0])
     this.colorObstacle2 = this.colorObstacle1;
     this.colorObstacle3 = this.colorObstacle2;
 
@@ -177,8 +177,6 @@ class TiltBoard {
     let volumeDry = -8;
     let bpmValue = 80;
 
-
-
     this.synth1 = new Tone.MonoSynth();
     this.synth2 = new Tone.MonoSynth();
     this.synth3 = new Tone.MonoSynth();
@@ -221,11 +219,6 @@ class TiltBoard {
     this.params.toneObjects.push(this.reverb5);
 
     this.params.toneObjects.push(this.volDry);
-
-
-
-    //
-
 
     //set parameters for synths and FX's
     // Tone.Transport.bpm.value = bpmValue;
@@ -521,7 +514,7 @@ class TiltBoard {
     let tryCount = 0;
     do {
       tryCount++;
-      if (tryCount>40) {
+      if (tryCount > 40) {
         this.initializeGame();
         break;
       }
@@ -532,8 +525,8 @@ class TiltBoard {
       let distanceFromMiddleX = this.p.random(0.2, 0.45)
       let distanceFromMiddleY = this.p.random(0.2, 0.45)
       // random left/right and up/down
-      distanceFromMiddleX = distanceFromMiddleX* (Math.random() < 0.5 ? -1 : 1);
-      distanceFromMiddleY = distanceFromMiddleY* (Math.random() < 0.5 ? -1 : 1);
+      distanceFromMiddleX = distanceFromMiddleX * (Math.random() < 0.5 ? -1 : 1);
+      distanceFromMiddleY = distanceFromMiddleY * (Math.random() < 0.5 ? -1 : 1);
       winningArea.posX = distanceFromMiddleX * board.boardWidth
       winningArea.posY = distanceFromMiddleX * board.boardHeight
       for (let i = 0; i < this.obstacles.length; i++) {
@@ -644,7 +637,7 @@ class TiltBoard {
       board.angleX += (tiltBack.value * world.playerSensitivity) * 0.1;
       this.synth2.triggerAttack("D3");
     }
-    else if (tiltforward.value  >= this.inputThreshold) {
+    else if (tiltforward.value >= this.inputThreshold) {
       board.angleX = board.angleX * 0.9;
       board.angleX += 0 - (tiltforward.value * world.playerSensitivity) * 0.1;
       this.synth1.triggerAttack("A3");
@@ -654,17 +647,17 @@ class TiltBoard {
       board.angleX = board.angleX * 0.9;
     }
 
-    if (sensors.left.value  >= this.inputThreshold) {
+    if (sensors.left.value >= this.inputThreshold) {
       board.angleY = board.angleY * 0.9;
       board.angleY += 0 - (sensors.left.value * world.playerSensitivity) * 0.1;
       this.synth4.triggerAttack("F3");
     }
 
-    else if (sensors.right.value  >= this.inputThreshold) {
+    else if (sensors.right.value >= this.inputThreshold) {
       board.angleY = board.angleY * 0.9;
       board.angleY += (sensors.right.value * world.playerSensitivity) * 0.1;
       this.synth3.triggerAttack("G3");
-    } 
+    }
     else {
       board.angleY = board.angleY * 0.9;
       // board.angleY += 0*0.1;

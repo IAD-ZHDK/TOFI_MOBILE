@@ -17,10 +17,6 @@ class Ball {
     this.dx = 0
     this.dy = 0
     this.smoothingFactor = 0.995;
-    this.notes1 = ["F2"];
-    this.notes2 = ["C3", "D3", "F3", "G3", "A3"];
-    this.notes3 = ["D4", "F4", "G4", "A4"];
-    this.notes4 = ["A4", "C5", "D5", "F5"];
   }
 
   update (p) {
@@ -52,7 +48,7 @@ class Ball {
     p.noFill()
     p.stroke(0)
     p.strokeWeight(4)
-    p.ellipse(this.x, this.y, this.r * 2, this.r * 2)
+    p.ellipse(50,50,50,50)
   }
 
   move(x, y) {

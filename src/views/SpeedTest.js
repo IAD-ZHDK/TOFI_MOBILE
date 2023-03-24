@@ -7,22 +7,40 @@ import { addBtn } from "./viewUtils/DomButton.js";
 
 class SpeedTest extends View {
 
-    constructor (p, Tone, Timer, params) {
+    constructor(p, Tone, Timer, params) {
         super(p, Tone, Timer, params)
-        this.textBox = new TextBox(this.p,'Press start when you are ready',this.p.width/2, this.p.height*.1,p.width*0.4,p.height*0.5)
+
+    
+        this.textBox = new TextBox(this.p, 'Press start when you are ready', this.p.width / 2, this.p.height * .1, p.width * 0.4, p.height * 0.5)
         //this.statesMachine = Object.create(machine);
         this.statesMachineNew = this.stateMachine();
         this.totalSensors = this.params.getNoActive()
         this.currentSensor = 0
         this.counter = 0
         // speed
-        this.speedTotal  = 0;
-        this.totalTouches  = 20;
-        this.remaningTouches  = this.totalTouches ;
-        this.tofiTrainer = new tofi(p,0.5, 0.5, p.width,p.height*0.6, this.params, this.Tone)
+        this.speedTotal = 0;
+        this.totalTouches = 20;
+        this.remaningTouches = this.totalTouches;
+        this.tofiTrainer = new tofi(p, 0.5, 0.5, p.width, p.height * 0.6, this.params, this.Tone)
+        // sound
+        this.envelope = new Tone.AmplitudeEnvelope({
+            attack: 0.1,
+            decay: 0.1,
+            sustain: 0.01,
+            release: 0.1,
+        }).toDestination()
+
+        this.oscillator = new Tone.Oscillator({
+            partials: [3, 2, 1],
+            type: "custom",
+            frequency: Tone.Midi(64).toFrequency(), 
+            volume: -8,
+        }).connect(this.envelope).start()
+
+        this.Timer.envelopes.push(this.envelope)
     }
 
-    draw () {
+    draw() {
         this.p.clear()
         if (this.statesMachineNew.value === 'intro') {
             this.intro()
@@ -33,13 +51,13 @@ class SpeedTest extends View {
         }
     }
 
-    windowResized(){
-        this.textBox.resize(this.p.width/2, this.p.height*.1,this.p.width*0.4,this.p.height*0.5);
+    windowResized() {
+        this.textBox.resize(this.p.width / 2, this.p.height * .1, this.p.width * 0.4, this.p.height * 0.5);
         this.tofiTrainer.resize(0.5, 0.5, this.p.width, this.p.height * 0.6)
     }
 
     intro() {
-    
+
         this.textBox.display()
         this.tofiTrainer.display()
     }
@@ -48,13 +66,14 @@ class SpeedTest extends View {
         this.p.fill(255);
         this.textBox.display()
         this.tofiTrainer.display(this.currentSensor)
-        if (this.remaningTouches<=0) {
+        if (this.remaningTouches <= 0) {
             let state = this.statesMachineNew.value
             state = this.statesMachineNew.transition(state, 'next')
         } else {
             let threshold = 0.85
             let currentSensorValue = this.params.getNormalisedActive(this.currentSensor)
             if (currentSensorValue > threshold) {
+                this.envelope.triggerAttackRelease(0.3)
                 if (this.remaningTouches === this.totalTouches) {
                     //set timer from first press
                     this.counter = this.p.millis()
@@ -93,11 +112,11 @@ class SpeedTest extends View {
         let binding = this
         const FSM = createMachine({
             initialState: 'intro',
-        
+
             intro: {
                 actions: {
                     onEnter() {
-                        binding.remaningTouches  = binding.totalTouches
+                        binding.remaningTouches = binding.totalTouches
                         binding.counter = binding.p.millis()
                         binding.textBox.setText('Press start when you are ready')
                         addBtn(function () {
@@ -141,13 +160,13 @@ class SpeedTest extends View {
             feedback: {
                 actions: {
                     onEnter() {
-                        binding.tofiTrainer.display(0,1,2,3,4,5)
+                        binding.tofiTrainer.display(0, 1, 2, 3, 4, 5)
                         let average = binding.speedTotal / binding.totalTouches  // millis
-                        average = average/1000 // seconds
+                        average = average / 1000 // seconds
                         let rounded = Math.round((average + Number.EPSILON) * 100) / 100;
                         binding.params.logSpeedResult(rounded);
                         binding.params.enableLogingSave();
-                        binding.textBox.setText('your average speed was: '+rounded+' seconds')
+                        binding.textBox.setText('your average speed was: ' + rounded + ' seconds')
                         addBtn(function () {
                             let state = this.statesMachineNew.value
                             state = this.statesMachineNew.transition(state, 'next')
@@ -269,5 +288,5 @@ class SpeedTest extends View {
         return FSM
     }
 }
-export {SpeedTest}
+export { SpeedTest }
 

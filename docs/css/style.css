@@ -8,10 +8,10 @@
 
 
 :root {
-    --c0: #71C7AA;
-    --c1: #CFBF5F;
+    --c0: #3da79e;
+    --c1: #f2ae41;
     --c2: #42B2DF;
-    --c3: #7B61FF;
+    --c3: #131316;
     --c4: #B83992;
     --c5: #0F0D31;
     --c6: #10C5C1;
@@ -76,7 +76,7 @@ backButton:hover {
 }
 
 #p5-container {
-    background: linear-gradient(180deg, #2D2D64 0%, #000000 100%);
+    background: linear-gradient(180deg, #3da79e 0%, #246d67 100%);
     z-index: 100;
 }
 
@@ -131,6 +131,47 @@ backButton:hover {
     margin-bottom: 3%;
 }
 
+
+.toolbar {
+    background: none;
+    font-size:  13px;
+}
+
+.toolbar__right {
+    padding-right: 1%;
+}
+#batteryIcon {
+    display: none;
+    margin-top: 5px;
+    font-size: 9px;
+    width: 20px;
+    line-height: 32px;
+    height: 6px;
+    margin-left: auto;
+    margin-right: 5px;
+    border: 2px solid white;
+}
+#batteryIcon::after {
+    content: "";
+    position: absolute;
+    width: 0px;
+    height: 2px;
+    margin-left: 20px;
+    display: -webkit-inline-box;
+    border: 2px solid white;
+}
+#batteryBar {
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 6px;
+    margin-left: 0px;
+    display: -webkit-inline-box;
+    background: white;
+}
+.pointer-events-none {
+    pointer-events: none;
+    }
 .circle-icon {
     background: var(--c7);
     border-radius: 50%;

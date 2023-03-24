@@ -40,7 +40,7 @@ void main() {
 	  alpha = 0.0;
 	}
 	
-  gl_FragColor = vec4(amplitude,0.3,1.0-amplitude, alpha);
+  gl_FragColor = vec4(242.0/255.0,amplitude,65.0/255.0, alpha);
 }
 `;
 
@@ -50,11 +50,6 @@ let scale1Notes1 = ["F2"];
 let scale1Notes2 = ["C3", "D3", "F3", "G3", "A3"];
 let scale1Notes3 = ["D4", "F4", "G4", "A4"];
 let scale1Notes4 = ["A4", "C5", "D5", "F5"];
-
-let scale2Notes1 = ["D2"];
-let scale2Notes2 = ["D3", "D#3", "G3", "A3", "C3"];
-let scale2Notes3 = ["D#4", "G4", "A4", "C4"];
-let scale2Notes4 = ["C5", "G5", "A5", "D5"];
 
 
 class Meta {
@@ -86,12 +81,8 @@ class Meta {
     //p.push()
     let centerW = this.width / 2
     let centerH = this.height / 2
-    // p.translate(centerW, centerH)
     // todo: this is a very messy fix for cases with less than 5 sensors
     let sensors = this.params.getSensorsUpdates();
-
-  
-
     let modifier = [];
     modifier[0] = sensorValues[0]
     modifier[1] = sensorValues[0]
@@ -105,7 +96,7 @@ class Meta {
     for (let i = 0; i < this.balls.length; i++) {
       //    2
       //    3
-      //    
+      //
       //    1
       // 0    4
       this.balls[i].addXamp((sensors.left.value  + sensors.right.value) * (this.width)*0.6)

@@ -1,4 +1,4 @@
-// import 'p5/lib/addons/p5.sound'
+
 import Note from './viewUtils/Note'
 import View from './View'
 import Tofi from './viewUtils/tofiVisualiser'

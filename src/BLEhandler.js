@@ -1,11 +1,8 @@
-//import P5 from 'p5'
-//import P5ble from 'p5ble'
-import { pushPage, showAlertDialog } from './index.js'
+import { pushPage, showAlertDialog, backButton } from './index.js'
 import { map, constrain, moveingWeightedAverageArray } from './views/viewUtils/MathUtils'
 class BLEhandler {
   constructor(params) {
     this.params = params
-
     var isChromium = window.chrome;
     var winNav = window.navigator;
     var vendorName = winNav.vendor;
@@ -16,39 +13,17 @@ class BLEhandler {
     if (isIOSChrome) {
       // is Google Chrome on IOS
     } else if (
-      isChromium !== null &&
+      isChromium !== null || isOpera !== null &&
       typeof isChromium !== "undefined" &&
       vendorName === "Google Inc." &&
-      isOpera === false &&
       isIEedge === false
     ) {
-      // is Google Chrome
+      // is Google Chrome or opera 
     } else {
       // not Google Chrome 
       window.alert('BLE may not work in your browser. Use Chrome or check for a list of compatible browsers here: https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API')
     }
 
-
-    var isChromium = window.chrome;
-    var winNav = window.navigator;
-    var vendorName = winNav.vendor;
-    var isOpera = typeof window.opr !== "undefined";
-    var isIEedge = winNav.userAgent.indexOf("Edg") > -1;
-    var isIOSChrome = winNav.userAgent.match("CriOS");
-
-    if (isIOSChrome) {
-      // is Google Chrome on IOS
-    } else if (
-      isChromium !== null &&
-      typeof isChromium !== "undefined" &&
-      vendorName === "Google Inc." &&
-      isOpera === false &&
-      isIEedge === false
-    ) {
-      // is Google Chrome
-    } else {
-      // not Google Chrome 
-    }
 
     this.id = 'default'
     this.serviceUuid = 'a22a0001-ad0b-4df2-a4e2-1745cbb4dcee' // The UUID for the main service on the TOFI trainer sensors
@@ -86,6 +61,15 @@ class BLEhandler {
         { services: [this.LEDUuid] },
       ],
       optionalServices: ['battery_service']
+    }
+
+  
+     let isAvailable = navigator.bluetooth.getAvailability();
+      console.log('Bluetooth is enabled: ', isAvailable);
+    if (!isAvailable) {
+      console.error(e);
+      isAvailable = false;
+      window.alert('BLE may not work in your browser. Use Chrome or check for a list of compatible browsers here: https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API')
     }
 
     let device = navigator.bluetooth.requestDevice(options)
@@ -215,7 +199,9 @@ class BLEhandler {
     let batteryIcon = document.getElementById('batteryIcon')
     batteryIcon.style.display= "none";
     console.log('Device was disconnected.')
+    backButton()
     showAlertDialog();
+    //todo: exit back to main menu.
   }
 
   getSensorValues() {

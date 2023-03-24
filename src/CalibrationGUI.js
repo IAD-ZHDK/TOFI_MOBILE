@@ -7,7 +7,6 @@ class CalibrationGUI {
     this.buildGUI(this.params.deviceProfile)
     //console.log("cookies " + this.Cookie.deviceProfile);
   }
-
   writeCookie() {
     this.params.save()
     writeToFB(this.params.getDeviceProfileJson())

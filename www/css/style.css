@@ -8,10 +8,10 @@
 
 
 :root {
-    --c0: #71C7AA;
-    --c1: #CFBF5F;
+    --c0: #3da79e;
+    --c1: #f2ae41;
     --c2: #42B2DF;
-    --c3: #7B61FF;
+    --c3: #131316;
     --c4: #B83992;
     --c5: #0F0D31;
     --c6: #10C5C1;
@@ -76,7 +76,7 @@ backButton:hover {
 }
 
 #p5-container {
-    background: linear-gradient(180deg, #2D2D64 0%, #000000 100%);
+    background: linear-gradient(180deg, #3da79e 0%, #246d67 100%);
     z-index: 100;
 }
 

@@ -18,6 +18,9 @@ module.exports = {
 module.exports = {
     mode: 'development',
     entry: './src/index.js',
+    optimization: {
+        minimize: true,
+      },
     output: {
         path: path.resolve(__dirname, 'www'),
         filename: 'index.bundle.js',
